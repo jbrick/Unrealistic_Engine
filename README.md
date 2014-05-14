@@ -7,7 +7,10 @@ Python Coding Style: http://legacy.python.org/dev/peps/pep-0008/
 
 Please use sublime text 3 with these plugins:
 
-Pylint (requires pylint python package to be installed)
+Package control (used to install sublime plugins) https://sublime.wbond.net/installation
 
-AutoPEP8
+SublimeLinter
+
+SublimeLinter-pep8 (requires pep8 python module to be installed)
+
 
