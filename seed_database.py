@@ -8,9 +8,7 @@ with db:
     query = ( "CREATE TABLE Character"
               "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Image TEXT)")
     cursor.execute(query)
-    with open ("../Images/character.bmp") as f:
-        blob = f.read()
 
     cursor.execute(
         "INSERT INTO Character (Image) VALUES (?)",
-        ["../Images/character.bmp"])
+        ["Images/ball.bmp"])

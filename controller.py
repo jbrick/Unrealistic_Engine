@@ -1,27 +1,10 @@
-import pygame
 import model
-from eventmanager import*
-from abc import ABCMeta
 
 
+# Every class that requires input from user should inherit this class.
 class Controller():
-    __metaclass__ = ABCMeta
 
-    @abstractclass
-    def __init__(self, model):
-        pass
-
-    @abstractclass
-    def quit_game(self, model):
-        pass
-
-    @abstractclass
-    def key_input(self):
-        pass
-
-    @abstractclass
-    def mouse_input(self):
-        pass
-
-    def register_listener(self, listener):
-        self.listeners[listener] = 1
+    # This method gets passed all the pygame events such as a user pressing a
+    # key.
+    def handle_game_event(self, event):
+        raise NotImplementedError("Please Implement this method")

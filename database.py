@@ -2,10 +2,10 @@ import sqlite3 as lite
 import sys
 from game import Game
 from character import Character
-from PIL import Image
+from model import Model
 
 
-class Database:
+class Database(Model):
     def __init__(self):
         self.db = None
 
@@ -21,22 +21,9 @@ class Database:
         return cursor
 
     def load_application(self):
+        # Currently game only consists of one character.
         cursor = self.__database_execute("SELECT * FROM Character", None)
         row = cursor.fetchone()
         character = Character(row["Image"])
         game = Game(character)
         return game
-
-    def save_character(self, character):
-        self.__database_execute(
-            "INSERT INTO CHARACTER (Image) VALUES ?", character.image)
-
-    def save_game(self, game):
-        save_character(game.character)
-
-
-
-db = Database()
-app = db.load_application()
-im = Image.open(app.character.image)
-im.show()
