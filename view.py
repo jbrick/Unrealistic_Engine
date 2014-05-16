@@ -28,3 +28,9 @@ class View():
 
     def remove_model(self, model):
         del self.visible_models[model]
+
+    def set_visible_model_position(self, model, position):
+        self.visible_models[model] = (self.visible_models[model][0], position)
+
+    def get_visible_model_position(self, model):
+        return self.visible_models[model][1]
