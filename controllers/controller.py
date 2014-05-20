@@ -1,6 +1,3 @@
-import model
-
-
 # Every class that requires input from user should inherit this class.
 class Controller():
 

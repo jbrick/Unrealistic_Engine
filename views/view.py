@@ -1,6 +1,5 @@
-import model
-from sets import Set
 import pygame
+from sets import Set
 
 
 # Any class the renders models to the screen should inherit from View, and 
