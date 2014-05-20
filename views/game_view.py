@@ -1,5 +1,5 @@
-from view import View
 import pygame
+from Unrealistic_Engine.views.view import View
 
 
 # Default view for rendering models.

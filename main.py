@@ -1,11 +1,8 @@
-import model
-import view
-import controller
 import pygame
-from database import Database
-from game_controller import GameController
-from game_view import GameView
-from position import Position
+from Unrealistic_Engine.models.database import Database
+from Unrealistic_Engine.controllers.game_controller import GameController
+from Unrealistic_Engine.views.game_view import GameView
+from Unrealistic_Engine.utils.position import Position
 
 
 pygame.init()

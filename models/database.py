@@ -1,8 +1,8 @@
 import sqlite3 as lite
 import sys
-from game import Game
-from character import Character
-from model import Model
+from Unrealistic_Engine.models.game import Game
+from Unrealistic_Engine.models.character import Character
+from Unrealistic_Engine.models.model import Model
 
 
 class Database(Model):
