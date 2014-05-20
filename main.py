@@ -20,7 +20,6 @@ gameView = GameView()
 gameController = GameController(gameModel, gameView)
 
 gameView.add_model(gameModel.character, GameView.render_character, Position(50, 50))
-
 # Main game loop passes all events to controller and continuaslly renders view.
 while True:
     for event in pygame.event.get():
