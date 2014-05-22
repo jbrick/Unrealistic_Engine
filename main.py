@@ -1,4 +1,5 @@
 import pygame
+
 from Unrealistic_Engine.models.database import Database
 from Unrealistic_Engine.controllers.game_controller import GameController
 from Unrealistic_Engine.views.game_view import GameView
@@ -16,8 +17,9 @@ gameModel = Database().load_application()
 gameView = GameView()
 gameController = GameController(gameModel, gameView)
 
+gameView.add_model(gameModel.game_map, GameView.render_map, Position(0,0))
 gameView.add_model(gameModel.character, GameView.render_character, Position(50, 50))
-# Main game loop passes all events to controller and continuaslly renders view.
+# Main game loop passes all events to controller and continually renders view.
 while True:
     for event in pygame.event.get():
         gameController.handle_game_event(event)
