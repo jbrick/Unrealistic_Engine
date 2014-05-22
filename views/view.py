@@ -15,6 +15,10 @@ class View():
     def render_character(character, position, screen):
         raise NotImplementedError("Please Implement this method")
 
+    @staticmethod
+    def render_map(game_map, position, screen):
+        raise NotImplementedError("Please Implement this method")
+
     def render(self, screen):
         for model in self.visible_models:
             # Find the tuple (renderfunction, position) for the current model.

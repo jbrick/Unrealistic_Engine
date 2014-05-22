@@ -15,13 +15,13 @@ class GameController(Controller):
             self.model.character)
 
         if keys[pygame.K_LEFT]:
-            position.set_x_coord(position.x_coord - 5)         
+            position.set_x_coord(position.x_coord - 1)         
         if keys[pygame.K_RIGHT]:
-            position.set_x_coord(position.x_coord + 5)  
+            position.set_x_coord(position.x_coord + 1)  
         if keys[pygame.K_UP]:
-            position.set_y_coord(position.y_coord - 5)  
+            position.set_y_coord(position.y_coord - 1)  
         if keys[pygame.K_DOWN]:
-            position.set_y_coord(position.y_coord + 5)  
+            position.set_y_coord(position.y_coord + 1)  
 
         self.view.set_visible_model_position(
             self.model.character, position)

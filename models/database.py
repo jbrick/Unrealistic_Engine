@@ -1,10 +1,13 @@
 import sqlite3 as lite
 import sys
+import pygame
+import os
 
-from Unrealistic_Engine.models.model import Tile
+from Unrealistic_Engine.models.tile import Tile
+from Unrealistic_Engine.models.map import Map
 from Unrealistic_Engine.models.game import Game
 from Unrealistic_Engine.models.character import Character
-from Unrealistic_Engine.models.model import Model, Tile, Map
+from Unrealistic_Engine.models.model import Model
 
 
 class Database(Model):
@@ -26,11 +29,12 @@ class Database(Model):
         # Currently game only consists of one character.
         cursor = self.__database_execute("SELECT * FROM Character", None)
         row = cursor.fetchone()
-        character = Character(row["Image"])
+        #character = Character(row["Image"])
+        character = Character(os.path.join('Images', 'ball.bmp'))
         #TODO: (Sakshi) should load map and images from database instead
         grid_size = 16
-        f_image = pygame.image.load("tile1.bmp")
-        w_image = pygame.image.load("tile2.bmp")
+        f_image = pygame.image.load(os.path.join('Images', 'tile1.bmp'))
+        w_image = pygame.image.load(os.path.join('Images', 'tile2.bmp'))
         game_map = Map(grid_size)
         for x in range(0, grid_size):
             for y in range(0, grid_size):
@@ -47,7 +51,7 @@ class Database(Model):
                         tile = Tile('Wall', w_image)
                     else:
                         tile = Tile('Floor', f_image)
-            game_map.addOrReplaceTile(tile, x, y)
+                game_map.addOrReplaceTile(tile, x, y)
 
         game = Game(character, game_map)
         return game
