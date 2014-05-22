@@ -19,7 +19,7 @@ class Database(Model):
         with self.db:
             self.db.row_factory = lite.Row
             cursor = self.db.cursor()
-            if args == None:
+            if args is None:
                 cursor.execute(sql)
             else:
                 cursor.execute(sql, args)
@@ -36,6 +36,7 @@ class Database(Model):
         f_image = pygame.image.load(os.path.join('Images', 'tile1.bmp'))
         w_image = pygame.image.load(os.path.join('Images', 'tile2.bmp'))
         game_map = Map(grid_size)
+        #Generates preset tile configuration
         for x in range(0, grid_size):
             for y in range(0, grid_size):
                 tile = None

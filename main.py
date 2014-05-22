@@ -18,8 +18,12 @@ gameModel = Database().load_application()
 gameView = GameView()
 gameController = GameController(gameModel, gameView)
 
-gameView.add_model(gameModel.game_map, GameView.render_map, Position(0,0))
-gameView.add_model(gameModel.character, GameView.render_character, Position(0, 0))
+#Add Map model
+gameView.add_model(gameModel.game_map, GameView.render_map,
+                   Position(0, 0), 1)
+#Add Character model
+gameView.add_model(gameModel.character, GameView.render_character,
+                   Position(0, 0), 2)
 
 
 # Main game loop passes all events to controller and continually renders view.
