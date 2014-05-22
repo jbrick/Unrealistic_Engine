@@ -35,7 +35,7 @@ while True:
             view.render(screen)
         # Allow for swapping of MVC Components.
         if event.type == event_types.UPDATE_GAME_STATE:
-            controller = event.__dict__['Controller']
-            view = event.__dict__['View']
+            controller = event.Controller
+            view = event.View
         else:
             controller.handle_game_event(event)
