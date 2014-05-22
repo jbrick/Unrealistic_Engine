@@ -10,9 +10,9 @@ class MenuController(Controller):
         self.view = view
 
     def check_keys(self):
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_LEFT] || keys[pygame.K_ESCAPE]:
             # Previous menu
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_RIGHT] || keys[pygame.K_RETURN]:
             # Next menu or select item
         if keys[pygame.K_UP]:
             # Previous item in current menu

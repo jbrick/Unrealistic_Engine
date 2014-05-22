@@ -1,7 +1,8 @@
 from Unrealistic_Engine.models.node import Node
 
 
-class LeafNode(Node):
+class MenuNode(Node):
 
-    def __init__ (self, submenu):
+    def __init__ (self, submenu, name):
         self.submenu = submenu;
+        self.name = name;
