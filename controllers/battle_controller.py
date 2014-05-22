@@ -8,8 +8,7 @@ from Unrealistic_Engine import event_types
 from Unrealistic_Engine.utils.position import Position
 
 
-# Currently battle controller just doubles movement speed and
-# changes character image as a test.
+# Currently battle controller just doubles movement speed as a test.
 class BattleController(Controller):
 
     def __init__(self, model, view):
