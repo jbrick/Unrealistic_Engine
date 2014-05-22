@@ -1,0 +1,4 @@
+import pygame
+
+RENDER_SCREEN = pygame.USEREVENT + 1
+UPDATE_GAME_STATE = pygame.USEREVENT + 2
