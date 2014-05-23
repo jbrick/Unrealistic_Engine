@@ -4,7 +4,7 @@ from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine.views.view import View
 
 
-# Default view for rendering models.
+# Default view for rendering models
 class GameView(View):
 
     # offset in pixels - centres character in tile
