@@ -21,13 +21,13 @@ class BattleController(Controller):
             self.model.character)
 
         if keys[pygame.K_LEFT]:
-            position.set_x_coord(position.x_coord - 10)         
+            position.set_x_coord(position.x_coord - 2)
         if keys[pygame.K_RIGHT]:
-            position.set_x_coord(position.x_coord + 10)  
+            position.set_x_coord(position.x_coord + 2)
         if keys[pygame.K_UP]:
-            position.set_y_coord(position.y_coord - 10)  
+            position.set_y_coord(position.y_coord - 2)
         if keys[pygame.K_DOWN]:
-            position.set_y_coord(position.y_coord + 10)
+            position.set_y_coord(position.y_coord + 2)
         # For testing purposes pressing enter swaps controller / view.
         if  keys[pygame.K_RETURN]:
             view = GameView()

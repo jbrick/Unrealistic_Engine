@@ -21,18 +21,18 @@ class GameController(Controller):
             self.model.character)
 
         if keys[pygame.K_LEFT]:
-            position.set_x_coord(position.x_coord - 5)         
+            position.set_x_coord(position.x_coord - 1)
         if keys[pygame.K_RIGHT]:
-            position.set_x_coord(position.x_coord + 5)  
+            position.set_x_coord(position.x_coord + 1)
         if keys[pygame.K_UP]:
-            position.set_y_coord(position.y_coord - 5)  
+            position.set_y_coord(position.y_coord - 1)
         if keys[pygame.K_DOWN]:
-            position.set_y_coord(position.y_coord + 5)
+            position.set_y_coord(position.y_coord + 1)
         # For testing purposes pressing enter swaps controller / view.
-        if  keys[pygame.K_RETURN]:
+        if keys[pygame.K_RETURN]:
             view = BattleView()
-            # Just give the battle view the same visible models as the game view
-            # for now.
+            # Just give the battle view the same visible models as the
+            # game view for now.
             view.visible_models = self.view.visible_models
             controller = battle_controller.BattleController(self.model, view)
 
@@ -40,7 +40,7 @@ class GameController(Controller):
                 pygame.event.Event(
                     event_types.UPDATE_GAME_STATE,
                     {"Controller": controller,
-                     "View" : view})) 
+                     "View": view}))
 
         self.view.set_visible_model_position(
             self.model.character, position)

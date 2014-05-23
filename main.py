@@ -1,7 +1,9 @@
 import pygame
+
 from Unrealistic_Engine.models.database import Database
 from Unrealistic_Engine.controllers.game_controller import GameController
 from Unrealistic_Engine.views.game_view import GameView
+from Unrealistic_Engine.views.view import View
 from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine import event_types
 
@@ -16,9 +18,16 @@ model = Database().load_application()
 view = GameView()
 controller = GameController(model, view)
 
-view.add_model(model.character, view.render_character, Position(50, 50))
-# Main game loop passes all events to controller and continuaslly renders view.
+# TODO: Move the model additions out of main
+# Add Map model
+view.add_model(model.game_map, GameView.render_map,
+               Position(0, 0), View.BACKGROUND)
+# Add Character model
+view.add_model(model.character, GameView.render_character,
+               Position(0, 0), View.FOREGROUND)
 
+
+# Main game loop passes all events to controller and continually renders view.
 # Draw the screen every 34 ms or 30 fps.
 pygame.time.set_timer(event_types.RENDER_SCREEN, 34)
 while True:
@@ -28,7 +37,7 @@ while True:
             view.render(screen)
         # Allow for swapping of MVC Components.
         if event.type == event_types.UPDATE_GAME_STATE:
-            controller = event.__dict__['Controller']
-            view = event.__dict__['View']
+            controller = event.Controller
+            view = event.View
         else:
             controller.handle_game_event(event)
