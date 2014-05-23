@@ -7,6 +7,7 @@ from Unrealistic_Engine.views.view import View
 # Default view for rendering models.
 class GameView(View):
 
+    # offset in pixels - centres character in tile
     CHARACTER_OFFSET = 10
 
     @staticmethod
