@@ -8,5 +8,5 @@ class Map:
         self.tiles = [[0 for x in xrange(grid_size)]
                       for x in xrange(grid_size)]
 
-    def addOrReplaceTile(self, tile, h_loc, v_loc):
-        self.tiles[h_loc][v_loc] = tile
+    def addOrReplaceTile(self, tile, position):
+        self.tiles[position.x_coord][position.y_coord] = tile

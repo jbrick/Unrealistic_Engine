@@ -3,6 +3,7 @@ import sys
 import pygame
 import os
 
+from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine.models.tile import Tile
 from Unrealistic_Engine.models.map import Map
 from Unrealistic_Engine.models.game import Game
@@ -52,7 +53,8 @@ class Database(Model):
                         tile = Tile('Wall', w_image)
                     else:
                         tile = Tile('Floor', f_image)
-                game_map.addOrReplaceTile(tile, x, y)
+                position = Position(x, y)
+                game_map.addOrReplaceTile(tile, position)
 
         game = Game(character, game_map)
         return game

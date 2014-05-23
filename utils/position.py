@@ -9,3 +9,7 @@ class Position():
 
     def set_y_coord(self, y_coord):
         self.y_coord = y_coord
+
+    def convert_to_pixels(self, offset):
+        return ((self.x_coord * 40) + offset,
+                (self.y_coord * 40) + offset)

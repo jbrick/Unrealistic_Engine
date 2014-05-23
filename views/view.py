@@ -6,38 +6,35 @@ from sets import Set
 # implement the required methods.
 class View():
 
+    BACKGROUND = 1
+    FOREGROUND = 2
+
     def __init__(self):
         # We maintain a dictionary mapping a model to the function to call to
         # render said model, as well as the position of where to render it.
         self.visible_models = {}
 
     @staticmethod
-    def render_character(character, position, screen):
+    def render_character(character, screen, position, *args, **kwargs):
         raise NotImplementedError("Please Implement this method")
 
     @staticmethod
-    def render_map(game_map, position, screen):
+    def render_map(game_map, screen, *args, **kwargs):
         raise NotImplementedError("Please Implement this method")
 
     def render(self, screen):
         for model in self.visible_models:
-            # Priority 1 (Background)
             # Find the tuple (renderfunction, position) for the current model.
             # Call the associated render function
-            #print (self.visible_models[model])
-            if self.visible_models[model][2] == 1:
-                self.visible_models[model][0](model,
-                                              self.visible_models[model][1],
-                                              screen)
+            if self.visible_models[model][2] == View.BACKGROUND:
+                self.visible_models[model][0](model, screen)
 
         for model in self.visible_models:
-            # Priority 2 (Character)
             # Find the tuple (renderfunction, position) for the current model.
             # Call the associated render function
-            if self.visible_models[model][2] == 2:
-                self.visible_models[model][0](model,
-                                              self.visible_models[model][1],
-                                              screen)
+            if self.visible_models[model][2] == View.FOREGROUND:
+                self.visible_models[model][0](model, screen,
+                                              self.visible_models[model][1])
 
         pygame.display.flip()
 

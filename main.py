@@ -3,6 +3,7 @@ import pygame
 from Unrealistic_Engine.models.database import Database
 from Unrealistic_Engine.controllers.game_controller import GameController
 from Unrealistic_Engine.views.game_view import GameView
+from Unrealistic_Engine.views.view import View
 from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine import event_types
 
@@ -17,12 +18,13 @@ model = Database().load_application()
 view = GameView()
 controller = GameController(model, view)
 
-#Add Map model
+# TODO: Move the model additions out of main
+# Add Map model
 view.add_model(model.game_map, GameView.render_map,
-               Position(0, 0), 1)
-#Add Character model
+               Position(0, 0), View.BACKGROUND)
+# Add Character model
 view.add_model(model.character, GameView.render_character,
-               Position(0, 0), 2)
+               Position(0, 0), View.FOREGROUND)
 
 
 # Main game loop passes all events to controller and continually renders view.
