@@ -16,8 +16,9 @@ class Menu():
         - Pointer to the active node
     """
     
-    __nodes = None
-    __activeNode = None;
+    
+    __nodeStack = []
+    __currentMenu = None
     
     @property
     def nodeCount(self):
@@ -27,7 +28,8 @@ class Menu():
     Constructor.
     """
     def __init__ (self):
-        self.__nodes = []
+        self.nodes = []
+        self.activeNode = 0;
     
     """
     Adds a new menu item to this menu.
@@ -36,7 +38,7 @@ class Menu():
     """
     def addItem (self, newNode):
         if (isinstance (newNode, Node)):
-            self.__nodes.append (newNode)
+            self.nodes.append (newNode)
         else:
             raise TypeError ("You may only add Node objects.")
 
@@ -48,11 +50,11 @@ class Menu():
     """
     def addItem (self, newNode, index):
         if (isinstance (newNode, Node)):
-            if ((index >= 0) && (index < len (__nodes))):
-                self.__nodes.insert (index, newNode)
+            if ((index >= 0) && (index < len (nodes))):
+                self.nodes.insert (index, newNode)
                 
-                if (self.__activeNode != None && index < self.__activeNode):
-                    self.__activeNode++;
+                if (self.activeNode != None && index < self.activeNode):
+                    self.activeNode++
             else:
                 raise IndexError ("The given index is out of bounds.")
         else:
@@ -68,12 +70,12 @@ class Menu():
             
         elif (isinstance (newNode, Node)):
             # Note that List.remove will generate its own exception if the value is not in the list
-            tmp = self.__nodes [self.__activeNode]
+            tmp = self.nodes [self.activeNode]
             
-            self.__nodes.remove (target)
+            self.nodes.remove (target)
             
-            if (tmp != self.__nodes [self.__activeNode]):
-                self.__activeNode--;
+            if (tmp != self.nodes [self.activeNode]):
+                self.activeNode--
         else:
             raise TypeError ("This function only accepts Node objects or numerics.")
 
@@ -84,11 +86,11 @@ class Menu():
     """
     def selectItem (self, target):
         if (isinstance(target, (int, float, long)):
-            if (target >= 0 && target <= len(self.__nodes)):
-                self.__activeNode = target
+            if (target >= 0 && target <= len(self.nodes)):
+                self.activeNode = target
             else:
                 IndexError ("The given index is out of bounds.")
         elif (isinstance (newNode, Node)):
-            self.__activeNode = self.__nodes.index (newNode);
+            self.activeNode = self.nodes.index (newNode)
         else:
             raise TypeError ("This function only accepts Node objects or numerics.")
