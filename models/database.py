@@ -4,11 +4,11 @@ import pygame
 import os
 
 from Unrealistic_Engine.utils.position import Position
-from Unrealistic_Engine.models.tile import Tile
-from Unrealistic_Engine.models.map import Map
 from Unrealistic_Engine.models.game import Game
 from Unrealistic_Engine.models.character import Character
 from Unrealistic_Engine.models.model import Model
+from Unrealistic_Engine.models.map import Map
+from Unrealistic_Engine.models.tile import Tile
 
 
 class Database(Model):
@@ -16,7 +16,9 @@ class Database(Model):
         self.db = None
 
     def __database_execute(self, sql, args):
-        self.db = lite.connect("game.db")
+        dir = os.path.dirname(__file__)
+        filename = os.path.join(dir, "game.db")
+        self.db = lite.connect(filename)
         with self.db:
             self.db.row_factory = lite.Row
             cursor = self.db.cursor()
@@ -30,6 +32,7 @@ class Database(Model):
         # Currently game only consists of one character.
         cursor = self.__database_execute("SELECT * FROM Character", None)
         row = cursor.fetchone()
+<<<<<<< HEAD
         #character = Character(row["Image"])
         character = Character(os.path.join('Images', 'ball.bmp'))
         #TODO: (Sakshi) should load map and images from database instead
@@ -58,3 +61,21 @@ class Database(Model):
 
         game = Game(character, game_map)
         return game
+=======
+        character = Character(row["Image"])
+
+        # Game is made up of one map for now.
+        cursor = self.__database_execute("SELECT * FROM Maps WHERE Name = 'Basic'", None)
+        row = cursor.fetchone()
+
+        # Load the map tiles for this map.
+        cursor = self.__database_execute("SELECT TileId, Index_X, Index_Y FROM MapTile WHERE MapId = %d" % row["Id"], None)
+        tiles = cursor.fetchall()
+
+        # Load the associated tile images for the map tiles.
+        
+        # Build a game object.
+
+        # Return a game object.
+        return map_list
+>>>>>>> Started DB implementation for Maps and Tiles.
