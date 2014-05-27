@@ -15,34 +15,32 @@ class BattleController(Controller):
         self.model = model
         self.view = view
 
-    def check_keys(self):
-        keys = pygame.key.get_pressed()
+    def handle_key_press(self, pressed_key):
         position = self.view.get_visible_model_position(
             self.model.character)
 
-        if keys[pygame.K_LEFT]:
+        if pressed_key == pygame.K_LEFT:
             position.set_x_coord(position.x_coord - 2)
-        if keys[pygame.K_RIGHT]:
+        if pressed_key == pygame.K_RIGHT:
             position.set_x_coord(position.x_coord + 2)
-        if keys[pygame.K_UP]:
+        if pressed_key == pygame.K_UP:
             position.set_y_coord(position.y_coord - 2)
-        if keys[pygame.K_DOWN]:
+        if pressed_key == pygame.K_DOWN:
             position.set_y_coord(position.y_coord + 2)
         # For testing purposes pressing enter swaps controller / view.
-        if  keys[pygame.K_RETURN]:
+        if pressed_key == pygame.K_RETURN:
             view = GameView()
-            # Just give the game view the same visible models as the battle view
-            # for now.
+            # Just give the game view the same visible models as the battle
+            # view for now.
             view.visible_models = self.view.visible_models
             # This long reference is neccessary otherwise we get cyclic imports
             controller = Unrealistic_Engine.controllers.game_controller.GameController(self.model, view)
 
             pygame.event.post(pygame.event.Event(
                 event_types.UPDATE_GAME_STATE,
-                {"Controller": controller, "View": view})) 
-
-        self.view.set_visible_model_position(
-            self.model.character, position)
+                {"Controller": controller, "View": view}))
+            self.view.set_visible_model_position(
+                self.model.character, position)
 
     def handle_game_event(self, event):
         if event.type == pygame.QUIT:

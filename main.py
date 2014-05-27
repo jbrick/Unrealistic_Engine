@@ -18,23 +18,17 @@ model = Database().load_application()
 view = GameView()
 controller = GameController(model, view)
 
-# TODO: Move the model additions out of main
-# Add Map model
-view.add_model(model.game_map, GameView.render_map,
-               Position(0, 0), View.BACKGROUND)
-# Add Character model
-view.add_model(model.character, GameView.render_character,
-               Position(0, 0), View.FOREGROUND)
-
-
 # Main game loop passes all events to controller and continually renders view.
 # Draw the screen every 34 ms or 30 fps.
 pygame.time.set_timer(event_types.RENDER_SCREEN, 34)
+
+pygame.key.set_repeat(50, 50)
 while True:
     for event in pygame.event.get():
-        if event.type == event_types.RENDER_SCREEN:
-            controller.check_keys()
+        if event.type is event_types.RENDER_SCREEN:
             view.render(screen)
+        if event.type is pygame.KEYDOWN:
+            controller.handle_key_press(event.key)
         # Allow for swapping of MVC Components.
         if event.type == event_types.UPDATE_GAME_STATE:
             controller = event.Controller
