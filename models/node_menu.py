@@ -5,4 +5,4 @@ class MenuNode(Node):
 
     def __init__ (self, submenu, name):
         self.submenu = submenu;
-        self.name = name;
+        self.label = label;

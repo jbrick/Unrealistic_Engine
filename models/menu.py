@@ -15,9 +15,17 @@ class Menu():
                 - Menu nodes will be defined with a child menu 
         - Pointer to the active node
     """
+    
     __nodes = None
     __activeNode = None;
     
+    @property
+    def nodeCount(self):
+        return len(self.nodes)
+    
+    """
+    Constructor.
+    """
     def __init__ (self):
         self.__nodes = []
     

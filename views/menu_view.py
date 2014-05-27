@@ -6,7 +6,10 @@ from Unrealistic_Engine.views.view import View
 class MenuView(View):
 
     @staticmethod
-    def render_character(character, position, screen):
+    def render_character(character, screen, position, *args, **kwargs):
         # Render caret for currently selected item
         # Render menu items
-        #   Different function?
+
+    @staticmethod
+    def render_map(game_map, screen, *args, **kwargs):
+        # Render background and breadcrumbs
