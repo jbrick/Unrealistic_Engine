@@ -1,22 +1,5 @@
 class Menu():
     
-    """
-    Root menu type. Should be subclassed into menus for specific functions
-    - Inventory
-    - Pause *
-        - For now this will be the only implementation
-    - Battle
-    """
-    """
-    Required attributes for menu
-        - List of Nodes
-            - Nodes may be leaf nodes or menu nodes
-                - Leaf nodes will be defined with an action
-                - Menu nodes will be defined with a child menu 
-        - Pointer to the active node
-    """
-    
-    
     __nodeStack = []
     __currentMenu = None
     
@@ -30,6 +13,7 @@ class Menu():
     def __init__ (self):
         self.nodes = []
         self.activeNode = 0;
+        activeicon = pygame.image.load("../img/menu_active.png")
     
     """
     Adds a new menu item to this menu.
