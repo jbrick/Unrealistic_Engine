@@ -38,8 +38,8 @@ with db:
 
     cursor.execute(
         "INSERT INTO MapTile (MapId, TileId, Index_X, Index_Y) VALUES (?, ?, ?, ?)",
-        (1, 1, 1, 1))
+        (1, 1, 0, 0))
 
     cursor.execute(
         "INSERT INTO MapTile (MapId, TileId, Index_X, Index_Y) VALUES (?, ?, ?, ?)",
-        (1, 1, 2, 1))
+        (1, 1, 0, 1))
