@@ -45,4 +45,3 @@ class MenuView(View):
             label = font.render (" > ", 1, (255, 0, 0))
             screen.blit (label, (crumbPos, 10))
             crumbPos += font.size (label) [0]
-            
