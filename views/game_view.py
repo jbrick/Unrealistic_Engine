@@ -2,10 +2,11 @@ import pygame
 
 from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine.views.view import View
+from Unrealistic_Engine.views.tiled_map_view import TiledMapView
 
 
 # Default view for rendering models
-class GameView(View):
+class GameView(TiledMapView):
 
     # offset in pixels - centres character in tile
     CHARACTER_OFFSET = 10
