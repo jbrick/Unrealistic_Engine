@@ -37,7 +37,7 @@ with db:
 
     cursor.execute(
         "INSERT INTO Tile (Type, Image) VALUES (?, ?)",
-        ("Floor", "tile1.bmp"))
+        ("Floor", "grass.bmp"))
 
     cursor.execute(
         "INSERT INTO MapTile (MapId, TileId, Index_X, Index_Y) VALUES (?, ?, ?, ?)",

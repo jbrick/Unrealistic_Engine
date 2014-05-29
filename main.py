@@ -6,10 +6,12 @@ from Unrealistic_Engine.views.game_view import GameView
 from Unrealistic_Engine.views.view import View
 from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine import event_types
+from Unrealistic_Engine.models.map import Map
+
 
 pygame.init()
 
-size = width, height = 640, 640
+size = Map.MAP_SIZE, Map.MAP_SIZE
 
 screen = pygame.display.set_mode(size)
 
