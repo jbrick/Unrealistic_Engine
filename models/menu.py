@@ -15,7 +15,7 @@ class Menu():
     """
     Constructor.
     """
-    def __init__ (self):
+    def __init__(self):
         self.nodes = []
         self.activeNode = 0;
         self.activeIcon = pygame.image.load(os.path.join ("Images", "menu_active.png"))
@@ -25,7 +25,7 @@ class Menu():
     
     @param newNode: The node to be added
     """
-    def addItem (self, newNode):
+    def addItem(self, newNode):
         if (isinstance (newNode, Node)):
             self.nodes.append (newNode)
         else:
@@ -37,7 +37,7 @@ class Menu():
     @param newNode: The node to be added
     @param index: The point in the menu where the new item will be added
     """
-    def insertItem (self, newNode, index):
+    def insertItem(self, newNode, index):
         if (isinstance (newNode, Node)):
             if ((index >= 0) and (index < len (nodes))):
                 self.nodes.insert (index, newNode)
@@ -54,7 +54,7 @@ class Menu():
     
     @param target: Either the menu item to be removed or its position in the list
     """
-    def removeItem (self, target):
+    def removeItem(self, target):
         if (isinstance (target, (int, float, long))):
             self.nodes.remove (target)
         elif (isinstance (newNode, Node)):
@@ -73,8 +73,8 @@ class Menu():
     
     @param target: Either a reference of the node itself or its position in the menu.
     """
-    def selectItem (self, target):
-        if (isinstance (target, (int, float, long))):
+    def selectItem(self, target):
+        if (isinstance(target, (int, float, long))):
             if (target >= 0 and target <= len(self.nodes)):
                 self.activeNode = target
             else:
