@@ -3,6 +3,7 @@ import pygame
 
 
 class Map:
+    MAP_SIZE = 640
     GRID_SIZE = 16
     
     def __init__(self, grid_size):

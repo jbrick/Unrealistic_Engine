@@ -54,7 +54,9 @@ class Database(Model):
         for row_map_tiles in map_tiles:
                 tile_image = pygame.image.load(
                     os.path.join('Images', row_map_tiles['Image']))
-                tile = Tile(row_map_tiles['Type'], tile_image)
+                tile_image_scaled = pygame.transform.scale(
+                    tile_image, (Tile.SIZE, Tile.SIZE))
+                tile = Tile(row_map_tiles['Type'], tile_image_scaled)
                 position = Position(
                     row_map_tiles['Index_X'], row_map_tiles['Index_Y'])
                 game_map.addOrReplaceTile(tile, position)
