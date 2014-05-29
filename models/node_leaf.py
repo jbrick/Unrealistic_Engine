@@ -7,5 +7,6 @@ class LeafNode(Node):
         self.action = action
         self.label = label
 
-    # def act (self):
-    #     self.action.execute ()
+    @staticmethod
+    def testFunc ():
+        print ("Action called for this node")

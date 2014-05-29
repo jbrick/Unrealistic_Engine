@@ -1,5 +1,6 @@
 import pygame
 from Unrealistic_Engine.views.view import View
+from Unrealistic_Engine.models.menu import Menu
 
 
 # Default view for rendering models.
@@ -16,30 +17,31 @@ class MenuView(View):
     def render_map(game_map, screen, *args, **kwargs):
         pass
 
-    # Render menu items
-    # Render caret for currently selected item
-    # Render background and breadcrumbs
+    @staticmethod
     def render_menu(menu, screen, *args, **kwargs):
         # Needs to be run after pygame initalizes, so it should be here rather than above
         font = pygame.font.SysFont("monospace", 20)
         
+        # Clear screen
+        screen.fill ((0, 0, 0))
+        
         # Render menu items
         for count in range(0, menu.nodeCount):
             label = font.render(menu.nodes [count].label, 1, (255, 255, 255))
-            screen.blit (label, (50, count*LINE_HEIGHT + OFFSET))
+            screen.blit (label, (20, count*MenuView.LINE_HEIGHT + MenuView.OFFSET))
             
             if (count == menu.activeNode):
-                screen.blit (menu.activeIcon, (10, count*LINE_HEIGHT + OFFSET + 10))
+                screen.blit (menu.activeIcon, (10, count*MenuView.LINE_HEIGHT + MenuView.OFFSET + 10))
         
         crumbPos = 10;
         
         # Render breadcrumbs
-        for crumb in range (0, (len (menu.__nodeStack) - 1)):
-            label = font.render (menu.__nodeStack [crumb].label, 1, (255, 255, 255))
+        for crumb in range (0, (len (Menu.nodeStack) - 1)):
+            label = font.render (Menu.nodeStack [crumb].label, 1, (255, 255, 255))
             screen.blit (label, (crumbPos, 10))
             crumbPos += font.size (label) [0]
             
-            if (crumb >= len (menu.__nodeStack)):
+            if (crumb >= len (Menu.nodeStack)):
                 return
             
             label = font.render (" > ", 1, (255, 0, 0))

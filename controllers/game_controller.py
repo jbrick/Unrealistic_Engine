@@ -1,12 +1,18 @@
 import sys
 import pygame
 from Unrealistic_Engine.controllers import battle_controller
+from Unrealistic_Engine.controllers import menu_controller
 from Unrealistic_Engine.controllers.controller import Controller
 from Unrealistic_Engine.views.battle_view import BattleView
 from Unrealistic_Engine.views.game_view import GameView
+from Unrealistic_Engine.views.menu_view import MenuView
 from Unrealistic_Engine.models.database import Database
 from Unrealistic_Engine import event_types
 from Unrealistic_Engine.models.model import Model
+from Unrealistic_Engine.models.menu import Menu
+from Unrealistic_Engine.models.node import Node
+from Unrealistic_Engine.models.node_leaf import LeafNode
+from Unrealistic_Engine.models.node_menu import MenuNode
 from Unrealistic_Engine.utils.position import Position
 
 
@@ -46,7 +52,31 @@ class GameController(Controller):
                     event_types.UPDATE_GAME_STATE,
                     {"Controller": controller,
                      "View": view}))
+        if pressed_key == pygame.K_ESCAPE:
+            view = MenuView()
+            
+            tmpMenu = Menu()
+            tmpChild = Menu()
+            
+            # Create a test submenu
+            tmpChild.addItem (LeafNode (LeafNode.testFunc, "Child item 1"))
+            tmpChild.addItem (LeafNode (LeafNode.testFunc, "Child item 2"))
+            
+            # Create a test menu
+            tmpMenu.addItem (LeafNode (LeafNode.testFunc, "Test 1"))
+            tmpMenu.addItem (LeafNode (LeafNode.testFunc, "Test 2"))
+            tmpMenu.addItem (MenuNode (tmpChild, "Test 3 (I have a submenu)"))
+            
+            model = tmpMenu
+            
+            controller = menu_controller.MenuController (model, view)
 
+            pygame.event.post(
+                pygame.event.Event(
+                    event_types.UPDATE_GAME_STATE,
+                    {"Controller": controller,
+                     "View": view}))
+        
         self.view.set_visible_model_position(
             self.model.character, position)
 

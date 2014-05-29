@@ -1,7 +1,12 @@
+import pygame
+import os
+from Unrealistic_Engine.models.node import Node
+from Unrealistic_Engine.models.node_menu import MenuNode
+from Unrealistic_Engine.models.node_leaf import LeafNode
+
 class Menu():
     
-    __nodeStack = []
-    __currentMenu = None
+    nodeStack = []
     
     @property
     def nodeCount(self):
@@ -13,7 +18,7 @@ class Menu():
     def __init__ (self):
         self.nodes = []
         self.activeNode = 0;
-        activeicon = pygame.image.load("../img/menu_active.png")
+        self.activeIcon = pygame.image.load(os.path.join ("Images", "menu_active.png"))
     
     """
     Adds a new menu item to this menu.
@@ -32,13 +37,13 @@ class Menu():
     @param newNode: The node to be added
     @param index: The point in the menu where the new item will be added
     """
-    def addItem (self, newNode, index):
+    def insertItem (self, newNode, index):
         if (isinstance (newNode, Node)):
-            if ((index >= 0) && (index < len (nodes))):
+            if ((index >= 0) and (index < len (nodes))):
                 self.nodes.insert (index, newNode)
                 
-                if (self.activeNode != None && index < self.activeNode):
-                    self.activeNode++
+                if (self.activeNode != None and index < self.activeNode):
+                    self.activeNode += 1
             else:
                 raise IndexError ("The given index is out of bounds.")
         else:
@@ -50,8 +55,8 @@ class Menu():
     @param target: Either the menu item to be removed or its position in the list
     """
     def removeItem (self, target):
-        if (isinstance (target, (int, float, long)))
-            
+        if (isinstance (target, (int, float, long))):
+            self.nodes.remove (target)
         elif (isinstance (newNode, Node)):
             # Note that List.remove will generate its own exception if the value is not in the list
             tmp = self.nodes [self.activeNode]
@@ -59,7 +64,7 @@ class Menu():
             self.nodes.remove (target)
             
             if (tmp != self.nodes [self.activeNode]):
-                self.activeNode--
+                self.activeNode -= 1
         else:
             raise TypeError ("This function only accepts Node objects or numerics.")
 
@@ -69,8 +74,8 @@ class Menu():
     @param target: Either a reference of the node itself or its position in the menu.
     """
     def selectItem (self, target):
-        if (isinstance(target, (int, float, long)):
-            if (target >= 0 && target <= len(self.nodes)):
+        if (isinstance (target, (int, float, long))):
+            if (target >= 0 and target <= len(self.nodes)):
                 self.activeNode = target
             else:
                 IndexError ("The given index is out of bounds.")
