@@ -36,14 +36,14 @@ class MenuView(View):
         crumbPos = 10;
         
         # Render breadcrumbs
-        for crumb in range (0, (len (Menu.nodeStack) - 1)):
-            label = font.render (Menu.nodeStack [crumb].label, 1, (255, 255, 255))
+        for crumb in range (0, len (Menu.nodeStack)):
+            label = font.render (Menu.nodeStack [crumb].nodes [Menu.nodeStack [crumb].activeNode].label, 1, (255, 255, 255))
             screen.blit (label, (crumbPos, 10))
-            crumbPos += font.size (label) [0]
+            crumbPos += font.size (Menu.nodeStack [crumb].nodes [Menu.nodeStack [crumb].activeNode].label) [0]
             
-            if (crumb >= len (Menu.nodeStack)):
+            if (crumb >= (len (Menu.nodeStack) - 1)):
                 return
             
             label = font.render (" > ", 1, (255, 0, 0))
             screen.blit (label, (crumbPos, 10))
-            crumbPos += font.size (label) [0]
+            crumbPos += font.size (" > ") [0]

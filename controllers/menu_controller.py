@@ -41,9 +41,6 @@ class MenuController(Controller):
             # Default behaviour is to wrap around at the end of the menu
             if (self.model.activeNode < 0):
                 self.model.activeNode = (self.model.nodeCount - 1)
-            
-            # DEBUG
-            print (self.model.activeNode)
         if (pressed_key == pygame.K_DOWN):
             # Next item in current menu
             self.model.activeNode += 1
@@ -51,9 +48,6 @@ class MenuController(Controller):
             # Default behaviour is to wrap around at the end of the menu
             if (self.model.activeNode >= self.model.nodeCount):
                 self.model.activeNode = 0
-
-            #DEBUG
-            print (self.model.activeNode)
             
     def handle_game_event(self, event):
         if event.type == pygame.QUIT:

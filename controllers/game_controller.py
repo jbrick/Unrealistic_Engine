@@ -56,16 +56,21 @@ class GameController(Controller):
             view = MenuView()
             
             tmpMenu = Menu()
-            tmpChild = Menu()
+            tmpChild1 = Menu()
+            tmpChild2 = Menu()
             
-            # Create a test submenu
-            tmpChild.addItem (LeafNode (LeafNode.testFunc, "Child item 1"))
-            tmpChild.addItem (LeafNode (LeafNode.testFunc, "Child item 2"))
+            # Create test menus
+            tmpChild2.addItem (LeafNode (LeafNode.testFunc, "Child's child 1"))
+            tmpChild2.addItem (LeafNode (LeafNode.testFunc, "Child's child 2"))
+            tmpChild2.addItem (LeafNode (LeafNode.testFunc, "Child's child 3"))
+            tmpChild2.addItem (LeafNode (LeafNode.testFunc, "Child's child 4"))
             
-            # Create a test menu
+            tmpChild1.addItem (LeafNode (LeafNode.testFunc, "Child item 1"))
+            tmpChild1.addItem (MenuNode (tmpChild2, "Child item 2"))
+            
             tmpMenu.addItem (LeafNode (LeafNode.testFunc, "Test 1"))
             tmpMenu.addItem (LeafNode (LeafNode.testFunc, "Test 2"))
-            tmpMenu.addItem (MenuNode (tmpChild, "Test 3 (I have a submenu)"))
+            tmpMenu.addItem (MenuNode (tmpChild1, "Test 3 (I have a submenu)"))
             
             model = tmpMenu
             
