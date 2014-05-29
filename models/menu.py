@@ -6,8 +6,6 @@ from Unrealistic_Engine.models.node_leaf import LeafNode
 
 class Menu():
     
-    nodeStack = []
-    
     @property
     def nodeCount(self):
         return len(self.nodes)
@@ -15,10 +13,11 @@ class Menu():
     """
     Constructor.
     """
-    def __init__(self):
+    def __init__(self, stack):
         self.nodes = []
         self.activeNode = 0;
         self.activeIcon = pygame.image.load(os.path.join ("Images", "menu_active.png"))
+        self.stack = stack
     
     """
     Adds a new menu item to this menu.
@@ -39,13 +38,10 @@ class Menu():
     """
     def insertItem(self, newNode, index):
         if (isinstance (newNode, Node)):
-            if ((index >= 0) and (index < len (nodes))):
-                self.nodes.insert (index, newNode)
-                
-                if (self.activeNode != None and index < self.activeNode):
-                    self.activeNode += 1
-            else:
-                raise IndexError ("The given index is out of bounds.")
+            self.nodes.insert (index, newNode)
+            
+            if (index <= self.activeNode):
+                self.activeNode += 1
         else:
            raise TypeError ("You may only add Node objects.")
     
@@ -75,10 +71,7 @@ class Menu():
     """
     def selectItem(self, target):
         if (isinstance(target, (int, float, long))):
-            if (target >= 0 and target <= len(self.nodes)):
-                self.activeNode = target
-            else:
-                IndexError ("The given index is out of bounds.")
+            self.activeNode = target
         elif (isinstance (newNode, Node)):
             self.activeNode = self.nodes.index (newNode)
         else:

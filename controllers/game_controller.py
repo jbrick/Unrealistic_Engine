@@ -55,9 +55,9 @@ class GameController(Controller):
         if pressed_key == pygame.K_ESCAPE:
             view = MenuView()
             
-            tmpMenu = Menu()
-            tmpChild1 = Menu()
-            tmpChild2 = Menu()
+            tmpMenu = Menu(menu_controller.MenuController.menu_stack)
+            tmpChild1 = Menu(menu_controller.MenuController.menu_stack)
+            tmpChild2 = Menu(menu_controller.MenuController.menu_stack)
             
             # Create test menus
             tmpChild2.addItem (LeafNode (LeafNode.testFunc, "Child's child 1"))

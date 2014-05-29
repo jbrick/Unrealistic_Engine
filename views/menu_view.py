@@ -8,9 +8,6 @@ class MenuView(View):
     LINE_HEIGHT = 25  # Height of each menu item
     OFFSET = 50       # Leaving space for breadcrumbs
 
-    def __int__(self):
-        self.font = pygame.font.SysFont("monospace", 20)
-
     @staticmethod
     def render_character(character, screen, position, *args, **kwargs):
         pass
@@ -21,12 +18,14 @@ class MenuView(View):
 
     @staticmethod
     def render_menu(menu, screen, *args, **kwargs):
+        font = pygame.font.SysFont("monospace", 20)
+        
         # Clear screen
         screen.fill ((0, 0, 0))
         
         # Render menu items
         for count in range(0, menu.nodeCount):
-            label = self.font.render(menu.nodes [count].label, 1, (255, 255, 255))
+            label = font.render(menu.nodes [count].label, 1, (255, 255, 255))
             screen.blit (label, (20, count*MenuView.LINE_HEIGHT + MenuView.OFFSET))
             
             if (count == menu.activeNode):
@@ -35,14 +34,14 @@ class MenuView(View):
         crumbPos = 10;
         
         # Render breadcrumbs
-        for crumb in range (0, len (Menu.nodeStack)):
-            label = self.font.render (Menu.nodeStack [crumb].nodes [Menu.nodeStack [crumb].activeNode].label, 1, (255, 255, 255))
+        for crumb in range (0, len (menu.stack)):
+            label = font.render (menu.stack [crumb].nodes [menu.stack [crumb].activeNode].label, 1, (255, 255, 255))
             screen.blit (label, (crumbPos, 10))
-            crumbPos += self.font.size (Menu.nodeStack [crumb].nodes [Menu.nodeStack [crumb].activeNode].label) [0]
+            crumbPos += font.size (menu.stack [crumb].nodes [menu.stack [crumb].activeNode].label) [0]
             
-            if (crumb >= (len (Menu.nodeStack) - 1)):
+            if (crumb >= (len (menu.stack) - 1)):
                 return
             
-            label = self.font.render (" > ", 1, (255, 0, 0))
+            label = font.render (" > ", 1, (255, 0, 0))
             screen.blit (label, (crumbPos, 10))
-            crumbPos += self.font.size (" > ") [0]
+            crumbPos += font.size (" > ") [0]

@@ -10,27 +10,29 @@ from Unrealistic_Engine.models.menu import Menu
 
 class MenuController(Controller):
 
+    menu_stack = []
+
     def __init__(self, model, view):
         self.model = model
         self.view = view
         
-        view.add_model (self.model, MenuView.render_menu, 0, 1)
+        view.add_model (self.model, MenuView.render_menu, 0, View.BACKGROUND)
         MenuController.activeMenu = model
 
     def handle_key_press(self, pressed_key):
         if (pressed_key == pygame.K_LEFT):
-            if (len(Menu.nodeStack) > 0):
+            if (len(MenuController.menu_stack) > 0):
                 # Go to previous menu
                 self.view.remove_model (self.model)
-                self.model = Menu.nodeStack.pop ();
-                self.view.add_model (self.model, MenuView.render_menu, 0, 1)
+                self.model = MenuController.menu_stack.pop ();
+                self.view.add_model (self.model, MenuView.render_menu, 0, View.BACKGROUND)
         if (pressed_key == pygame.K_RIGHT or pressed_key == pygame.K_RETURN):
             if (isinstance (self.model.nodes [self.model.activeNode], MenuNode)):
                 # Traverse into submenu
-                Menu.nodeStack.append (self.model)
+                MenuController.menu_stack.append (self.model)
                 self.view.remove_model (self.model)
                 self.model = self.model.nodes [self.model.activeNode].submenu
-                self.view.add_model (self.model, MenuView.render_menu, 0, 1)
+                self.view.add_model (self.model, MenuView.render_menu, 0, View.BACKGROUND)
             elif (isinstance (self.model.nodes [self.model.activeNode], LeafNode)):
                 # Activate action associate with menu item
                 self.model.nodes [self.model.activeNode].action ()
