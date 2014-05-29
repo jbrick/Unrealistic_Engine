@@ -1,6 +1,9 @@
 import sqlite3 as lite
+import os
 
-db = lite.connect('game.db')
+dir = os.path.dirname(__file__)
+filename = os.path.join(dir, "game.db")
+db = lite.connect(filename)
 with db:
     cursor = db.cursor()
     cursor.execute("DROP TABLE IF EXISTS Map")

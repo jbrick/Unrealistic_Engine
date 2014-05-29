@@ -40,8 +40,7 @@ class Database(Model):
         cursor = self.__database_execute(
             "SELECT * FROM Map WHERE Name = 'Basic'", None)
         map_item = cursor.fetchone()
-        grid_size = 16
-        game_map = Map(grid_size)
+        game_map = Map(Map.GRID_SIZE)
 
         # Load the map tiles for this map.
         cursor = self.__database_execute(

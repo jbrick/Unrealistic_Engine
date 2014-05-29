@@ -2,7 +2,6 @@ import pygame
 
 from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine.views.view import View
-from Unrealistic_Engine.views.tiled_map_view import TiledMapView
 
 
 # Default view for rendering models
