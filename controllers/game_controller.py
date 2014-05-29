@@ -3,6 +3,7 @@ import pygame
 from Unrealistic_Engine.controllers import battle_controller
 from Unrealistic_Engine.controllers import menu_controller
 from Unrealistic_Engine.controllers.controller import Controller
+from Unrealistic_Engine.views.view import View
 from Unrealistic_Engine.views.battle_view import BattleView
 from Unrealistic_Engine.views.game_view import GameView
 from Unrealistic_Engine.views.menu_view import MenuView

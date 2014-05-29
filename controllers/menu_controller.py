@@ -1,6 +1,7 @@
 import sys
 import pygame
 from Unrealistic_Engine.controllers.controller import Controller
+from Unrealistic_Engine.views.view import View
 from Unrealistic_Engine.views.menu_view import MenuView
 from Unrealistic_Engine.models.node import Node
 from Unrealistic_Engine.models.node_leaf import LeafNode
