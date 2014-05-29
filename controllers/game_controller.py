@@ -8,6 +8,7 @@ from Unrealistic_Engine.models.database import Database
 from Unrealistic_Engine import event_types
 from Unrealistic_Engine.models.model import Model
 from Unrealistic_Engine.utils.position import Position
+from Unrealistic_Engine.models.trigger import Trigger
 
 
 class GameController(Controller):
@@ -15,6 +16,8 @@ class GameController(Controller):
     def __init__(self, model, view):
         self.model = model
         self.view = view
+        self.triggers = {}
+        self.build_triggers()
 
         # Add Map model
         view.add_model(model.game_map, GameView.render_map, Position(0, 0), 1)
@@ -50,9 +53,24 @@ class GameController(Controller):
         self.view.set_visible_model_position(
             self.model.character, position)
 
-    def check_keys(self):
-        keys = pygame.key.get_pressed()
-        
+        # Check if any triggers have been activated.
+        print "position is %s" % str(position)
+        if position in self.triggers:
+            # TODO Handle chance here.
+            self.handle_trigger(self.triggers[position])
+
+    def build_triggers(self):
+        for row in self.model.game_map.tiles:
+            for tile in row:
+                if tile != 0 and tile.trigger != None:
+                    print "adding trigger to %s" % tile.position
+                    self.triggers[tile.position] = tile.trigger
+
+    def handle_trigger(self, trigger):
+        if (trigger.action_type == Trigger.CHANGE_MAP):
+            # TODO change the map.
+            print "Action occurred with data: " + str(trigger.action_data)
+
     def handle_game_event(self, event):
         if event.type == pygame.QUIT:
             pygame.quit()
