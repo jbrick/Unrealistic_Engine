@@ -9,4 +9,4 @@ class LeafNode(Node):
 
     @staticmethod
     def testFunc():
-        print ("Action called for this node")
+        print("Action called for this node")

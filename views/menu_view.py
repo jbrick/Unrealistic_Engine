@@ -28,22 +28,22 @@ class MenuView(View):
         # Render menu items
         for count in range(0, menu.nodeCount):
             label = font.render(menu.nodes [count].label, 1, (255, 255, 255))
-            screen.blit (label, (2*MenuView.PADDING, count*MenuView.LINE_HEIGHT + MenuView.OFFSET))
+            screen.blit(label, (2*MenuView.PADDING, count*MenuView.LINE_HEIGHT + MenuView.OFFSET))
             
             if (count == menu.activeNode):
-                screen.blit (menu.activeIcon, (MenuView.PADDING, count*MenuView.LINE_HEIGHT + MenuView.OFFSET + MenuView.PADDING))
+                screen.blit(menu.activeIcon, (MenuView.PADDING, count*MenuView.LINE_HEIGHT + MenuView.OFFSET + MenuView.PADDING))
         
         crumbPos = MenuView.PADDING;
         
         # Render breadcrumbs
-        for crumb in range (0, len (menu.stack)):
-            label = font.render (menu.stack [crumb].nodes [menu.stack [crumb].activeNode].label, 1, (255, 255, 255))
-            screen.blit (label, (crumbPos, MenuView.PADDING))
-            crumbPos += font.size (menu.stack [crumb].nodes [menu.stack [crumb].activeNode].label) [0]
+        for crumb in range(0, len (menu.stack)):
+            label = font.render(menu.stack [crumb].nodes [menu.stack [crumb].activeNode].label, 1, (255, 255, 255))
+            screen.blit(label, (crumbPos, MenuView.PADDING))
+            crumbPos += font.size(menu.stack [crumb].nodes [menu.stack [crumb].activeNode].label) [0]
             
-            if (crumb >= (len (menu.stack) - 1)):
+            if (crumb >= (len(menu.stack) - 1)):
                 return
             
-            label = font.render (" > ", 1, (255, 0, 0))
-            screen.blit (label, (crumbPos, MenuView.PADDING))
-            crumbPos += font.size (" > ") [0]
+            label = font.render(" > ", 1, (255, 0, 0))
+            screen.blit(label, (crumbPos, MenuView.PADDING))
+            crumbPos += font.size(" > ") [0]

@@ -16,7 +16,7 @@ class Menu():
     def __init__(self, stack):
         self.nodes = []
         self.activeNode = 0;
-        self.activeIcon = pygame.image.load(os.path.join ("Images", "menu_active.png"))
+        self.activeIcon = pygame.image.load(os.path.join("Images", "menu_active.png"))
         self.stack = stack
     
     """
@@ -25,8 +25,8 @@ class Menu():
     @param newNode: The node to be added
     """
     def addItem(self, newNode):
-        if (isinstance (newNode, Node)):
-            self.nodes.append (newNode)
+        if (isinstance(newNode, Node)):
+            self.nodes.append(newNode)
         else:
             raise TypeError ("You may only add Node objects.")
 
@@ -37,13 +37,13 @@ class Menu():
     @param index: The point in the menu where the new item will be added
     """
     def insertItem(self, newNode, index):
-        if (isinstance (newNode, Node)):
-            self.nodes.insert (index, newNode)
+        if (isinstance(newNode, Node)):
+            self.nodes.insert(index, newNode)
             
             if (index <= self.activeNode):
                 self.activeNode += 1
         else:
-           raise TypeError ("You may only add Node objects.")
+           raise TypeError("You may only add Node objects.")
     
     """
     Removes the given item from the menu.
@@ -51,18 +51,18 @@ class Menu():
     @param target: Either the menu item to be removed or its position in the list
     """
     def removeItem(self, target):
-        if (isinstance (target, (int, float, long))):
-            self.nodes.remove (target)
-        elif (isinstance (newNode, Node)):
+        if (isinstance(target, (int, float, long))):
+            self.nodes.remove(target)
+        elif (isinstance(newNode, Node)):
             # Note that List.remove will generate its own exception if the value is not in the list
             tmp = self.nodes [self.activeNode]
             
-            self.nodes.remove (target)
+            self.nodes.remove(target)
             
-            if (tmp != self.nodes [self.activeNode]):
+            if (tmp != self.nodes[self.activeNode]):
                 self.activeNode -= 1
         else:
-            raise TypeError ("This function only accepts Node objects or numerics.")
+            raise TypeError("This function only accepts Node objects or numerics.")
 
     """
     Makes the target item the selected item.
@@ -72,7 +72,7 @@ class Menu():
     def selectItem(self, target):
         if (isinstance(target, (int, float, long))):
             self.activeNode = target
-        elif (isinstance (newNode, Node)):
-            self.activeNode = self.nodes.index (newNode)
+        elif (isinstance(newNode, Node)):
+            self.activeNode = self.nodes.index(newNode)
         else:
-            raise TypeError ("This function only accepts Node objects or numerics.")
+            raise TypeError("This function only accepts Node objects or numerics.")

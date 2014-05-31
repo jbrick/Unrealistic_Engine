@@ -17,26 +17,26 @@ class MenuController(Controller):
         self.model = model
         self.view = view
         
-        view.add_model (self.model, MenuView.render_menu, 0, View.BACKGROUND)
+        view.add_model(self.model, MenuView.render_menu, 0, View.BACKGROUND)
         MenuController.activeMenu = model
 
     def handle_key_press(self, pressed_key):
         if (pressed_key == pygame.K_LEFT):
             if (len(MenuController.menu_stack) > 0):
                 # Go to previous menu
-                self.view.remove_model (self.model)
-                self.model = MenuController.menu_stack.pop ();
-                self.view.add_model (self.model, MenuView.render_menu, 0, View.BACKGROUND)
+                self.view.remove_model(self.model)
+                self.model = MenuController.menu_stack.pop();
+                self.view.add_model(self.model, MenuView.render_menu, 0, View.BACKGROUND)
         if (pressed_key == pygame.K_RIGHT or pressed_key == pygame.K_RETURN):
-            if (isinstance (self.model.nodes [self.model.activeNode], MenuNode)):
+            if (isinstance(self.model.nodes [self.model.activeNode], MenuNode)):
                 # Traverse into submenu
-                MenuController.menu_stack.append (self.model)
-                self.view.remove_model (self.model)
+                MenuController.menu_stack.append(self.model)
+                self.view.remove_model(self.model)
                 self.model = self.model.nodes [self.model.activeNode].submenu
-                self.view.add_model (self.model, MenuView.render_menu, 0, View.BACKGROUND)
-            elif (isinstance (self.model.nodes [self.model.activeNode], LeafNode)):
+                self.view.add_model(self.model, MenuView.render_menu, 0, View.BACKGROUND)
+            elif (isinstance(self.model.nodes [self.model.activeNode], LeafNode)):
                 # Activate action associate with menu item
-                self.model.nodes [self.model.activeNode].action ()
+                self.model.nodes [self.model.activeNode].action()
         if (pressed_key == pygame.K_UP):
             # Previous item in current menu
             self.model.activeNode -= 1
