@@ -4,7 +4,10 @@ from Unrealistic_Engine.models.node import Node
 from Unrealistic_Engine.models.node_menu import MenuNode
 from Unrealistic_Engine.models.node_leaf import LeafNode
 
+
 class Menu():
+
+    breadcrumbs = []
     
     @property
     def nodeCount(self):
@@ -13,11 +16,10 @@ class Menu():
     """
     Constructor.
     """
-    def __init__(self, stack):
+    def __init__(self):
         self.nodes = []
         self.activeNode = 0;
         self.activeIcon = pygame.image.load(os.path.join("Images", "menu_active.png"))
-        self.stack = stack
     
     """
     Adds a new menu item to this menu.
