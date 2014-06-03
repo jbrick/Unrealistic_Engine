@@ -10,6 +10,7 @@ from Unrealistic_Engine.views.menu_view import MenuView
 from Unrealistic_Engine.models.database import Database
 from Unrealistic_Engine import event_types
 from Unrealistic_Engine.models.model import Model
+from Unrealistic_Engine.models.map import Map
 from Unrealistic_Engine.models.menu import Menu
 from Unrealistic_Engine.models.node import Node
 from Unrealistic_Engine.models.node_leaf import LeafNode
@@ -36,13 +37,18 @@ class GameController(Controller):
         position = self.view.get_visible_model_position(
             self.model.character)
         if pressed_key == pygame.K_LEFT:
-            position.set_x_coord(position.x_coord - 1)
+            if((position.x_coord - 1) >= 0):
+                position.set_x_coord(position.x_coord - 1)
         if pressed_key == pygame.K_RIGHT:
-            position.set_x_coord(position.x_coord + 1)
+            if((position.x_coord + 1) < Map.GRID_SIZE and 
+                self.model.maps['map3'].tiles[position.x_coord + 1][position.y_coord].type):
+                position.set_x_coord(position.x_coord + 1)
         if pressed_key == pygame.K_UP:
-            position.set_y_coord(position.y_coord - 1)
+            if((position.y_coord - 1) >= 0):
+                position.set_y_coord(position.y_coord - 1)
         if pressed_key == pygame.K_DOWN:
-            position.set_y_coord(position.y_coord + 1)
+            if((position.y_coord + 1) < Map.GRID_SIZE):
+                position.set_y_coord(position.y_coord + 1)
         # For testing purposes pressing enter swaps controller / view.
         if pressed_key == pygame.K_RETURN:
             view = BattleView()
