@@ -18,8 +18,8 @@ class Database(Model):
 
     def load_application(self):
         character = self.__load_characters()
-        game_map = self.__load_maps()
-        game = Game(character, game_map)
+        maps = self.__load_maps()
+        game = Game(character, maps)
         return game
 
     def __database_execute(self, sql, args):
@@ -46,22 +46,26 @@ class Database(Model):
         return Character(character_image_scaled)
 
     def __load_maps(self):
-        # Game is made up of one map for now.
+
+        maps = {}
+
+        # Game is now made up of multiple maps
         cursor = self.__database_execute(
-            "SELECT * FROM Map WHERE Name = 'map3'", None)
-        map_item = cursor.fetchone()
-        game_map = Map(Map.GRID_SIZE)
+            "SELECT * FROM Map", None)
+        loaded_maps = cursor.fetchall()
+        
+        for each_map in loaded_maps:
+            game_map = Map(Map.GRID_SIZE)
+            # Load the map tiles for this map.
+            cursor = self.__database_execute(
+                """SELECT mt.TileId, mt.Index_X, mt.Index_Y, t.Type, t.Image, mt.Id
+                FROM MapTile AS mt JOIN Tile as t ON mt.TileId = t.Id
+                WHERE MapId = %d""" % each_map['Id'], None)
 
-        # Load the map tiles for this map.
-        cursor = self.__database_execute(
-            """SELECT mt.TileId, mt.Index_X, mt.Index_Y, t.Type, t.Image, mt.Id
-            FROM MapTile AS mt JOIN Tile as t ON mt.TileId = t.Id
-            WHERE MapId = %d""" % map_item['Id'], None)
+            map_tiles = cursor.fetchall()
 
-        map_tiles = cursor.fetchall()
-
-        # Add all the tiles into the map.
-        for row_map_tiles in map_tiles:
+            # Add all the tiles into the map.
+            for row_map_tiles in map_tiles:
                 tile_image = pygame.image.load(
                     os.path.join('Images', row_map_tiles['Image']))
                 tile_image_scaled = pygame.transform.scale(
@@ -89,4 +93,6 @@ class Database(Model):
                 
                 game_map.addOrReplaceTile(tile)
 
-        return game_map
+            maps[each_map['Name']] = game_map
+
+        return maps
