@@ -1,8 +1,8 @@
 import pygame
-from Unrealistic_Engine.views.view import View
+from Unrealistic_Engine.views.map_view import MapView
 
 
-class BattleView(View):
+class BattleView(MapView):
 
     @staticmethod
     def render_character(character, position, screen):
