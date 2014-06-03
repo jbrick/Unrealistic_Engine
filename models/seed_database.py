@@ -44,6 +44,10 @@ with db:
         ["Basic"])
 
     cursor.execute(
+        "INSERT INTO Map (Name) VALUES (?)",
+        ["Second"])
+
+    cursor.execute(
         "INSERT INTO Tile (Type, Image) VALUES (?, ?)",
         ("Floor", "grass.bmp"))
 
@@ -54,6 +58,14 @@ with db:
     cursor.execute(
         "INSERT INTO MapTile (MapId, TileId, Index_X, Index_Y) VALUES (?, ?, ?, ?)",
         (1, 1, 0, 1))
+
+    cursor.execute(
+        "INSERT INTO MapTile (MapId, TileId, Index_X, Index_Y) VALUES (?, ?, ?, ?)",
+        (2, 2, 0, 0))
+
+    cursor.execute(
+        "INSERT INTO MapTile (MapId, TileId, Index_X, Index_Y) VALUES (?, ?, ?, ?)",
+        (2, 2, 0, 1))
 
     action_data = { "map_name" : "Basic"}
     cursor.execute(
