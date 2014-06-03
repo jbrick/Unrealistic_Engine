@@ -27,7 +27,7 @@ class GameController(Controller):
         self.build_triggers()
 
         # Add Map model
-        view.add_model(model.maps['Basic'], GameView.render_map, Position(0, 0), 1)
+        view.add_model(model.maps['map3'], GameView.render_map, Position(0, 0), 1)
         # Add Character model
         view.add_model(
             model.character, GameView.render_character, Position(0, 0), 2)
