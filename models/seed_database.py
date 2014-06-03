@@ -1,5 +1,8 @@
 import sqlite3 as lite
 import os
+import json
+
+from Unrealistic_Engine.models.trigger import Trigger
 
 dir = os.path.dirname(__file__)
 filename = os.path.join(dir, "game.db")
@@ -10,6 +13,7 @@ with db:
     cursor.execute("DROP TABLE IF EXISTS Tile")
     cursor.execute("DROP TABLE IF EXISTS MapTile")
     cursor.execute("DROP TABLE IF EXISTS Character")
+    cursor.execute("DROP TABLE IF EXISTS Trigger")
 
     cursor.execute(
         "CREATE TABLE Map"
@@ -26,6 +30,10 @@ with db:
     cursor.execute(
         "CREATE TABLE Character"
         "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Image TEXT)")
+
+    cursor.execute(
+        "CREATE TABLE Trigger"
+        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, MapTileId INTEGER, Chance INTEGER, Action_Type INTEGER, Action_Data TEXT)")
 
     cursor.execute(
         "INSERT INTO Character (Image) VALUES (?)",
@@ -49,3 +57,8 @@ with db:
     cursor.execute(
         "INSERT INTO MapTile (MapId, TileId, Index_X, Index_Y) VALUES (?, ?, ?, ?)",
         (1, 1, 0, 1))
+
+    action_data = { "map_name" : "Basic"}
+    cursor.execute(
+        "INSERT INTO Trigger (MapTileId, Chance, Action_Type, Action_Data) VALUES (?, ?, ?, ?)",
+        (1, 50, Trigger.CHANGE_MAP, json.dumps(action_data)))

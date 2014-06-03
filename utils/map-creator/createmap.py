@@ -2,7 +2,10 @@ import sqlite3 as lite
 import csv
 import sys
 import os
+import json
 import optparse
+
+from Unrealistic_Engine.models.trigger import Trigger
 
 
 def main():
@@ -165,6 +168,8 @@ def reset_database(cursor):
     cursor.execute("DROP TABLE IF EXISTS Tile")
     cursor.execute("DROP TABLE IF EXISTS MapTile")
     cursor.execute("DROP TABLE IF EXISTS Character")
+    cursor.execute("DROP TABLE IF EXISTS Trigger")
+
 
     # Create tables (again if dropped before)
     cursor.execute(
@@ -183,6 +188,10 @@ def reset_database(cursor):
         "CREATE TABLE Character"
         "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Image TEXT)")
 
+    cursor.execute(
+        "CREATE TABLE Trigger"
+        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, MapTileId INTEGER, Chance INTEGER, Action_Type INTEGER, Action_Data TEXT)")
+
     # Insert default data
     # Insert default character entry
     cursor.execute(
@@ -194,6 +203,12 @@ def reset_database(cursor):
         ["Basic"])
     # Insert default tiles
     populate_tile_table(cursor)
+
+    # Insert sample trigger data
+    action_data = { "map_name" : "Basic"}
+    cursor.execute(
+        "INSERT INTO Trigger (MapTileId, Chance, Action_Type, Action_Data) VALUES (?, ?, ?, ?)",
+        (1, 50, Trigger.CHANGE_MAP, json.dumps(action_data)))
 
     print("Database successfully reset to base data.")
 

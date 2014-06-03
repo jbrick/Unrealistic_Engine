@@ -9,11 +9,18 @@ from Unrealistic_Engine.models.character import Character
 from Unrealistic_Engine.models.model import Model
 from Unrealistic_Engine.models.map import Map
 from Unrealistic_Engine.models.tile import Tile
+from Unrealistic_Engine.models.trigger import Trigger
 
 
 class Database(Model):
     def __init__(self):
         self.db = None
+
+    def load_application(self):
+        character = self.__load_characters()
+        game_map = self.__load_maps()
+        game = Game(character, game_map)
+        return game
 
     def __database_execute(self, sql, args):
         dir = os.path.dirname(__file__)
@@ -28,7 +35,7 @@ class Database(Model):
                 cursor.execute(sql, args)
         return cursor
 
-    def load_application(self):
+    def __load_characters(self):
         # Currently game only consists of one character.
         cursor = self.__database_execute("SELECT * FROM Character", None)
         row = cursor.fetchone()
@@ -36,7 +43,9 @@ class Database(Model):
             os.path.join('Images', row['Image']))
         character_image_scaled = pygame.transform.scale(
                     character_image, (Character.SIZE, Character.SIZE))
-        character = Character(character_image_scaled)
+        return Character(character_image_scaled)
+
+    def __load_maps(self):
         # Game is made up of one map for now.
         cursor = self.__database_execute(
             "SELECT * FROM Map WHERE Name = 'map3'", None)
@@ -45,7 +54,7 @@ class Database(Model):
 
         # Load the map tiles for this map.
         cursor = self.__database_execute(
-            """SELECT mt.TileId, mt.Index_X, mt.Index_Y, t.Type, t.Image
+            """SELECT mt.TileId, mt.Index_X, mt.Index_Y, t.Type, t.Image, mt.Id
             FROM MapTile AS mt JOIN Tile as t ON mt.TileId = t.Id
             WHERE MapId = %d""" % map_item['Id'], None)
 
@@ -57,9 +66,27 @@ class Database(Model):
                     os.path.join('Images', row_map_tiles['Image']))
                 tile_image_scaled = pygame.transform.scale(
                     tile_image, (Tile.SIZE, Tile.SIZE))
-                tile = Tile(row_map_tiles['Type'], tile_image_scaled)
+                map_tile_id = row_map_tiles['Id']
+
+                # Add trigger for this tile.
+                cursor = self.__database_execute(
+                    """SELECT Chance, Action_Type, Action_Data FROM Trigger WHERE
+                    MapTileId = %s""" % (map_tile_id), None)
+
+                trigger_row = cursor.fetchone()
+                if trigger_row is not None:
+                    trigger = Trigger(
+                        trigger_row['Chance'], trigger_row['Action_Type'],
+                        trigger_row['Action_Data'])
+                else:
+                    trigger = None
+
                 position = Position(
                     row_map_tiles['Index_X'], row_map_tiles['Index_Y'])
-                game_map.addOrReplaceTile(tile, position)
-        game = Game(character, game_map)
-        return game
+
+                tile = Tile(
+                    row_map_tiles['Type'], tile_image_scaled, position, trigger)
+                
+                game_map.addOrReplaceTile(tile)
+
+        return game_map
