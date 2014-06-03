@@ -1,5 +1,4 @@
 import pygame
-from sets import Set
 
 
 # Any class the renders models to the screen should inherit from View, and
@@ -13,14 +12,6 @@ class View():
         # We maintain a dictionary mapping a model to the function to call to
         # render said model, as well as the position of where to render it.
         self.visible_models = {}
-
-    @staticmethod
-    def render_character(character, screen, position, *args, **kwargs):
-        raise NotImplementedError("Please Implement this method")
-
-    @staticmethod
-    def render_map(game_map, screen, *args, **kwargs):
-        raise NotImplementedError("Please Implement this method")
 
     def render(self, screen):
         for model in self.visible_models:
