@@ -41,9 +41,12 @@ class Database(Model):
         row = cursor.fetchone()
         character_image = pygame.image.load(
             os.path.join('Images', row['Image']))
-        return Character(character_image)
+        character_image_scaled = pygame.transform.scale(
+                    character_image, (Character.SIZE, Character.SIZE))
+        return Character(character_image_scaled)
 
     def __load_maps(self):
+
         maps = {}
 
         # Game is now made up of multiple maps
@@ -84,6 +87,7 @@ class Database(Model):
 
                 position = Position(
                     row_map_tiles['Index_X'], row_map_tiles['Index_Y'])
+
                 tile = Tile(
                     row_map_tiles['Type'], tile_image_scaled, position, trigger)
                 

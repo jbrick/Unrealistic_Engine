@@ -37,7 +37,7 @@ with db:
 
     cursor.execute(
         "INSERT INTO Character (Image) VALUES (?)",
-        ["ball.bmp"])
+        ["banana.png"])
 
     cursor.execute(
         "INSERT INTO Map (Name) VALUES (?)",
@@ -49,7 +49,10 @@ with db:
 
     cursor.execute(
         "INSERT INTO Tile (Type, Image) VALUES (?, ?)",
-        ("Floor", "grass.bmp"))
+        ("Floor", "rpggrass.png"))
+    cursor.execute(
+        "INSERT INTO Tile (Type, Image) VALUES (?, ?)",
+        ("Dirt", "rpgdirt.png"))
 
     cursor.execute(
         "INSERT INTO MapTile (MapId, TileId, Index_X, Index_Y) VALUES (?, ?, ?, ?)",
