@@ -37,7 +37,7 @@ def create_map(cursor, map_arg):
 
     map_name = map_arg
     if map_name.endswith(".csv"):
-        map_name = map_name[:-4]
+        map_name = map_name[:len(".csv")]
     insert_map(cursor, map_name)
     map_id = get_map_id(cursor, map_name)
 
