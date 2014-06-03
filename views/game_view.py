@@ -8,7 +8,7 @@ from Unrealistic_Engine.views.view import View
 class GameView(View):
 
     # offset in pixels - centres character in tile
-    CHARACTER_OFFSET = 10
+    CHARACTER_OFFSET = 0
 
     @staticmethod
     def render_character(character, screen, position, *args, **kwargs):

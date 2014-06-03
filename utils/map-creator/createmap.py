@@ -4,6 +4,7 @@ import sys
 import os
 import optparse
 
+
 def main():
 
     dir = os.path.dirname(__file__)
@@ -17,8 +18,10 @@ def main():
         elif sys.argv[1] == "show":
             show_map_names(cursor)
         elif sys.argv[1] == "create":
-            #TODO: check that valid input was given (Not null and with .csv on end)
+            #TODO: check that valid input was given (Notnull, with .csv on end)
             create_map(cursor, sys.argv[2])
+        elif sys.argv[1] == "update":
+            update_map(cursor, sys.argv[2])
         elif sys.argv[1] == "help":
             print_options()
         else:
@@ -44,25 +47,89 @@ def create_map(cursor, map_arg):
         cur_row += 1
     print("Map with name '%s' was successfully created." % map_name)
 
+
+def update_map(cursor, map_arg):
+    reader = csv.reader(open(map_arg, "rb"), delimiter=',')
+
+    map_name = map_arg
+    if map_name.endswith(".csv"):
+        map_name = map_name[:-4]
+
+    map_id = get_map_id(cursor, map_name)
+    if map_id is None:
+        print("There is no map with name '%s'. " +
+              "Please use create option instead." % map_name)
+        return
+
+    # Removes all current MapTiles with the found map id
+    delete_map_tiles(cursor, map_id)
+
+    #Re-adds updated MapTIles
+    cur_row = 0
+    for row in reader:
+        cur_col = 0
+        for entry in row:
+            insert_maptile(cursor, map_id, entry, cur_col, cur_row)
+            cur_col += 1
+        cur_row += 1
+    print("Map with name '%s' was successfully updated." % map_name)
+
+
+def delete_map_tiles(cursor, map_id):
+    cursor.execute(
+        "DELETE FROM MapTile WHERE MapId = %s" % map_id)
+
+
 def populate_tile_table(cursor):
+    #TODO: write function to import tiles rather than staticly type here
+    # 1
     cursor.execute(
         "INSERT INTO Tile (Type, Image) VALUES (?, ?)",
         ("Grass", "rpggrass.png"))
+    # 2
     cursor.execute(
         "INSERT INTO Tile (Type, Image) VALUES (?, ?)",
         ("Dirt", "rpgdirt.png"))
+    # 3
     cursor.execute(
         "INSERT INTO Tile (Type, Image) VALUES (?, ?)",
         ("WaterTopLeft", "water-top-left.png"))
+    # 4
     cursor.execute(
         "INSERT INTO Tile (Type, Image) VALUES (?, ?)",
         ("WaterTopRight", "water-top-right.png"))
+    # 5
     cursor.execute(
         "INSERT INTO Tile (Type, Image) VALUES (?, ?)",
         ("WaterBottomLeft", "water-bottom-left.png"))
+    # 6
     cursor.execute(
         "INSERT INTO Tile (Type, Image) VALUES (?, ?)",
         ("WaterBottomRight", "water-bottom-right.png"))
+    # 7
+    cursor.execute(
+        "INSERT INTO Tile (Type, Image) VALUES (?, ?)",
+        ("WaterSolid", "water-solid.png"))
+    # 8
+    cursor.execute(
+        "INSERT INTO Tile (Type, Image) VALUES (?, ?)",
+        ("BrickBeige", "brick-beige.png"))
+    # 9
+    cursor.execute(
+        "INSERT INTO Tile (Type, Image) VALUES (?, ?)",
+        ("BrickBlue", "brick-blue.png"))
+    # 10
+    cursor.execute(
+        "INSERT INTO Tile (Type, Image) VALUES (?, ?)",
+        ("BrickBrown", "brick-brown.png"))
+    # 11
+    cursor.execute(
+        "INSERT INTO Tile (Type, Image) VALUES (?, ?)",
+        ("StairsUp", "stairs-up.png"))
+    # 12
+    cursor.execute(
+        "INSERT INTO Tile (Type, Image) VALUES (?, ?)",
+        ("StairsDown", "stairs-down.png"))
 
 
 def insert_map(cursor, map_name):
@@ -73,7 +140,7 @@ def insert_map(cursor, map_name):
 
 def get_map_id(cursor, map_name):
     result = cursor.execute(
-                "SELECT ID FROM Map WHERE NAME = '%s'" 
+                "SELECT ID FROM Map WHERE NAME = '%s'"
                 % map_name)
     for row in result:
         return row[0]
@@ -136,6 +203,7 @@ def print_options():
     print("     show - prints out the name and id of every map in the DB")
     print("     reset - drops all tables in the DB and recreates them with the base data.")
     print("     create <map_name>.csv - creates a map from the given data in the passed in csv file")
+    print("     update <map_name>.csv - updates a map that already exists from the given data in the passed in csv file")
 
 if __name__ == "__main__":
     main()

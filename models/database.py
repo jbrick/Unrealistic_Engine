@@ -39,7 +39,7 @@ class Database(Model):
         character = Character(character_image_scaled)
         # Game is made up of one map for now.
         cursor = self.__database_execute(
-            "SELECT * FROM Map WHERE Name = 'map2'", None)
+            "SELECT * FROM Map WHERE Name = 'map3'", None)
         map_item = cursor.fetchone()
         game_map = Map(Map.GRID_SIZE)
 
