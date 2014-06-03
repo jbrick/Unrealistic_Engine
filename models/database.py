@@ -18,8 +18,8 @@ class Database(Model):
 
     def load_application(self):
         character = self.__load_characters()
-        map_list = self.__load_maps()
-        game = Game(character, map_list)
+        maps = self.__load_maps()
+        game = Game(character, maps)
         return game
 
     def __database_execute(self, sql, args):
@@ -44,14 +44,14 @@ class Database(Model):
         return Character(character_image)
 
     def __load_maps(self):
-        map_list = {}
+        maps = {}
 
-        #Game is now made up of multiple maps
+        # Game is now made up of multiple maps
         cursor = self.__database_execute(
             "SELECT * FROM Map", None)
-        all_maps = cursor.fetchall()
+        loaded_maps = cursor.fetchall()
         
-        for each_map in all_maps:
+        for each_map in loaded_maps:
             game_map = Map(Map.GRID_SIZE)
             # Load the map tiles for this map.
             cursor = self.__database_execute(
@@ -89,6 +89,6 @@ class Database(Model):
                 
                 game_map.addOrReplaceTile(tile)
 
-            map_list[each_map['Name']] = game_map
+            maps[each_map['Name']] = game_map
 
-        return map_list
+        return maps

@@ -2,6 +2,6 @@ import sys
 
 
 class Game:
-    def __init__(self, character, map_list):
+    def __init__(self, character, maps):
         self.character = character
-        self.map_list = map_list
+        self.maps = maps
