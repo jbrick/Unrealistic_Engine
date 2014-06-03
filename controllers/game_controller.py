@@ -20,7 +20,7 @@ class GameController(Controller):
         self.build_triggers()
 
         # Add Map model
-        view.add_model(model.game_map, GameView.render_map, Position(0, 0), 1)
+        view.add_model(model.map_list['Basic'], GameView.render_map, Position(0, 0), 1)
         # Add Character model
         view.add_model(
             model.character, GameView.render_character, Position(0, 0), 2)
@@ -60,7 +60,7 @@ class GameController(Controller):
             self.handle_trigger(self.triggers[position])
 
     def build_triggers(self):
-        for row in self.model.game_map.tiles:
+        for row in self.model.map_list['Basic'].tiles:
             for tile in row:
                 if tile != 0 and tile.trigger != None:
                     print "adding trigger to %s" % tile.position
