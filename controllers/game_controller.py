@@ -6,7 +6,7 @@ from Unrealistic_Engine.controllers.controller import Controller
 from Unrealistic_Engine.views.view import View
 from Unrealistic_Engine.views.battle_view import BattleView
 from Unrealistic_Engine.views.game_view import GameView
-from Unrealistic_Engine.views.menu_view import MenuView
+from Unrealistic_Engine.views.main_menu import MainMenu
 from Unrealistic_Engine.models.database import Database
 from Unrealistic_Engine import event_types
 from Unrealistic_Engine.models.model import Model
@@ -57,7 +57,7 @@ class GameController(Controller):
                     {"Controller": controller,
                      "View": view}))
         if pressed_key == pygame.K_ESCAPE:
-            view = MenuView()
+            view = MainMenu()
             
             tmpMenu = Menu()
             tmpChild1 = Menu()

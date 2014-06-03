@@ -2,7 +2,7 @@ import sys
 import pygame
 from Unrealistic_Engine.controllers.controller import Controller
 from Unrealistic_Engine.views.view import View
-from Unrealistic_Engine.views.menu_view import MenuView
+from Unrealistic_Engine.views.main_menu import MainMenu
 from Unrealistic_Engine.models.node import Node
 from Unrealistic_Engine.models.node_leaf import LeafNode
 from Unrealistic_Engine.models.node_menu import MenuNode
@@ -15,7 +15,7 @@ class MenuController(Controller):
         self.model = model
         self.view = view
         
-        view.add_model(self.model, MenuView.render_menu, 0, View.BACKGROUND)
+        view.add_model(self.model, MainMenu.render_menu, 0, View.BACKGROUND)
         MenuController.activeMenu = model
 
     def handle_key_press(self, pressed_key):
@@ -24,14 +24,14 @@ class MenuController(Controller):
                 # Go to previous menu
                 self.view.remove_model(self.model)
                 self.model = Menu.breadcrumbs.pop();
-                self.view.add_model(self.model, MenuView.render_menu, 0, View.BACKGROUND)
+                self.view.add_model(self.model, MainMenu.render_menu, 0, View.BACKGROUND)
         if (pressed_key == pygame.K_RIGHT or pressed_key == pygame.K_RETURN):
             if (isinstance(self.model.nodes [self.model.activeNode], MenuNode)):
                 # Traverse into submenu
                 Menu.breadcrumbs.append(self.model)
                 self.view.remove_model(self.model)
                 self.model = self.model.nodes [self.model.activeNode].submenu
-                self.view.add_model(self.model, MenuView.render_menu, 0, View.BACKGROUND)
+                self.view.add_model(self.model, MainMenu.render_menu, 0, View.BACKGROUND)
             elif (isinstance(self.model.nodes [self.model.activeNode], LeafNode)):
                 # Activate action associate with menu item
                 self.model.nodes [self.model.activeNode].action()
