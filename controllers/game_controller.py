@@ -1,12 +1,19 @@
 import sys
 import pygame
 from Unrealistic_Engine.controllers import battle_controller
+from Unrealistic_Engine.controllers import menu_controller
 from Unrealistic_Engine.controllers.controller import Controller
+from Unrealistic_Engine.views.view import View
 from Unrealistic_Engine.views.battle_view import BattleView
 from Unrealistic_Engine.views.game_view import GameView
+from Unrealistic_Engine.views.menu_view import MenuView
 from Unrealistic_Engine.models.database import Database
 from Unrealistic_Engine import event_types
 from Unrealistic_Engine.models.model import Model
+from Unrealistic_Engine.models.menu import Menu
+from Unrealistic_Engine.models.node import Node
+from Unrealistic_Engine.models.node_leaf import LeafNode
+from Unrealistic_Engine.models.node_menu import MenuNode
 from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine.models.trigger import Trigger
 
@@ -49,7 +56,36 @@ class GameController(Controller):
                     event_types.UPDATE_GAME_STATE,
                     {"Controller": controller,
                      "View": view}))
+        if pressed_key == pygame.K_ESCAPE:
+            view = MenuView()
+            
+            tmpMenu = Menu()
+            tmpChild1 = Menu()
+            tmpChild2 = Menu()
+            
+            # Create test menus
+            tmpChild2.addItem (LeafNode (LeafNode.testFunc, "Child's child 1"))
+            tmpChild2.addItem (LeafNode (LeafNode.testFunc, "Child's child 2"))
+            tmpChild2.addItem (LeafNode (LeafNode.testFunc, "Child's child 3"))
+            tmpChild2.addItem (LeafNode (LeafNode.testFunc, "Child's child 4"))
+            
+            tmpChild1.addItem (LeafNode (LeafNode.testFunc, "Child item 1"))
+            tmpChild1.addItem (MenuNode (tmpChild2, "Child item 2"))
+            
+            tmpMenu.addItem (LeafNode (LeafNode.testFunc, "Test 1"))
+            tmpMenu.addItem (LeafNode (LeafNode.testFunc, "Test 2"))
+            tmpMenu.addItem (MenuNode (tmpChild1, "Test 3 (I have a submenu)"))
+            
+            model = tmpMenu
+            
+            controller = menu_controller.MenuController (model, view)
 
+            pygame.event.post(
+                pygame.event.Event(
+                    event_types.UPDATE_GAME_STATE,
+                    {"Controller": controller,
+                     "View": view}))
+        
         self.view.set_visible_model_position(
             self.model.character, position)
 
