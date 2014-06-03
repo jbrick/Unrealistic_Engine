@@ -6,9 +6,6 @@ import optparse
 
 def main():
 
-    #if sys.argv[1] == None:
-        #raise KeyError
-
     dir = os.path.dirname(__file__)
     filename = os.path.join(dir, "../../models/game.db")
     db = lite.connect(filename)
@@ -23,13 +20,10 @@ def main():
             #TODO: check that valid input was given (Not null and with .csv on end)
             create_map(cursor, sys.argv[2])
         elif sys.argv[1] == "help":
-            print("To use the map creation utility, use one of the following commands:")
-            print("     show - prints out the name and id of every map in the DB")
-            print("     reset - drops all tables in the DB and recreates them with the base data.")
-            print("     create <map_name>.csv - creates a map from the given data in the passed in csv file")
-
+            print_options()
         else:
             print("Input not valid. ")
+            print_options()
 
 
 def create_map(cursor, map_arg):
@@ -57,6 +51,18 @@ def populate_tile_table(cursor):
     cursor.execute(
         "INSERT INTO Tile (Type, Image) VALUES (?, ?)",
         ("Dirt", "rpgdirt.png"))
+    cursor.execute(
+        "INSERT INTO Tile (Type, Image) VALUES (?, ?)",
+        ("WaterTopLeft", "water-top-left.png"))
+    cursor.execute(
+        "INSERT INTO Tile (Type, Image) VALUES (?, ?)",
+        ("WaterTopRight", "water-top-right.png"))
+    cursor.execute(
+        "INSERT INTO Tile (Type, Image) VALUES (?, ?)",
+        ("WaterBottomLeft", "water-bottom-left.png"))
+    cursor.execute(
+        "INSERT INTO Tile (Type, Image) VALUES (?, ?)",
+        ("WaterBottomRight", "water-bottom-right.png"))
 
 
 def insert_map(cursor, map_name):
@@ -114,7 +120,7 @@ def reset_database(cursor):
     # Insert default character entry
     cursor.execute(
         "INSERT INTO Character (Image) VALUES (?)",
-        ["banana.png"])
+        ["ranger_m.png"])
     # Insert default map entry
     cursor.execute(
         "INSERT INTO Map (Name) VALUES (?)",
@@ -123,6 +129,13 @@ def reset_database(cursor):
     populate_tile_table(cursor)
 
     print("Database successfully reset to base data.")
+
+
+def print_options():
+    print("To use the map creation utility, use one of the following commands:")
+    print("     show - prints out the name and id of every map in the DB")
+    print("     reset - drops all tables in the DB and recreates them with the base data.")
+    print("     create <map_name>.csv - creates a map from the given data in the passed in csv file")
 
 if __name__ == "__main__":
     main()
