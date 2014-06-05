@@ -19,7 +19,8 @@ class Menu():
     def __init__(self):
         self.nodes = []
         self.activeNode = 0;
-        self.activeIcon = pygame.image.load(os.path.join("Images", "menu_active.png"))
+        self.activeIcon = pygame.image.load(os.path.join("Images",
+            "menu_active.png"))
     
     """
     Adds a new menu item to this menu.
@@ -50,13 +51,12 @@ class Menu():
     """
     Removes the given item from the menu.
     
-    @param target: Either the menu item to be removed or its position in the list
+    @param target: Either the item to be removed or its position in the list
     """
     def removeItem(self, target):
         if (isinstance(target, (int, float, long))):
             self.nodes.remove(target)
         elif (isinstance(newNode, Node)):
-            # Note that List.remove will generate its own exception if the value is not in the list
             tmp = self.nodes [self.activeNode]
             
             self.nodes.remove(target)
@@ -69,7 +69,7 @@ class Menu():
     """
     Makes the target item the selected item.
     
-    @param target: Either a reference of the node itself or its position in the menu.
+    @param target: Either a reference of the node or its position in the menu.
     """
     def selectItem(self, target):
         if (isinstance(target, (int, float, long))):

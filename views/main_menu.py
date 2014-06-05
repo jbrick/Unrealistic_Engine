@@ -21,18 +21,23 @@ class MainMenu(MenuView):
         for count in range(0, menu.nodeCount):
             label = font.render(menu.nodes [count].label, 1, (255, 255, 255))
             screen.blit(
-                label, (2*MainMenu.PADDING, count*MainMenu.LINE_HEIGHT + MainMenu.OFFSET))
+                label, (2*MainMenu.PADDING, count*MainMenu.LINE_HEIGHT +
+                    MainMenu.OFFSET))
             
             if (count == menu.activeNode):
-                screen.blit(menu.activeIcon, (MainMenu.PADDING, count*MainMenu.LINE_HEIGHT + MainMenu.OFFSET + MainMenu.PADDING))
+                screen.blit(menu.activeIcon, (MainMenu.PADDING,
+                    count*MainMenu.LINE_HEIGHT + MainMenu.OFFSET +
+                    MainMenu.PADDING))
         
         crumbPos = MainMenu.PADDING;
         
         # Render breadcrumbs
         for crumb in range(0, len (Menu.breadcrumbs)):
-            label = font.render(Menu.breadcrumbs [crumb].nodes [Menu.breadcrumbs [crumb].activeNode].label, 1, (255, 255, 255))
+            label = font.render(Menu.breadcrumbs [crumb].nodes
+                [Menu.breadcrumbs [crumb].activeNode].label, 1, (255, 255, 255))
             screen.blit(label, (crumbPos, MainMenu.PADDING))
-            crumbPos += font.size(Menu.breadcrumbs [crumb].nodes [Menu.breadcrumbs [crumb].activeNode].label) [0]
+            crumbPos += font.size(Menu.breadcrumbs [crumb].nodes
+                [Menu.breadcrumbs [crumb].activeNode].label) [0]
             
             if (crumb >= (len(Menu.breadcrumbs) - 1)):
                 return
