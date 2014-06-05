@@ -26,6 +26,7 @@ class GameController(Controller):
         self.view = view
         self.triggers = {}
         self.build_triggers()
+        self.current_map = model.maps['map3']
 
         # Add Map model
         view.add_model(
@@ -38,22 +39,26 @@ class GameController(Controller):
         position = self.view.get_visible_model_position(
             self.model.character)
         # TODO: change to be actual currently shown map rather than static map3
-        cur_map = self.model.maps['map3']
+        destination_tile = None
         if pressed_key == pygame.K_LEFT:
-            if((position.x_coord - 1) >= 0 and
-                cur_map.tiles[position.x_coord - 1][position.y_coord].walkable == 1):
+            destination_tile = self.get_map_tile(position.x_coord - 1,
+                                                 position.y_coord)
+            if (position.x_coord - 1) >= 0 and destination_tile.walkable == 1:
                 position.set_x_coord(position.x_coord - 1)
         if pressed_key == pygame.K_RIGHT:
-            if((position.x_coord + 1) < Map.GRID_SIZE and
-                cur_map.tiles[position.x_coord + 1][position.y_coord].walkable == 1):
+            destination_tile = self.get_map_tile(position.x_coord + 1,
+                                                 position.y_coord)
+            if(position.x_coord + 1) < Map.GRID_SIZE and destination_tile.walkable == 1:
                 position.set_x_coord(position.x_coord + 1)
         if pressed_key == pygame.K_UP:
-            if((position.y_coord - 1) >= 0 and
-                cur_map.tiles[position.x_coord][position.y_coord - 1].walkable == 1):
+            destination_tile = self.get_map_tile(position.x_coord,
+                                                 position.y_coord - 1)
+            if(position.y_coord - 1) >= 0 and destination_tile.walkable == 1:
                 position.set_y_coord(position.y_coord - 1)
         if pressed_key == pygame.K_DOWN:
-            if((position.y_coord + 1) < Map.GRID_SIZE and
-                cur_map.tiles[position.x_coord][position.y_coord + 1].walkable == 1):
+            destination_tile = self.get_map_tile(position.x_coord,
+                                                 position.y_coord + 1)
+            if(position.y_coord + 1) < Map.GRID_SIZE and destination_tile.walkable == 1:
                 position.set_y_coord(position.y_coord + 1)
         # For testing purposes pressing enter swaps controller / view.
         if pressed_key == pygame.K_RETURN:
@@ -123,3 +128,6 @@ class GameController(Controller):
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+
+    def get_map_tile(self, pos_x, pos_y):
+        return self.current_map.tiles[pos_x][pos_y]
