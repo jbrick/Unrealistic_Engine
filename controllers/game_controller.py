@@ -28,7 +28,8 @@ class GameController(Controller):
         self.build_triggers()
 
         # Add Map model
-        view.add_model(model.maps['map3'], GameView.render_map, Position(0, 0), 1)
+        view.add_model(
+            model.maps['map3'], GameView.render_map, Position(0, 0), 1)
         # Add Character model
         view.add_model(
             model.character, GameView.render_character, Position(0, 0), 2)
@@ -36,18 +37,23 @@ class GameController(Controller):
     def handle_key_press(self, pressed_key):
         position = self.view.get_visible_model_position(
             self.model.character)
+        # TODO: change to be actual currently shown map rather than static map3
+        cur_map = self.model.maps['map3']
         if pressed_key == pygame.K_LEFT:
-            if((position.x_coord - 1) >= 0):
+            if((position.x_coord - 1) >= 0 and
+                cur_map.tiles[position.x_coord - 1][position.y_coord].walkable == 1):
                 position.set_x_coord(position.x_coord - 1)
         if pressed_key == pygame.K_RIGHT:
-            if((position.x_coord + 1) < Map.GRID_SIZE and 
-                self.model.maps['map3'].tiles[position.x_coord + 1][position.y_coord].type):
+            if((position.x_coord + 1) < Map.GRID_SIZE and
+                cur_map.tiles[position.x_coord + 1][position.y_coord].walkable == 1):
                 position.set_x_coord(position.x_coord + 1)
         if pressed_key == pygame.K_UP:
-            if((position.y_coord - 1) >= 0):
+            if((position.y_coord - 1) >= 0 and
+                cur_map.tiles[position.x_coord][position.y_coord - 1].walkable == 1):
                 position.set_y_coord(position.y_coord - 1)
         if pressed_key == pygame.K_DOWN:
-            if((position.y_coord + 1) < Map.GRID_SIZE):
+            if((position.y_coord + 1) < Map.GRID_SIZE and
+                cur_map.tiles[position.x_coord][position.y_coord + 1].walkable == 1):
                 position.set_y_coord(position.y_coord + 1)
         # For testing purposes pressing enter swaps controller / view.
         if pressed_key == pygame.K_RETURN:
@@ -64,34 +70,34 @@ class GameController(Controller):
                      "View": view}))
         if pressed_key == pygame.K_ESCAPE:
             view = MainMenu()
-            
+
             tmpMenu = Menu()
             tmpChild1 = Menu()
             tmpChild2 = Menu()
-            
+
             # Create test menus
-            tmpChild2.addItem (LeafNode (LeafNode.testFunc, "Child's child 1"))
-            tmpChild2.addItem (LeafNode (LeafNode.testFunc, "Child's child 2"))
-            tmpChild2.addItem (LeafNode (LeafNode.testFunc, "Child's child 3"))
-            tmpChild2.addItem (LeafNode (LeafNode.testFunc, "Child's child 4"))
-            
-            tmpChild1.addItem (LeafNode (LeafNode.testFunc, "Child item 1"))
-            tmpChild1.addItem (MenuNode (tmpChild2, "Child item 2"))
-            
-            tmpMenu.addItem (LeafNode (LeafNode.testFunc, "Test 1"))
-            tmpMenu.addItem (LeafNode (LeafNode.testFunc, "Test 2"))
-            tmpMenu.addItem (MenuNode (tmpChild1, "Test 3 (I have a submenu)"))
-            
+            tmpChild2.addItem(LeafNode(LeafNode.testFunc, "Child's child 1"))
+            tmpChild2.addItem(LeafNode(LeafNode.testFunc, "Child's child 2"))
+            tmpChild2.addItem(LeafNode(LeafNode.testFunc, "Child's child 3"))
+            tmpChild2.addItem(LeafNode(LeafNode.testFunc, "Child's child 4"))
+
+            tmpChild1.addItem(LeafNode(LeafNode.testFunc, "Child item 1"))
+            tmpChild1.addItem(MenuNode(tmpChild2, "Child item 2"))
+
+            tmpMenu.addItem(LeafNode(LeafNode.testFunc, "Test 1"))
+            tmpMenu.addItem(LeafNode(LeafNode.testFunc, "Test 2"))
+            tmpMenu.addItem(MenuNode(tmpChild1, "Test 3 (I have a submenu)"))
+
             model = tmpMenu
-            
-            controller = menu_controller.MenuController (model, view)
+
+            controller = menu_controller.MenuController(model, view)
 
             pygame.event.post(
                 pygame.event.Event(
                     event_types.UPDATE_GAME_STATE,
                     {"Controller": controller,
                      "View": view}))
-        
+
         self.view.set_visible_model_position(
             self.model.character, position)
 
@@ -104,7 +110,7 @@ class GameController(Controller):
     def build_triggers(self):
         for row in self.model.maps['Basic'].tiles:
             for tile in row:
-                if tile != 0 and tile.trigger != None:
+                if tile != 0 and tile.trigger is not None:
                     print "adding trigger to %s" % tile.position
                     self.triggers[tile.position] = tile.trigger
 

@@ -42,7 +42,7 @@ class Database(Model):
         character_image = pygame.image.load(
             os.path.join('Images', row['Image']))
         character_image_scaled = pygame.transform.scale(
-                    character_image, (Character.SIZE, Character.SIZE))
+            character_image, (Character.SIZE, Character.SIZE))
         return Character(character_image_scaled)
 
     def __load_maps(self):
@@ -53,12 +53,13 @@ class Database(Model):
         cursor = self.__database_execute(
             "SELECT * FROM Map", None)
         loaded_maps = cursor.fetchall()
-        
+
         for each_map in loaded_maps:
             game_map = Map(Map.GRID_SIZE)
             # Load the map tiles for this map.
             cursor = self.__database_execute(
-                """SELECT mt.TileId, mt.Index_X, mt.Index_Y, t.Type, t.Image, mt.Id
+                """SELECT mt.TileId, mt.Index_X, mt.Index_Y, t.Type, t.Image,
+                t.Walkable, mt.Id
                 FROM MapTile AS mt JOIN Tile as t ON mt.TileId = t.Id
                 WHERE MapId = %d""" % each_map['Id'], None)
 
@@ -74,8 +75,8 @@ class Database(Model):
 
                 # Add trigger for this tile.
                 cursor = self.__database_execute(
-                    """SELECT Chance, Action_Type, Action_Data FROM Trigger WHERE
-                    MapTileId = %s""" % (map_tile_id), None)
+                    """SELECT Chance, Action_Type, Action_Data FROM Trigger
+                    WHERE MapTileId = %s""" % (map_tile_id), None)
 
                 trigger_row = cursor.fetchone()
                 if trigger_row is not None:
@@ -89,8 +90,9 @@ class Database(Model):
                     row_map_tiles['Index_X'], row_map_tiles['Index_Y'])
 
                 tile = Tile(
-                    row_map_tiles['Type'], tile_image_scaled, position, trigger)
-                
+                    row_map_tiles['Type'], tile_image_scaled, position,
+                    trigger, row_map_tiles['Walkable'])
+
                 game_map.addOrReplaceTile(tile)
 
             maps[each_map['Name']] = game_map
