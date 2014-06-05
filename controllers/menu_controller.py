@@ -14,7 +14,7 @@ class MenuController(Controller):
     def __init__(self, model, view):
         self.model = model
         self.view = view
-        
+
         view.add_model(self.model, MainMenu.render_menu, 0, View.BACKGROUND)
         MenuController.activeMenu = model
 
@@ -24,14 +24,16 @@ class MenuController(Controller):
                 # Go to previous menu
                 self.view.remove_model(self.model)
                 self.model = Menu.breadcrumbs.pop();
-                self.view.add_model(self.model, MainMenu.render_menu, 0, View.BACKGROUND)
+                self.view.add_model(self.model, MainMenu.render_menu, 0,
+                    View.BACKGROUND)
         if (pressed_key == pygame.K_RIGHT or pressed_key == pygame.K_RETURN):
             if (isinstance(self.model.nodes [self.model.activeNode], MenuNode)):
                 # Traverse into submenu
                 Menu.breadcrumbs.append(self.model)
                 self.view.remove_model(self.model)
                 self.model = self.model.nodes [self.model.activeNode].submenu
-                self.view.add_model(self.model, MainMenu.render_menu, 0, View.BACKGROUND)
+                self.view.add_model(self.model, MainMenu.render_menu, 0,
+                    View.BACKGROUND)
             elif (isinstance(self.model.nodes [self.model.activeNode], LeafNode)):
                 # Activate action associate with menu item
                 self.model.nodes [self.model.activeNode].action()
@@ -49,7 +51,9 @@ class MenuController(Controller):
             # Default behaviour is to wrap around at the end of the menu
             if (self.model.activeNode >= self.model.nodeCount):
                 self.model.activeNode = 0
-            
+        if (pressed_key == pygame.K_ESCAPE):
+            pass
+
     def handle_game_event(self, event):
         if event.type == pygame.QUIT:
             pygame.quit()

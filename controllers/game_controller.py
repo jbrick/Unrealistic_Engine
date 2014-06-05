@@ -1,20 +1,15 @@
-import sys
+# import sys
 import pygame
+from Unrealistic_Engine.utils.utils import Utils
 from Unrealistic_Engine.controllers import battle_controller
-from Unrealistic_Engine.controllers import menu_controller
 from Unrealistic_Engine.controllers.controller import Controller
 from Unrealistic_Engine.views.view import View
 from Unrealistic_Engine.views.battle_view import BattleView
 from Unrealistic_Engine.views.game_view import GameView
-from Unrealistic_Engine.views.main_menu import MainMenu
 from Unrealistic_Engine.models.database import Database
 from Unrealistic_Engine import event_types
 from Unrealistic_Engine.models.model import Model
 from Unrealistic_Engine.models.map import Map
-from Unrealistic_Engine.models.menu import Menu
-from Unrealistic_Engine.models.node import Node
-from Unrealistic_Engine.models.node_leaf import LeafNode
-from Unrealistic_Engine.models.node_menu import MenuNode
 from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine.models.trigger import Trigger
 
@@ -74,28 +69,45 @@ class GameController(Controller):
                     {"Controller": controller,
                      "View": view}))
         if pressed_key == pygame.K_ESCAPE:
-            view = MainMenu()
-
-            tmpMenu = Menu()
-            tmpChild1 = Menu()
-            tmpChild2 = Menu()
+            print(Utils.engine)
+            
+            mview = Utils.fetch("Unrealistic_Engine.views.main_menu")
+            menu = Utils.fetch("Unrealistic_Engine.models.menu")
+            leaf = Utils.fetch("Unrealistic_Engine.models.node_leaf")
+            subm = Utils.fetch("Unrealistic_Engine.models.node_menu")
+            mcon = Utils.fetch("Unrealistic_Engine.controllers.menu_controller")
+            
+            view = mview.MainMenu ()
+            
+            tmpMenu = menu.Menu()
+            tmpChild1 = menu.Menu()
+            tmpChild2 = menu.Menu()
 
             # Create test menus
-            tmpChild2.addItem(LeafNode(LeafNode.testFunc, "Child's child 1"))
-            tmpChild2.addItem(LeafNode(LeafNode.testFunc, "Child's child 2"))
-            tmpChild2.addItem(LeafNode(LeafNode.testFunc, "Child's child 3"))
-            tmpChild2.addItem(LeafNode(LeafNode.testFunc, "Child's child 4"))
+            tmpChild2.addItem(leaf.LeafNode
+                (leaf.LeafNode.testFunc, "Ta"))
+            tmpChild2.addItem(leaf.LeafNode
+                (leaf.LeafNode.testFunc, "Ta"))
+            tmpChild2.addItem(leaf.LeafNode
+                (leaf.LeafNode.testFunc, "For"))
+            tmpChild2.addItem(leaf.LeafNode
+                (leaf.LeafNode.testFunc, "Now"))
 
-            tmpChild1.addItem(LeafNode(LeafNode.testFunc, "Child item 1"))
-            tmpChild1.addItem(MenuNode(tmpChild2, "Child item 2"))
+            tmpChild1.addItem(leaf.LeafNode
+                (leaf.LeafNode.testFunc, "Do Nothing"))
+            tmpChild1.addItem(subm.MenuNode
+                (tmpChild2, "See More"))
 
-            tmpMenu.addItem(LeafNode(LeafNode.testFunc, "Test 1"))
-            tmpMenu.addItem(LeafNode(LeafNode.testFunc, "Test 2"))
-            tmpMenu.addItem(MenuNode(tmpChild1, "Test 3 (I have a submenu)"))
+            tmpMenu.addItem(leaf.LeafNode
+                (Utils.quit, "Quit"))
+            tmpMenu.addItem(leaf.LeafNode
+                (leaf.LeafNode.testFunc, "Save"))
+            tmpMenu.addItem(subm.MenuNode
+                (tmpChild1, "See More"))
 
             model = tmpMenu
 
-            controller = menu_controller.MenuController(model, view)
+            controller = mcon.MenuController(model, view)
 
             pygame.event.post(
                 pygame.event.Event(
