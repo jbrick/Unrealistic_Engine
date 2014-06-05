@@ -11,6 +11,8 @@ from Unrealistic_Engine.models.map import Map
 
 pygame.init()
 
+pygame.display.set_caption('Unrealistic Engine')
+
 size = Map.MAP_SIZE, Map.MAP_SIZE
 
 screen = pygame.display.set_mode(size)
