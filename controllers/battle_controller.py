@@ -1,11 +1,12 @@
 import sys
 import pygame
 import Unrealistic_Engine.controllers
-from Unrealistic_Engine.controllers.controller import Controller
-from Unrealistic_Engine.views.game_view import GameView
-from Unrealistic_Engine.models.database import Database
 from Unrealistic_Engine import event_types
+from Unrealistic_Engine.utils.utils import Utils
 from Unrealistic_Engine.utils.position import Position
+from Unrealistic_Engine.models.database import Database
+from Unrealistic_Engine.views.view import View
+from Unrealistic_Engine.controllers.controller import Controller
 
 
 # Currently battle controller just doubles movement speed as a test.
@@ -14,6 +15,25 @@ class BattleController(Controller):
     def __init__(self, model, view):
         self.model = model
         self.view = view
+
+    @staticmethod
+    def getModels():
+        models = ["Unrealistic_Engine.models.map",
+            "Unrealistic_Engine.models.trigger"]
+        
+        return models
+
+    @staticmethod
+    def getViews():
+        views = ["Unrealistic_Engine.views.battle_view"]
+        
+        return views
+
+    @staticmethod
+    def getControllers():
+        controllers = ["Unrealistic_Engine.controllers.battle_controller"]
+        
+        return controllers
 
     def handle_key_press(self, pressed_key):
         position = self.view.get_visible_model_position(
@@ -29,12 +49,21 @@ class BattleController(Controller):
             position.set_y_coord(position.y_coord + 2)
         # For testing purposes pressing enter swaps controller / view.
         if pressed_key == pygame.K_RETURN:
-            view = GameView()
+            baseController = Utils.fetch(Utils.qualifyControllerName(
+                "game_controller"))
+            
+            models = baseController.GameController.getModels()
+            views = baseController.GameController.getViews()
+            controllers = baseController.GameController.getControllers()
+            
+            gview = utils.fetch(views [0])
+            
+            view = gview.GameView()
             # Just give the game view the same visible models as the battle
             # view for now.
             view.visible_models = self.view.visible_models
-            # This long reference is neccessary otherwise we get cyclic imports
-            controller = Unrealistic_Engine.controllers.game_controller.GameController(self.model, view)
+            
+            controller = baseController.GameController(self.model, view)
 
             pygame.event.post(pygame.event.Event(
                 event_types.UPDATE_GAME_STATE,

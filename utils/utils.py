@@ -16,5 +16,9 @@ class Utils:
         return module
 
     @staticmethod
+    def qualifyControllerName(name):
+        return ("Unrealistic_Engine.controllers." + name)
+
+    @staticmethod
     def quit():
         pygame.event.post (pygame.event.Event(pygame.QUIT))

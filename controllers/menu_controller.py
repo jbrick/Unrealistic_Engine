@@ -1,9 +1,9 @@
 import sys
 import pygame
+from Unrealistic_Engine.utils.utils import Utils
 from Unrealistic_Engine.controllers.controller import Controller
 from Unrealistic_Engine.views.view import View
 from Unrealistic_Engine.views.main_menu import MainMenu
-from Unrealistic_Engine.models.node import Node
 from Unrealistic_Engine.models.node_leaf import LeafNode
 from Unrealistic_Engine.models.node_menu import MenuNode
 from Unrealistic_Engine.models.menu import Menu
@@ -17,6 +17,56 @@ class MenuController(Controller):
 
         view.add_model(self.model, MainMenu.render_menu, 0, View.BACKGROUND)
         MenuController.activeMenu = model
+
+    @staticmethod
+    def getModels():
+        models = ["Unrealistic_Engine.models.menu",
+            "Unrealistic_Engine.models.node_menu",
+            "Unrealistic_Engine.models.node_leaf"]
+        
+        return models
+    
+    @staticmethod
+    def getViews():
+        views = ["Unrealistic_Engine.views.main_menu"]
+        
+        return views
+
+    @staticmethod
+    def getControllers():
+        controllers = ["Unrealistic_Engine.controllers.menu_controller"]
+        
+        return controllers
+
+    @staticmethod
+    def buildMenu():
+        tmpMenu = Menu()
+        tmpChild1 = Menu()
+        tmpChild2 = Menu()
+
+        # Create test menus
+        tmpChild2.addItem(LeafNode
+            (LeafNode.testFunc, "Ta"))
+        tmpChild2.addItem(LeafNode
+            (LeafNode.testFunc, "Ta"))
+        tmpChild2.addItem(LeafNode
+            (LeafNode.testFunc, "For"))
+        tmpChild2.addItem(LeafNode
+            (LeafNode.testFunc, "Now"))
+
+        tmpChild1.addItem(LeafNode
+            (LeafNode.testFunc, "Do Nothing"))
+        tmpChild1.addItem(MenuNode
+            (tmpChild2, "See More"))
+
+        tmpMenu.addItem(LeafNode
+            (Utils.quit, "Quit"))
+        tmpMenu.addItem(LeafNode
+            (LeafNode.testFunc, "Save"))
+        tmpMenu.addItem(MenuNode
+            (tmpChild1, "See More"))
+        
+        return tmpMenu
 
     def handle_key_press(self, pressed_key):
         if (pressed_key == pygame.K_LEFT):
