@@ -97,6 +97,7 @@ def add_triggers(cursor, json_triggers_set, *args, **kwargs):
                  trigger["Action_Type"], json.dumps(trigger["Action_Data"])))
 
 def show_map_layout(cursor, map_names, *args, **kwargs):
+    show_tiles(cursor)
     cursor = cursor.execute(
             "SELECT * FROM Map WHERE Name='%s'" % map_names[0])
     loaded_map = cursor.fetchone()
@@ -110,15 +111,35 @@ def show_map_layout(cursor, map_names, *args, **kwargs):
 
     print ""
     print "Showing layout for map: %s" % map_names[0]
-    print "<Unique Tile Identifier>, <Tile Identifier>"
+    print ""
+    print "Tile Identifier"
     print ""
 
     count = 0
     for column in range(Map.GRID_SIZE):
         for row in range(Map.GRID_SIZE):
-            sys.stdout.write( "%5d,%d" % (matrix[column][row]["Id"], matrix[column][row]["TileId"]))
+            sys.stdout.write( "%5d" % (matrix[column][row]["TileId"]))
             count = count + 1
         print ""
+
+    print ""
+    print "Unique Tile Identifier"
+    print ""
+
+    count = 0
+    for column in range(Map.GRID_SIZE):
+        for row in range(Map.GRID_SIZE):
+            sys.stdout.write( "%5d" % (matrix[column][row]["Id"]))
+            count = count + 1
+        print ""
+
+    print ""
+    print "Triggers"
+    print ""
+
+    show_triggers(cursor)
+
+    print ""
 
 def create_maps(cursor, maps, *args, **kwargs):
 
@@ -186,8 +207,8 @@ def add_tilesets(cursor, json_tilesets, *args, **kwargs):
 
         for tile in tiles["tiles"]:
             cursor.execute(
-                "INSERT INTO Tile (Name, Image) VALUES (?, ?)",
-                (tile["Name"],tile["Image"]))
+                "INSERT INTO Tile (Name, Image, Walkable) VALUES (?, ?, ?)",
+                (tile["Name"], tile["Image"], tile["Walkable"]))
 
 
 def insert_map(cursor, map_name):
@@ -233,7 +254,7 @@ def reset_database(cursor, *args, **kwargs):
 
     cursor.execute(
         "CREATE TABLE Tile"
-        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Image TEXT)")
+        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Image TEXT, Walkable INTEGER)")
 
     cursor.execute(
         "CREATE TABLE MapTile"
