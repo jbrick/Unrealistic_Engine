@@ -1,17 +1,14 @@
 # import sys
 import pygame
-from Unrealistic_Engine.utils.utils import Utils
-from Unrealistic_Engine.controllers import battle_controller
-from Unrealistic_Engine.controllers.controller import Controller
-from Unrealistic_Engine.views.view import View
-from Unrealistic_Engine.views.battle_view import BattleView
-from Unrealistic_Engine.views.game_view import GameView
-from Unrealistic_Engine.models.database import Database
 from Unrealistic_Engine import event_types
-from Unrealistic_Engine.models.model import Model
-from Unrealistic_Engine.models.map import Map
+from Unrealistic_Engine.utils.utils import Utils
 from Unrealistic_Engine.utils.position import Position
+from Unrealistic_Engine.models.database import Database
+from Unrealistic_Engine.models.map import Map
 from Unrealistic_Engine.models.trigger import Trigger
+from Unrealistic_Engine.views.view import View
+from Unrealistic_Engine.views.game_view import GameView
+from Unrealistic_Engine.controllers.controller import Controller
 
 
 class GameController(Controller):
@@ -26,9 +23,29 @@ class GameController(Controller):
         # Add Map model
         view.add_model(
             model.maps['map3'], GameView.render_map, Position(0, 0), 1)
+
         # Add Character model
         view.add_model(
             model.character, GameView.render_character, Position(0, 0), 2)
+
+    @staticmethod
+    def getModels():
+        models = ["Unrealistic_Engine.models.map",
+            "Unrealistic_Engine.models.trigger"]
+        
+        return models
+
+    @staticmethod
+    def getViews():
+        views = ["Unrealistic_Engine.views.game_view"]
+        
+        return views
+
+    @staticmethod
+    def getControllers():
+        controllers = ["Unrealistic_Engine.controllers.game_controller"]
+        
+        return controllers
 
     def handle_key_press(self, pressed_key):
         position = self.view.get_visible_model_position(
@@ -57,11 +74,22 @@ class GameController(Controller):
                 position.set_y_coord(position.y_coord + 1)
         # For testing purposes pressing enter swaps controller / view.
         if pressed_key == pygame.K_RETURN:
-            view = BattleView()
+            baseController = Utils.fetch(Utils.qualifyControllerName(
+                "battle_controller"))
+            
+            models = baseController.BattleController.getModels()
+            views = baseController.BattleController.getViews()
+            controllers = baseController.BattleController.getControllers()
+            
+            bview = Utils.fetch(views [0])
+            bcon = Utils.fetch(controllers [0])
+            
+            view = bview.BattleView()
+            
             # Just give the battle view the same visible models as the
             # game view for now.
             view.visible_models = self.view.visible_models
-            controller = battle_controller.BattleController(self.model, view)
+            controller = bcon.BattleController(self.model, view)
 
             pygame.event.post(
                 pygame.event.Event(
@@ -69,41 +97,19 @@ class GameController(Controller):
                     {"Controller": controller,
                      "View": view}))
         if pressed_key == pygame.K_ESCAPE:
-            print(Utils.engine)
+            baseController = Utils.fetch(Utils.qualifyControllerName(
+                "menu_controller"))
             
-            mview = Utils.fetch("Unrealistic_Engine.views.main_menu")
-            menu = Utils.fetch("Unrealistic_Engine.models.menu")
-            leaf = Utils.fetch("Unrealistic_Engine.models.node_leaf")
-            subm = Utils.fetch("Unrealistic_Engine.models.node_menu")
-            mcon = Utils.fetch("Unrealistic_Engine.controllers.menu_controller")
+            modelList = baseController.MenuController.getModels()
+            viewList = baseController.MenuController.getViews()
+            controllerList = baseController.MenuController.getControllers()
+            
+            mview = Utils.fetch(viewList [0])
+            mcon = Utils.fetch(controllerList [0])
             
             view = mview.MainMenu ()
             
-            tmpMenu = menu.Menu()
-            tmpChild1 = menu.Menu()
-            tmpChild2 = menu.Menu()
-
-            # Create test menus
-            tmpChild2.addItem(leaf.LeafNode
-                (leaf.LeafNode.testFunc, "Ta"))
-            tmpChild2.addItem(leaf.LeafNode
-                (leaf.LeafNode.testFunc, "Ta"))
-            tmpChild2.addItem(leaf.LeafNode
-                (leaf.LeafNode.testFunc, "For"))
-            tmpChild2.addItem(leaf.LeafNode
-                (leaf.LeafNode.testFunc, "Now"))
-
-            tmpChild1.addItem(leaf.LeafNode
-                (leaf.LeafNode.testFunc, "Do Nothing"))
-            tmpChild1.addItem(subm.MenuNode
-                (tmpChild2, "See More"))
-
-            tmpMenu.addItem(leaf.LeafNode
-                (Utils.quit, "Quit"))
-            tmpMenu.addItem(leaf.LeafNode
-                (leaf.LeafNode.testFunc, "Save"))
-            tmpMenu.addItem(subm.MenuNode
-                (tmpChild1, "See More"))
+            tmpMenu = mcon.MenuController.buildMenu ()
 
             model = tmpMenu
 
