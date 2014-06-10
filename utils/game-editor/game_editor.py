@@ -48,10 +48,26 @@ def main():
         const=show_map_layout, default=None,
         help="Given a map shows the the tile id and unique id for every tile in the map. This can be used for knowing where to add triggers to the map")
 
+    parser.add_argument(
+        "--add_triggers", dest="to_run", action="store_const",
+        const=add_triggers, default=None,
+        help="Attach triggers from a json file to unique map tiles use the show_map_layout command to use when writing triggers."
+    )
+
+    parser.add_argument(
+        "--show_triggers", dest="to_run", action="store_const",
+        const=show_triggers, default=None,
+        help="Shows all currently active triggers"
+    )
+
     parser.add_argument("input_files", type=str, nargs="*",
                    help="input files")
 
     args = parser.parse_args()
+
+    if not args.to_run:
+        parser.error("No arguments provided")
+
 
     dir = os.path.dirname(__file__)
     filename = os.path.join(dir, "../../models/game.db")
@@ -61,6 +77,24 @@ def main():
         cursor = db.cursor()
         args.to_run(cursor, args.input_files)
 
+def show_triggers(cursor, *args, **kwargs):
+    cursor.execute("SELECT * FROM Trigger")
+    rows = cursor.fetchall()
+    for row in rows:
+        print "MapTileId: %3d | Chance: %3d | Action_Type: %3d | Action_Data: %s" % (row['MapTileId'], row['Chance'], row['Action_Type'], str(json.loads(row['Action_Data'])))
+
+def add_triggers(cursor, json_triggers_set, *args, **kwargs):
+    for json_triggers in json_triggers_set:
+        triggers_file = open(json_triggers)
+        triggers = json.load(triggers_file)
+        triggers_file.close()
+
+        for trigger in triggers["triggers"]:
+            cursor.execute(
+                """INSERT INTO Trigger (MapTileId, Chance, Action_Type,
+                 Action_Data) VALUES (?, ?, ?, ?)""",
+                (trigger["MapTileId"], trigger["Chance"],
+                 trigger["Action_Type"], json.dumps(trigger["Action_Data"])))
 
 def show_map_layout(cursor, map_names, *args, **kwargs):
     cursor = cursor.execute(
@@ -218,16 +252,6 @@ def reset_database(cursor, *args, **kwargs):
     cursor.execute(
         "INSERT INTO Character (Image) VALUES (?)",
         ["ranger_m.png"])
-    # Insert default map entry
-    cursor.execute(
-        "INSERT INTO Map (Name) VALUES (?)",
-        ["Basic"])
-
-    # Insert sample trigger data
-    action_data = { "map_name" : "Basic"}
-    cursor.execute(
-        "INSERT INTO Trigger (MapTileId, Chance, Action_Type, Action_Data) VALUES (?, ?, ?, ?)",
-        (1, 50, Trigger.CHANGE_MAP, json.dumps(action_data)))
 
     print("Database successfully reset to base data.")
 

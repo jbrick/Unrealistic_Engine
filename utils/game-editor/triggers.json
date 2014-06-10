@@ -1,0 +1,12 @@
+{
+	"triggers": [
+			{
+				"MapTileId" : 74,
+				"Chance" : 100,
+				"Action_Type" : 1,
+				"Action_Data" : { 
+							"map_name" : "map1"
+						}
+			}
+		]
+}

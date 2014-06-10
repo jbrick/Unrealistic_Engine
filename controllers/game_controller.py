@@ -1,5 +1,6 @@
 import sys
 import pygame
+import json
 from Unrealistic_Engine.controllers import battle_controller
 from Unrealistic_Engine.controllers import menu_controller
 from Unrealistic_Engine.controllers.controller import Controller
@@ -25,12 +26,14 @@ class GameController(Controller):
         self.model = model
         self.view = view
         self.triggers = {}
+        self.current_map = model.maps["map3"]
+
         self.build_triggers()
         self.current_map = model.maps['map3']
 
         # Add Map model
         view.add_model(
-            model.maps['map3'], GameView.render_map, Position(0, 0), 1)
+            self.current_map, GameView.render_map, Position(0, 0), 1)
         # Add Character model
         view.add_model(
             model.character, GameView.render_character, Position(0, 0), 2)
@@ -113,7 +116,7 @@ class GameController(Controller):
             self.handle_trigger(self.triggers[position])
 
     def build_triggers(self):
-        for row in self.model.maps['Basic'].tiles:
+        for row in self.current_map.tiles:
             for tile in row:
                 if tile != 0 and tile.trigger is not None:
                     print "adding trigger to %s" % tile.position
@@ -121,7 +124,11 @@ class GameController(Controller):
 
     def handle_trigger(self, trigger):
         if (trigger.action_type == Trigger.CHANGE_MAP):
-            # TODO change the map.
+            self.view.remove_model(self.current_map)
+            self.current_map = self.model.maps[trigger.action_data['map_name']]
+            self.view.add_model(
+                self.current_map, GameView.render_map, Position(0, 0), 1)
+
             print "Action occurred with data: " + str(trigger.action_data)
 
     def handle_game_event(self, event):

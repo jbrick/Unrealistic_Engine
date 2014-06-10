@@ -58,9 +58,9 @@ class Database(Model):
             game_map = Map(Map.GRID_SIZE)
             # Load the map tiles for this map.
             cursor = self.__database_execute(
-                """SELECT mt.TileId, mt.Index_X, mt.Index_Y, t.Type, t.Image,
-                t.Walkable, mt.Id
-                FROM MapTile AS mt JOIN Tile as t ON mt.TileId = t.Id
+                """SELECT mt.TileId, mt.Index_X, mt.Index_Y, t.Name, t.Walkable,
+                 t.Image, mt.Id FROM MapTile AS mt JOIN Tile as t
+                 ON mt.TileId = t.Id
                 WHERE MapId = %d""" % each_map['Id'], None)
 
             map_tiles = cursor.fetchall()
@@ -90,9 +90,9 @@ class Database(Model):
                     row_map_tiles['Index_X'], row_map_tiles['Index_Y'])
 
                 tile = Tile(
-                    row_map_tiles['Type'], tile_image_scaled, position,
+                    row_map_tiles['Name'], tile_image_scaled, position,
                     trigger, row_map_tiles['Walkable'])
-
+                
                 game_map.addOrReplaceTile(tile)
 
             maps[each_map['Name']] = game_map
