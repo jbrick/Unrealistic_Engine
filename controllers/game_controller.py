@@ -22,7 +22,7 @@ from Unrealistic_Engine.models.trigger import Trigger
 
 class GameController(Controller):
 
-    def __init__(self, model, view):
+    def __init__(self, model, view, character_position):
         self.model = model
         self.view = view
         self.triggers = {}
@@ -35,7 +35,7 @@ class GameController(Controller):
             self.current_map, GameView.render_map, Position(0, 0), 1)
         # Add Character model
         view.add_model(
-            model.character, GameView.render_character, Position(0, 0), 2)
+            model.character, GameView.render_character, character_position, 2)
 
     def handle_key_press(self, pressed_key):
         position = self.view.get_visible_model_position(
@@ -64,10 +64,9 @@ class GameController(Controller):
         # For testing purposes pressing enter swaps controller / view.
         if pressed_key == pygame.K_RETURN:
             view = BattleView()
-            # Just give the battle view the same visible models as the
-            # game view for now.
-            view.visible_models = self.view.visible_models
-            controller = battle_controller.BattleController(self.model, view)
+            
+            controller = battle_controller.BattleController(self.model, view, self.view.visible_models,
+                                                            self.current_map, position)
 
             pygame.event.post(
                 pygame.event.Event(

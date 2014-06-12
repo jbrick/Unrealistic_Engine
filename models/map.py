@@ -13,3 +13,6 @@ class Map:
 
     def addOrReplaceTile(self, tile):
         self.tiles[tile.position.x_coord][tile.position.y_coord] = tile
+
+    def get_tile_at_position(self, position):
+    	return self.tiles[position.x_coord][position.y_coord]
