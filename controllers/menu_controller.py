@@ -94,7 +94,7 @@ class MenuController(Controller):
             if (self.model.activeNode >= self.model.nodeCount):
                 self.model.activeNode = 0
         if (pressed_key == pygame.K_ESCAPE):
-            base = Utils.fetch(Utils.qualifyControllerName("game_controller"))
+            base = Utils.fetch(Utils.qualify_controller_name("game_controller"))
             
             imports = base.GameController.get_imports()
             

@@ -39,7 +39,7 @@ class BattleController(Controller):
             position.set_y_coord(position.y_coord + 2)
         # For testing purposes pressing enter swaps controller / view.
         if pressed_key == pygame.K_RETURN:
-            base = Utils.fetch(Utils.qualifyControllerName("game_controller"))
+            base = Utils.fetch(Utils.qualify_controller_name("game_controller"))
             
             imports = base.GameController.get_imports()
             

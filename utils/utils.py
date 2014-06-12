@@ -16,7 +16,7 @@ class Utils:
         return module
 
     @staticmethod
-    def qualifyControllerName(name):
+    def qualify_controller_name(name):
         return ("Unrealistic_Engine.controllers." + name)
 
     @staticmethod
