@@ -1,5 +1,6 @@
 import sys
 import pygame
+import json
 from Unrealistic_Engine.controllers import battle_controller
 from Unrealistic_Engine.controllers import menu_controller
 from Unrealistic_Engine.controllers.controller import Controller
@@ -25,12 +26,13 @@ class GameController(Controller):
         self.model = model
         self.view = view
         self.triggers = {}
-        self.build_triggers()
-        self.current_map = model.maps['map3']
+        self.current_map = model.maps["map3"]
+
+        self.__build_triggers()
 
         # Add Map model
         view.add_model(
-            model.maps['map3'], GameView.render_map, Position(0, 0), 1)
+            self.current_map, GameView.render_map, Position(0, 0), 1)
         # Add Character model
         view.add_model(
             model.character, GameView.render_character, Position(0, 0), 2)
@@ -38,7 +40,6 @@ class GameController(Controller):
     def handle_key_press(self, pressed_key):
         position = self.view.get_visible_model_position(
             self.model.character)
-        # TODO: change to be actual currently shown map rather than static map3
         destination_tile = None
         if pressed_key == pygame.K_LEFT:
             destination_tile = self.get_map_tile(position.x_coord - 1,
@@ -110,18 +111,26 @@ class GameController(Controller):
         print "position is %s" % str(position)
         if position in self.triggers:
             # TODO Handle chance here.
-            self.handle_trigger(self.triggers[position])
+            self.__handle_trigger(self.triggers[position])
 
-    def build_triggers(self):
-        for row in self.model.maps['Basic'].tiles:
+    def __change_map(self, map_name):
+        self.view.remove_model(self.current_map)
+        self.current_map = self.model.maps[map_name]
+        self.view.add_model(
+            self.current_map, GameView.render_map, Position(0, 0), 1)
+        self.triggers = {}
+        self.__build_triggers()
+
+    def __build_triggers(self):
+        for row in self.current_map.tiles:
             for tile in row:
                 if tile != 0 and tile.trigger is not None:
                     print "adding trigger to %s" % tile.position
                     self.triggers[tile.position] = tile.trigger
 
-    def handle_trigger(self, trigger):
+    def __handle_trigger(self, trigger):
         if (trigger.action_type == Trigger.CHANGE_MAP):
-            # TODO change the map.
+            self.__change_map(trigger.action_data['map_name'])
             print "Action occurred with data: " + str(trigger.action_data)
 
     def handle_game_event(self, event):
@@ -130,4 +139,8 @@ class GameController(Controller):
             sys.exit()
 
     def get_map_tile(self, pos_x, pos_y):
+        max_size = len(self.current_map.tiles)
+        if pos_x < 0 or pos_y < 0 or pos_x > max_size - 1 or pos_y > max_size - 1:
+            return None
+
         return self.current_map.tiles[pos_x][pos_y]

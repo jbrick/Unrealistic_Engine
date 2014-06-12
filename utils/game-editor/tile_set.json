@@ -1,0 +1,18 @@
+{
+	"tiles": [
+			{"Name" : "Grass", "Image" : "rpggrass.png", "Walkable" : 1 },
+			{"Name" : "Beige Brick", "Image" : "brick-beige.png", "Walkable" : 1 },
+			{"Name" : "Water Top Left", "Image" : "water-top-left.png", "Walkable" : 0 },
+			{"Name" : "Water Top Right", "Image" : "water-top-right.png", "Walkable" : 0 },
+			{"Name" : "Water Bottom Left", "Image" : "water-bottom-left.png", "Walkable" : 0 },
+			{"Name" : "Water Bottom Right", "Image" : "water-bottom-right.png", "Walkable" : 0 },
+			{"Name" : "Big Stairs", "Image" : "rpgTile118.png", "Walkable" : 1 },
+			{"Name" : "Brown Brick", "Image" : "brick-brown.png", "Walkable" : 1 },
+			{"Name" : "Boards", "Image" : "rpgTile084.png", "Walkable" : 1 },
+			{"Name" : "Blue Brick", "Image" : "brick-blue.png", "Walkable" : 1 },
+			{"Name" : "Stairs Down", "Image" : "stairs-down.png", "Walkable" : 1 },
+			{"Name" : "Stairs Up", "Image" : "stairs-up.png", "Walkable" : 1 },
+			{"Name" : "Water", "Image" : "water-solid.png", "Walkable" : 0 }
+
+		]
+}

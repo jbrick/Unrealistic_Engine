@@ -1,0 +1,61 @@
+{
+	"triggers": [
+			{
+				"MapTileId" : 513,
+				"Chance" : 100,
+				"Action_Type" : 1,
+				"Action_Data" : { 
+							"map_name" : "map1"
+						}
+			},
+			{
+				"MapTileId" : 672,
+				"Chance" : 100,
+				"Action_Type" : 1,
+				"Action_Data" : { 
+							"map_name" : "map1"
+						}
+			},
+			{
+				"MapTileId" : 725,
+				"Chance" : 100,
+				"Action_Type" : 1,
+				"Action_Data" : { 
+							"map_name" : "map1"
+							}
+			},
+			{
+				"MapTileId" : 735,
+				"Chance" : 100,
+				"Action_Type" : 1,
+				"Action_Data" : { 
+							"map_name" : "map1"
+						}
+			},
+			{
+				"MapTileId" : 639,
+				"Chance" : 100,
+				"Action_Type" : 1,
+				"Action_Data" : { 
+							"map_name" : "map1"
+					}
+			},
+			{
+				"MapTileId" : 1,
+				"Chance" : 100,
+				"Action_Type" : 1,
+				"Action_Data" : { 
+							"map_name" : "map3"
+					}
+			},
+			{
+				"MapTileId" : 252,
+				"Chance" : 100,
+				"Action_Type" : 1,
+				"Action_Data" : { 
+							"map_name" : "map3"
+					}
+			}
+		]
+
+}
