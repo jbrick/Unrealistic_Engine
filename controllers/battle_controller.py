@@ -17,23 +17,13 @@ class BattleController(Controller):
         self.view = view
 
     @staticmethod
-    def getModels():
+    def get_imports():
         models = ["Unrealistic_Engine.models.map",
             "Unrealistic_Engine.models.trigger"]
-        
-        return models
-
-    @staticmethod
-    def getViews():
         views = ["Unrealistic_Engine.views.battle_view"]
-        
-        return views
-
-    @staticmethod
-    def getControllers():
         controllers = ["Unrealistic_Engine.controllers.battle_controller"]
         
-        return controllers
+        return [models, views, controllers]
 
     def handle_key_press(self, pressed_key):
         position = self.view.get_visible_model_position(
@@ -49,21 +39,19 @@ class BattleController(Controller):
             position.set_y_coord(position.y_coord + 2)
         # For testing purposes pressing enter swaps controller / view.
         if pressed_key == pygame.K_RETURN:
-            baseController = Utils.fetch(Utils.qualifyControllerName(
-                "game_controller"))
+            base = Utils.fetch(Utils.qualifyControllerName("game_controller"))
             
-            models = baseController.GameController.getModels()
-            views = baseController.GameController.getViews()
-            controllers = baseController.GameController.getControllers()
+            imports = base.GameController.get_imports()
             
-            gview = utils.fetch(views [0])
+            view_module = utils.fetch(imports [base.GameController.VIEWS][0])
             
-            view = gview.GameView()
+            view = view_module.GameView()
+            
             # Just give the game view the same visible models as the battle
             # view for now.
             view.visible_models = self.view.visible_models
             
-            controller = baseController.GameController(self.model, view)
+            controller = base.GameController(self.model, view)
 
             pygame.event.post(pygame.event.Event(
                 event_types.UPDATE_GAME_STATE,

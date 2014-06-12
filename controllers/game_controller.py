@@ -30,23 +30,13 @@ class GameController(Controller):
             model.character, GameView.render_character, Position(0, 0), 2)
 
     @staticmethod
-    def getModels():
+    def get_imports():
         models = ["Unrealistic_Engine.models.map",
             "Unrealistic_Engine.models.trigger"]
-        
-        return models
-
-    @staticmethod
-    def getViews():
         views = ["Unrealistic_Engine.views.game_view"]
-        
-        return views
-
-    @staticmethod
-    def getControllers():
         controllers = ["Unrealistic_Engine.controllers.game_controller"]
         
-        return controllers
+        return [models, views, controllers]
 
     def handle_key_press(self, pressed_key):
         position = self.view.get_visible_model_position(
@@ -74,22 +64,19 @@ class GameController(Controller):
                 position.set_y_coord(position.y_coord + 1)
         # For testing purposes pressing enter swaps controller / view.
         if pressed_key == pygame.K_RETURN:
-            baseController = Utils.fetch(Utils.qualifyControllerName(
+            base = Utils.fetch(Utils.qualifyControllerName(
                 "battle_controller"))
             
-            models = baseController.BattleController.getModels()
-            views = baseController.BattleController.getViews()
-            controllers = baseController.BattleController.getControllers()
+            imports = base.BattleController.get_imports()
             
-            bview = Utils.fetch(views [0])
-            bcon = Utils.fetch(controllers [0])
+            view_module = Utils.fetch(imports [base.BattleController.VIEWS] [0])
             
-            view = bview.BattleView()
+            view = view_module.BattleView()
             
             # Just give the battle view the same visible models as the
             # game view for now.
             view.visible_models = self.view.visible_models
-            controller = bcon.BattleController(self.model, view)
+            controller = base.BattleController(self.model, view)
 
             pygame.event.post(
                 pygame.event.Event(
@@ -97,23 +84,16 @@ class GameController(Controller):
                     {"Controller": controller,
                      "View": view}))
         if pressed_key == pygame.K_ESCAPE:
-            baseController = Utils.fetch(Utils.qualifyControllerName(
+            base = Utils.fetch(Utils.qualifyControllerName(
                 "menu_controller"))
             
-            modelList = baseController.MenuController.getModels()
-            viewList = baseController.MenuController.getViews()
-            controllerList = baseController.MenuController.getControllers()
+            imports = base.MenuController.get_imports()
             
-            mview = Utils.fetch(viewList [0])
-            mcon = Utils.fetch(controllerList [0])
+            view_module = Utils.fetch(imports [base.MenuController.VIEWS] [0])
             
-            view = mview.MainMenu ()
-            
-            tmpMenu = mcon.MenuController.buildMenu ()
-
-            model = tmpMenu
-
-            controller = mcon.MenuController(model, view)
+            model = base.MenuController.build_menu ()
+            view = view_module.MainMenu ()
+            controller = base.MenuController(model, view)
 
             pygame.event.post(
                 pygame.event.Event(
