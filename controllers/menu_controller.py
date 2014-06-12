@@ -1,5 +1,6 @@
 import sys
 import pygame
+from Unrealistic_Engine import event_types
 from Unrealistic_Engine.utils.utils import Utils
 from Unrealistic_Engine.controllers.controller import Controller
 from Unrealistic_Engine.views.view import View
@@ -7,6 +8,7 @@ from Unrealistic_Engine.views.main_menu import MainMenu
 from Unrealistic_Engine.models.node_leaf import LeafNode
 from Unrealistic_Engine.models.node_menu import MenuNode
 from Unrealistic_Engine.models.menu import Menu
+from Unrealistic_Engine.models.database import Database
 
 
 class MenuController(Controller):
@@ -19,27 +21,17 @@ class MenuController(Controller):
         MenuController.activeMenu = model
 
     @staticmethod
-    def getModels():
+    def get_imports():
         models = ["Unrealistic_Engine.models.menu",
             "Unrealistic_Engine.models.node_menu",
             "Unrealistic_Engine.models.node_leaf"]
-        
-        return models
-    
-    @staticmethod
-    def getViews():
         views = ["Unrealistic_Engine.views.main_menu"]
-        
-        return views
-
-    @staticmethod
-    def getControllers():
         controllers = ["Unrealistic_Engine.controllers.menu_controller"]
         
-        return controllers
+        return [models, views, controllers]
 
     @staticmethod
-    def buildMenu():
+    def build_menu():
         tmpMenu = Menu()
         tmpChild1 = Menu()
         tmpChild2 = Menu()
@@ -102,7 +94,19 @@ class MenuController(Controller):
             if (self.model.activeNode >= self.model.nodeCount):
                 self.model.activeNode = 0
         if (pressed_key == pygame.K_ESCAPE):
-            pass
+            base = Utils.fetch(Utils.qualifyControllerName("game_controller"))
+            
+            imports = base.GameController.get_imports()
+            
+            view_module = Utils.fetch(imports [base.GameController.VIEWS] [0])
+            
+            model = Database().load_application()
+            view = view_module.GameView()
+            controller = base.GameController(model, view)
+
+            pygame.event.post(pygame.event.Event(
+                event_types.UPDATE_GAME_STATE,
+                {"Controller": controller, "View": view}))
 
     def handle_game_event(self, event):
         if event.type == pygame.QUIT:

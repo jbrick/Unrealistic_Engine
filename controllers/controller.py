@@ -1,28 +1,16 @@
 # Every class that requires input from user should inherit this class.
 class Controller():
 
+    # For use with the get_imports function
+    MODELS      = 0;
+    VIEWS       = 1;
+    CONTROLLERS = 2;
+    
     def __init__(self, model, view):
         raise NotImplementedError("Please Implement this method")
 
-    """
-    Retrieves the list of models associated with this controller.
-    """
     @staticmethod
-    def getModels():
-        raise NotImplementedError("Please Implement this method")
-
-    """
-    Retrieves the list of views associated with this controller
-    """
-    @staticmethod
-    def getViews():
-        raise NotImplementedError("Please Implement this method")
-
-    """
-    Retrieves the list of controllers associated with this controller
-    """
-    @staticmethod
-    def getControllers():
+    def get_imports():
         raise NotImplementedError("Please Implement this method")
 
     # This method gets passed all the pygame events such as a user pressing a
