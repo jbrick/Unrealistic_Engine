@@ -28,7 +28,7 @@ class MenuController(Controller):
         views = [Utils.qualify_view_name("main_menu")]
         controllers = [Utils.qualify_controller_name("menu_controller")]
         
-        return [models, views, controllers]
+        return (models, views, controllers)
 
     @staticmethod
     def build_menu():

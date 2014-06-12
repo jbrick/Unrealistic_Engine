@@ -36,7 +36,7 @@ class GameController(Controller):
         views = [Utils.qualify_view_name("game_view")]
         controllers = [Utils.qualify_controller_name("game_controller")]
         
-        return [models, views, controllers]
+        return (models, views, controllers)
 
     def handle_key_press(self, pressed_key):
         position = self.view.get_visible_model_position(
