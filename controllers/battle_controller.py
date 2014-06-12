@@ -23,7 +23,7 @@ class BattleController(Controller):
         views = [Utils.qualify_view_name("battle_view")]
         controllers = [Utils.qualify_controller_name("battle_controller")]
         
-        return [models, views, controllers]
+        return (models, views, controllers)
 
     def handle_key_press(self, pressed_key):
         position = self.view.get_visible_model_position(
