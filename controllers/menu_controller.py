@@ -104,6 +104,8 @@ class MenuController(Controller):
             view = view_module.GameView()
             controller = base.GameController(model, view)
 
+            Menu.breadcrumbs = []
+
             pygame.event.post(pygame.event.Event(
                 event_types.UPDATE_GAME_STATE,
                 {"Controller": controller, "View": view}))
