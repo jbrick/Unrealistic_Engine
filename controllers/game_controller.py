@@ -1,5 +1,6 @@
 import sys
 import pygame
+import copy
 import json
 from Unrealistic_Engine.controllers import battle_controller
 from Unrealistic_Engine.controllers import menu_controller
@@ -27,6 +28,8 @@ class GameController(Controller):
         self.view = view
         self.triggers = {}
         self.current_map = model.maps["map3"]
+        self.previous_position = None
+        self.changed_map = False
 
         self.__build_triggers()
 
@@ -42,22 +45,22 @@ class GameController(Controller):
             self.model.character)
         destination_tile = None
         if pressed_key == pygame.K_LEFT:
-            destination_tile = self.get_map_tile(position.x_coord - 1,
-                                                 position.y_coord)
+            destination_tile = self.current_map.get_map_tile(
+                position.x_coord - 1,position.y_coord)
             if (position.x_coord - 1) >= 0 and destination_tile.walkable == 1:
                 position.set_x_coord(position.x_coord - 1)
         if pressed_key == pygame.K_RIGHT:
-            destination_tile = self.get_map_tile(position.x_coord + 1,
-                                                 position.y_coord)
+            destination_tile = self.current_map.get_map_tile(
+                position.x_coord + 1,position.y_coord)
             if(position.x_coord + 1) < Map.GRID_SIZE and destination_tile.walkable == 1:
                 position.set_x_coord(position.x_coord + 1)
         if pressed_key == pygame.K_UP:
-            destination_tile = self.get_map_tile(position.x_coord,
+            destination_tile = self.current_map.get_map_tile(position.x_coord,
                                                  position.y_coord - 1)
             if(position.y_coord - 1) >= 0 and destination_tile.walkable == 1:
                 position.set_y_coord(position.y_coord - 1)
         if pressed_key == pygame.K_DOWN:
-            destination_tile = self.get_map_tile(position.x_coord,
+            destination_tile = self.current_map.get_map_tile(position.x_coord,
                                                  position.y_coord + 1)
             if(position.y_coord + 1) < Map.GRID_SIZE and destination_tile.walkable == 1:
                 position.set_y_coord(position.y_coord + 1)
@@ -104,33 +107,56 @@ class GameController(Controller):
                     {"Controller": controller,
                      "View": view}))
 
-        self.view.set_visible_model_position(
-            self.model.character, position)
+        self.view.set_visible_model_position(self.model.character, position)
 
         # Check if any triggers have been activated.
+        print "previous position is %s" % str(self.previous_position)
         print "position is %s" % str(position)
+
         if position in self.triggers:
             # TODO Handle chance here.
-            self.__handle_trigger(self.triggers[position])
+            self.__handle_trigger(self.triggers[position], position, False)
+        if self.previous_position in self.triggers:
+            # TODO Handle chance here.
+            self.__handle_trigger(self.triggers[self.previous_position], self.previous_position, True)
+
+        self.previous_position = copy.copy(position)
+        if self.changed_map:
+            self.previous_position = None
+            self.changed_map = False
 
     def __change_map(self, map_name):
+        self.changed_map = True
         self.view.remove_model(self.current_map)
         self.current_map = self.model.maps[map_name]
         self.view.add_model(
             self.current_map, GameView.render_map, Position(0, 0), 1)
         self.triggers = {}
+        self.previous_position = None
         self.__build_triggers()
 
     def __build_triggers(self):
         for row in self.current_map.tiles:
             for tile in row:
                 if tile != 0 and tile.trigger is not None:
-                    print "adding trigger to %s" % tile.position
                     self.triggers[tile.position] = tile.trigger
 
-    def __handle_trigger(self, trigger):
-        if (trigger.action_type == Trigger.CHANGE_MAP):
-            self.__change_map(trigger.action_data['map_name'])
+    def __handle_trigger(self, trigger, position, is_previous):
+
+        # We support triggers being fired when entering or leaving a tile.
+        valid_previous_trigger = trigger.triggered_on == "exit" and is_previous
+        valid_current_trigger = trigger.triggered_on == "entrance" and not is_previous
+
+        if valid_current_trigger or valid_previous_trigger:
+            if trigger.action_type == Trigger.CHANGE_MAP:
+                self.__change_map(trigger.action_data['map_name'])
+                position = Position(
+                    trigger.action_data['character_x'],
+                    trigger.action_data['character_y'])
+
+                self.view.set_visible_model_position(self.model.character, position)
+
+
             print "Action occurred with data: " + str(trigger.action_data)
 
     def handle_game_event(self, event):
@@ -138,9 +164,4 @@ class GameController(Controller):
             pygame.quit()
             sys.exit()
 
-    def get_map_tile(self, pos_x, pos_y):
-        max_size = len(self.current_map.tiles)
-        if pos_x < 0 or pos_y < 0 or pos_x > max_size - 1 or pos_y > max_size - 1:
-            return None
 
-        return self.current_map.tiles[pos_x][pos_y]

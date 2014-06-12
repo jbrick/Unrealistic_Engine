@@ -1,59 +1,69 @@
 {
 	"triggers": [
+	        {
+				"MapTileId" : 586,
+				"Chance" : 100,
+				"Action_Type" : 1,
+				"Triggered_On" : "entrance",
+				"Action_Data" : {
+							"map_name" : "map1",
+							"character_x": 9,
+							"character_y": 4
+						}
+			},
+			{
+				"MapTileId" : 541,
+				"Chance" : 100,
+				"Action_Type" : 1,
+				"Triggered_On" : "entrance",
+				"Action_Data" : {
+							"map_name" : "map1",
+							"character_x": 12,
+							"character_y": 1
+			}
+			},
 			{
 				"MapTileId" : 513,
 				"Chance" : 100,
 				"Action_Type" : 1,
+				"Triggered_On" : "exit",
 				"Action_Data" : { 
-							"map_name" : "map1"
+							"map_name" : "map1",
+							"character_x": 0,
+							"character_y": 15
 						}
 			},
 			{
 				"MapTileId" : 672,
 				"Chance" : 100,
 				"Action_Type" : 1,
-				"Action_Data" : { 
-							"map_name" : "map1"
+				"Triggered_On" : "exit",
+				"Action_Data" : {
+							"map_name" : "map1",
+							"character_x": 0,
+							"character_y": 9
 						}
-			},
-			{
-				"MapTileId" : 725,
-				"Chance" : 100,
-				"Action_Type" : 1,
-				"Action_Data" : { 
-							"map_name" : "map1"
-							}
-			},
-			{
-				"MapTileId" : 735,
-				"Chance" : 100,
-				"Action_Type" : 1,
-				"Action_Data" : { 
-							"map_name" : "map1"
-						}
-			},
-			{
-				"MapTileId" : 639,
-				"Chance" : 100,
-				"Action_Type" : 1,
-				"Action_Data" : { 
-							"map_name" : "map1"
-					}
 			},
 			{
 				"MapTileId" : 1,
 				"Chance" : 100,
 				"Action_Type" : 1,
-				"Action_Data" : { 
-							"map_name" : "map3"
+				"Triggered_On" : "exit",
+				"Action_Data" : {
+							"map_name" : "map3",
+							"character_x": 0,
+							"character_y": 15
 					}
 			},
 			{
 				"MapTileId" : 252,
 				"Chance" : 100,
 				"Action_Type" : 1,
-				"Action_Data" : { 
-							"map_name" : "map3"
+				"Triggered_On" : "exit",
+				"Action_Data" : {
+							"map_name" : "map3",
+							"character_x": 11,
+							"character_y": 0
 					}
 			}
 		]

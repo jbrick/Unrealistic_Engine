@@ -91,10 +91,10 @@ def add_triggers(cursor, json_triggers_set, *args, **kwargs):
 
         for trigger in triggers["triggers"]:
             cursor.execute(
-                """INSERT INTO Trigger (MapTileId, Chance, Action_Type,
-                 Action_Data) VALUES (?, ?, ?, ?)""",
+                """INSERT INTO Trigger (MapTileId, Chance, Action_Type, Triggered_On,
+                 Action_Data) VALUES (?, ?, ?, ?, ?)""",
                 (trigger["MapTileId"], trigger["Chance"],
-                 trigger["Action_Type"], json.dumps(trigger["Action_Data"])))
+                 trigger["Action_Type"], trigger["Triggered_On"], json.dumps(trigger["Action_Data"])))
 
 def show_map_layout(cursor, map_names, *args, **kwargs):
     show_tiles(cursor)
@@ -265,7 +265,7 @@ def reset_database(cursor, *args, **kwargs):
 
     cursor.execute(
         "CREATE TABLE Trigger"
-        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, MapTileId INTEGER, Chance INTEGER, Action_Type INTEGER, Action_Data TEXT)")
+        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, MapTileId INTEGER, Chance INTEGER, Action_Type INTEGER, Triggered_On TEXT, Action_Data TEXT)")
 
     # Insert default data
     # Insert default character entry
