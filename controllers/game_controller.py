@@ -64,7 +64,7 @@ class GameController(Controller):
                 position.set_y_coord(position.y_coord + 1)
         # For testing purposes pressing enter swaps controller / view.
         if pressed_key == pygame.K_RETURN:
-            base = Utils.fetch(Utils.qualifyControllerName(
+            base = Utils.fetch(Utils.qualify_controller_name(
                 "battle_controller"))
             
             imports = base.BattleController.get_imports()
@@ -84,7 +84,7 @@ class GameController(Controller):
                     {"Controller": controller,
                      "View": view}))
         if pressed_key == pygame.K_ESCAPE:
-            base = Utils.fetch(Utils.qualifyControllerName(
+            base = Utils.fetch(Utils.qualify_controller_name(
                 "menu_controller"))
             
             imports = base.MenuController.get_imports()
