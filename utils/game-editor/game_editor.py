@@ -141,6 +141,32 @@ def show_map_layout(cursor, map_names, *args, **kwargs):
 
     print ""
 
+def show_map_names(cursor, *args, **kwargs):
+    result = cursor.execute(
+                "SELECT * FROM Map")
+    for row in result:
+        print("Name: '%s', ID: '%s'" % (row[1], row[0]))
+
+
+def insert_map(cursor, map_name):
+    cursor.execute(
+        "INSERT INTO Map (Name) VALUES (?)",
+        [map_name])
+
+
+def get_map_id(cursor, map_name):
+    result = cursor.execute(
+                "SELECT ID FROM Map WHERE NAME = '%s'"
+                % map_name)
+    for row in result:
+        return row[0]
+
+
+def insert_maptile(cursor, map_id, tile_id, x_pos, y_pos):
+    cursor.execute(
+        "INSERT INTO MapTile (MapId, TileId, Index_X, Index_Y) VALUES (?, ?, ?, ?)",
+        (map_id, tile_id, x_pos, y_pos))
+
 def create_maps(cursor, maps, *args, **kwargs):
 
     for a_map in maps:    
@@ -209,33 +235,6 @@ def add_tilesets(cursor, json_tilesets, *args, **kwargs):
             cursor.execute(
                 "INSERT INTO Tile (Name, Image, Walkable) VALUES (?, ?, ?)",
                 (tile["Name"], tile["Image"], tile["Walkable"]))
-
-
-def insert_map(cursor, map_name):
-    cursor.execute(
-        "INSERT INTO Map (Name) VALUES (?)",
-        [map_name])
-
-
-def get_map_id(cursor, map_name):
-    result = cursor.execute(
-                "SELECT ID FROM Map WHERE NAME = '%s'"
-                % map_name)
-    for row in result:
-        return row[0]
-
-
-def insert_maptile(cursor, map_id, tile_id, x_pos, y_pos):
-    cursor.execute(
-        "INSERT INTO MapTile (MapId, TileId, Index_X, Index_Y) VALUES (?, ?, ?, ?)",
-        (map_id, tile_id, x_pos, y_pos))
-
-
-def show_map_names(cursor, *args, **kwargs):
-    result = cursor.execute(
-                "SELECT * FROM Map")
-    for row in result:
-        print("Name: '%s', ID: '%s'" % (row[1], row[0])) 
 
 
 def reset_database(cursor, *args, **kwargs):

@@ -40,7 +40,6 @@ class GameController(Controller):
     def handle_key_press(self, pressed_key):
         position = self.view.get_visible_model_position(
             self.model.character)
-        # TODO: change to be actual currently shown map rather than static map3
         destination_tile = None
         if pressed_key == pygame.K_LEFT:
             destination_tile = self.get_map_tile(position.x_coord - 1,
