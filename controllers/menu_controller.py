@@ -22,11 +22,11 @@ class MenuController(Controller):
 
     @staticmethod
     def get_imports():
-        models = ["Unrealistic_Engine.models.menu",
-            "Unrealistic_Engine.models.node_menu",
-            "Unrealistic_Engine.models.node_leaf"]
-        views = ["Unrealistic_Engine.views.main_menu"]
-        controllers = ["Unrealistic_Engine.controllers.menu_controller"]
+        models = [Utils.qualify_model_name("menu"),
+            Utils.qualify_model_name("node_menu"),
+            Utils.qualify_model_name("node_leaf")]
+        views = [Utils.qualify_view_name("main_menu")]
+        controllers = [Utils.qualify_controller_name("menu_controller")]
         
         return [models, views, controllers]
 
