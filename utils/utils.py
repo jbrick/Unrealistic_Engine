@@ -16,6 +16,14 @@ class Utils:
         return module
 
     @staticmethod
+    def qualify_model_name(name):
+        return ("Unrealistic_Engine.models." + name)
+
+    @staticmethod
+    def qualify_view_name(name):
+        return ("Unrealistic_Engine.views." + name)
+
+    @staticmethod
     def qualify_controller_name(name):
         return ("Unrealistic_Engine.controllers." + name)
 

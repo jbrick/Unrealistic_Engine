@@ -18,10 +18,10 @@ class BattleController(Controller):
 
     @staticmethod
     def get_imports():
-        models = ["Unrealistic_Engine.models.map",
-            "Unrealistic_Engine.models.trigger"]
-        views = ["Unrealistic_Engine.views.battle_view"]
-        controllers = ["Unrealistic_Engine.controllers.battle_controller"]
+        models = [Utils.qualify_model_name("map"),
+            Utils.qualify_model_name("trigger")]
+        views = [Utils.qualify_view_name("battle_view")]
+        controllers = [Utils.qualify_controller_name("battle_controller")]
         
         return [models, views, controllers]
 

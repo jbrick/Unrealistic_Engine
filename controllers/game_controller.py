@@ -31,10 +31,10 @@ class GameController(Controller):
 
     @staticmethod
     def get_imports():
-        models = ["Unrealistic_Engine.models.map",
-            "Unrealistic_Engine.models.trigger"]
-        views = ["Unrealistic_Engine.views.game_view"]
-        controllers = ["Unrealistic_Engine.controllers.game_controller"]
+        models = [Utils.qualify_model_name("map"),
+            Utils.qualify_model_name("trigger")]
+        views = [Utils.qualify_view_name("game_view")]
+        controllers = [Utils.qualify_controller_name("game_controller")]
         
         return [models, views, controllers]
 
