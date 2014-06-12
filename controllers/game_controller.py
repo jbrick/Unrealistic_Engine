@@ -24,7 +24,7 @@ class GameController(Controller):
 
         # Add Map model
         view.add_model(self.current_map, GameView.render_map, Position(0, 0), 1)
-
+        
         # Add Character model
         view.add_model(
             model.character, GameView.render_character, Position(0, 0), 2)
