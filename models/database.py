@@ -43,7 +43,7 @@ class Database(Model):
             os.path.join('Images', row['Image']))
         character_image_scaled = pygame.transform.scale(
             character_image, (Character.SIZE, Character.SIZE))
-        return Character(character_image_scaled)
+        return Character('Player', character_image_scaled, 200, 50)
 
     def __load_maps(self):
 
@@ -93,7 +93,7 @@ class Database(Model):
                     row_map_tiles['Name'], tile_image_scaled, position,
                     trigger, row_map_tiles['Walkable'])
                 
-                game_map.addOrReplaceTile(tile)
+                game_map.add_or_replace_tile(tile)
 
             maps[each_map['Name']] = game_map
 

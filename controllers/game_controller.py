@@ -1,19 +1,15 @@
 import sys
 import pygame
-import json
+
 from Unrealistic_Engine.controllers import battle_controller
 from Unrealistic_Engine.controllers import menu_controller
 from Unrealistic_Engine.controllers.controller import Controller
-from Unrealistic_Engine.views.view import View
 from Unrealistic_Engine.views.battle_view import BattleView
 from Unrealistic_Engine.views.game_view import GameView
 from Unrealistic_Engine.views.main_menu import MainMenu
-from Unrealistic_Engine.models.database import Database
 from Unrealistic_Engine import event_types
-from Unrealistic_Engine.models.model import Model
 from Unrealistic_Engine.models.map import Map
 from Unrealistic_Engine.models.menu import Menu
-from Unrealistic_Engine.models.node import Node
 from Unrealistic_Engine.models.node_leaf import LeafNode
 from Unrealistic_Engine.models.node_menu import MenuNode
 from Unrealistic_Engine.utils.position import Position
@@ -62,7 +58,7 @@ class GameController(Controller):
             if(position.y_coord + 1) < Map.GRID_SIZE and destination_tile.walkable == 1:
                 position.set_y_coord(position.y_coord + 1)
         # For testing purposes pressing enter swaps controller / view.
-        if pressed_key == pygame.K_RETURN:
+        if pressed_key == pygame.K_b:
             view = BattleView()
             
             controller = battle_controller.BattleController(self.model, view, self.view.visible_models,

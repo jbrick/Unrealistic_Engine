@@ -1,7 +1,3 @@
-import sys
-import pygame
-
-
 class Map:
     MAP_SIZE = 640
     GRID_SIZE = 16
@@ -11,8 +7,8 @@ class Map:
         self.tiles = [[0 for x in xrange(grid_size)]
                       for x in xrange(grid_size)]
 
-    def addOrReplaceTile(self, tile):
+    def add_or_replace_tile(self, tile):
         self.tiles[tile.position.x_coord][tile.position.y_coord] = tile
 
     def get_tile_at_position(self, position):
-    	return self.tiles[position.x_coord][position.y_coord]
+        return self.tiles[position.x_coord][position.y_coord]

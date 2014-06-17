@@ -3,7 +3,6 @@ import pygame
 from Unrealistic_Engine.models.database import Database
 from Unrealistic_Engine.controllers.game_controller import GameController
 from Unrealistic_Engine.views.game_view import GameView
-from Unrealistic_Engine.views.view import View
 from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine import event_types
 from Unrealistic_Engine.models.map import Map
