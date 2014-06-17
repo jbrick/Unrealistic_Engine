@@ -16,19 +16,17 @@ class MenuController(Controller):
     def __init__(self, model, view):
         self.model = model
         self.view = view
-
+        
         view.add_model(self.model, MainMenu.render_menu, 0, View.BACKGROUND)
         MenuController.activeMenu = model
 
     @staticmethod
     def get_imports():
-        models = [Utils.qualify_model_name("menu"),
-            Utils.qualify_model_name("node_menu"),
-            Utils.qualify_model_name("node_leaf")]
-        views = [Utils.qualify_view_name("main_menu")]
-        controllers = [Utils.qualify_controller_name("menu_controller")]
+        models = ["menu", "node_menu", "node_leaf"]
+        views = ["main_menu"]
+        controllers = ["menu_controller"]
         
-        return (models, views, controllers)
+        return Controller.qualify_imports((models, views, controllers))
 
     @staticmethod
     def build_menu():
@@ -98,7 +96,7 @@ class MenuController(Controller):
             
             imports = base.GameController.get_imports()
             
-            view_module = Utils.fetch(imports [base.GameController.VIEWS] [0])
+            view_module = Utils.fetch(imports [base.GameController.VIEWS] ["game_view"])
             
             model = Database().load_application()
             view = view_module.GameView()

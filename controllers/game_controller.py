@@ -31,12 +31,11 @@ class GameController(Controller):
 
     @staticmethod
     def get_imports():
-        models = [Utils.qualify_model_name("map"),
-            Utils.qualify_model_name("trigger")]
-        views = [Utils.qualify_view_name("game_view")]
-        controllers = [Utils.qualify_controller_name("game_controller")]
+        models = ["map", "trigger"]
+        views = ["game_view"]
+        controllers = ["game_controller"]
         
-        return (models, views, controllers)
+        return Controller.qualify_imports((models, views, controllers))
 
     def handle_key_press(self, pressed_key):
         position = self.view.get_visible_model_position(
@@ -69,7 +68,7 @@ class GameController(Controller):
             
             imports = base.BattleController.get_imports()
             
-            view_module = Utils.fetch(imports [base.BattleController.VIEWS] [0])
+            view_module = Utils.fetch(imports [base.BattleController.VIEWS] ["battle_view"])
             
             view = view_module.BattleView()
             
@@ -89,7 +88,7 @@ class GameController(Controller):
             
             imports = base.MenuController.get_imports()
             
-            view_module = Utils.fetch(imports [base.MenuController.VIEWS] [0])
+            view_module = Utils.fetch(imports [base.MenuController.VIEWS] ["main_menu"])
             
             model = base.MenuController.build_menu ()
             view = view_module.MainMenu ()

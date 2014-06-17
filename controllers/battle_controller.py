@@ -18,12 +18,11 @@ class BattleController(Controller):
 
     @staticmethod
     def get_imports():
-        models = [Utils.qualify_model_name("map"),
-            Utils.qualify_model_name("trigger")]
-        views = [Utils.qualify_view_name("battle_view")]
-        controllers = [Utils.qualify_controller_name("battle_controller")]
+        models = ["map", "trigger"]
+        views = ["battle_view"]
+        controllers = ["battle_controller"]
         
-        return (models, views, controllers)
+        return Controller.qualify_imports((models, views, controllers))
 
     def handle_key_press(self, pressed_key):
         position = self.view.get_visible_model_position(
@@ -43,7 +42,7 @@ class BattleController(Controller):
             
             imports = base.GameController.get_imports()
             
-            view_module = utils.fetch(imports [base.GameController.VIEWS][0])
+            view_module = utils.fetch(imports [base.GameController.VIEWS] ["game_view"])
             
             view = view_module.GameView()
             

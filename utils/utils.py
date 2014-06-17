@@ -5,6 +5,14 @@ class Utils:
     engine = __import__("Unrealistic_Engine")
 
     @staticmethod
+    def dictify(list_to_change):
+        dictionary = {}
+        for item in list_to_change:
+            dictionary[item] = item
+        
+        return dictionary
+
+    @staticmethod
     def fetch(path):
         module = __import__(path)
         
