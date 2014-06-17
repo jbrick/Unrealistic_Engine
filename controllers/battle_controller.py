@@ -38,7 +38,7 @@ class BattleController(Controller):
 
         #Add Map Model
         self.view.add_model(
-            self.current_map.get_tile_at_position(character_start_position),
+            self.current_map.get_map_tile(character_start_position.x_coord, character_start_position.y_coord),
             BattleView.render_map, Position(0, 0), 1)
 
         #Add test Enemy
