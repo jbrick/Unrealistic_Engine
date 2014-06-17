@@ -13,6 +13,8 @@ class BattleView(BattleViewInterface):
     TARGET_ICON_OFFSET = -10
     FONT_SIZE = 20
     PADDING = 10
+    LINE_HEIGHT = 25  # Height of each menu item
+    OFFSET = 50       # Leaving space for breadcrumbs
 
     @staticmethod
     def render_character(character, screen, position, *args, **kwargs):
@@ -34,6 +36,11 @@ class BattleView(BattleViewInterface):
 
     @staticmethod
     def render_target_window(target_window, screen, position, *args, **kwargs):
+        large_offset = Map.MAP_SIZE - (Map.MAP_SIZE / 4)
+
+        window_surface = pygame.Surface((Map.MAP_SIZE/4, Map.MAP_SIZE/8))
+        screen.blit(window_surface, (large_offset, Map.MAP_SIZE/4))
+
         # Render the target icon over the new target
         target_image = pygame.image.load(
             os.path.join('Images', "target_icon.png"))
@@ -48,9 +55,28 @@ class BattleView(BattleViewInterface):
         health_label = font.render("Health: %d" % target_window.current_target.health, 1, (255, 255, 255))
         attack_label = font.render("Attack: %d" % target_window.current_target.attack, 1, (255, 255, 255))
 
-        screen.blit(name_label, (Map.MAP_SIZE - (Map.MAP_SIZE / 4), (Map.MAP_SIZE / 4)))
-        screen.blit(health_label, (Map.MAP_SIZE - (Map.MAP_SIZE / 4), (Map.MAP_SIZE / 4) + 20))
-        screen.blit(attack_label, (Map.MAP_SIZE - (Map.MAP_SIZE / 4), (Map.MAP_SIZE / 4) + 40))
+        screen.blit(name_label, (large_offset, (Map.MAP_SIZE / 4)))
+        screen.blit(health_label, (large_offset, (Map.MAP_SIZE / 4) + 20))
+        screen.blit(attack_label, (large_offset, (Map.MAP_SIZE / 4) + 40))
 
+    @staticmethod
+    def render_action_menu(action_menu, screen, position, *args, **kwargs):
+        large_offset = Map.MAP_SIZE - (Map.MAP_SIZE / 4)
+        font = pygame.font.SysFont("monospace", BattleView.FONT_SIZE)
+
+        menu_surface = pygame.Surface((Map.MAP_SIZE, Map.MAP_SIZE/4))
+        screen.blit(menu_surface, (0, large_offset))
+
+        # Render menu items
+        for count in range(0, action_menu.nodeCount):
+            label = font.render(action_menu.nodes [count].label, 1, (255, 255, 255))
+            screen.blit(
+                label, (2*BattleView.PADDING, count*BattleView.LINE_HEIGHT + BattleView.OFFSET + large_offset))
+
+            if count == action_menu.activeNode:
+                screen.blit(action_menu.activeIcon, (BattleView.PADDING, count*BattleView.LINE_HEIGHT +
+                                                     BattleView.OFFSET + BattleView.PADDING + large_offset))
+
+        crumbPos = BattleView.PADDING;
 
 

@@ -18,3 +18,7 @@ class BattleViewInterface(View):
     @staticmethod
     def render_target_window(target_window, screen, *args, **kwargs):
         raise NotImplementedError("Please Implement this method")
+
+    @staticmethod
+    def render_action_menu(action_menu, screen, position, *args, **kwargs):
+        raise NotImplementedError("Please Implement this method")
