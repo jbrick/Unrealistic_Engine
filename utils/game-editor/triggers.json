@@ -4,7 +4,7 @@
 				"MapTileId" : 586,
 				"Chance" : 100,
 				"Action_Type" : 1,
-				"Triggered_On" : "entrance",
+				"Triggered_On" : "enter",
 				"Action_Data" : {
 							"map_name" : "map1",
 							"character_x": 9,
@@ -15,7 +15,7 @@
 				"MapTileId" : 541,
 				"Chance" : 100,
 				"Action_Type" : 1,
-				"Triggered_On" : "entrance",
+				"Triggered_On" : "enter",
 				"Action_Data" : {
 							"map_name" : "map1",
 							"character_x": 12,

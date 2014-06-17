@@ -122,6 +122,8 @@ class GameController(Controller):
 
         self.previous_position = copy.copy(position)
         if self.changed_map:
+            # If we changed maps we need to reset our previous position such that we don't fire the
+            # trigger twice.
             self.previous_position = None
             self.changed_map = False
 
@@ -145,7 +147,7 @@ class GameController(Controller):
 
         # We support triggers being fired when entering or leaving a tile.
         valid_previous_trigger = trigger.triggered_on == "exit" and is_previous
-        valid_current_trigger = trigger.triggered_on == "entrance" and not is_previous
+        valid_current_trigger = trigger.triggered_on == "enter" and not is_previous
 
         if valid_current_trigger or valid_previous_trigger:
             if trigger.action_type == Trigger.CHANGE_MAP:
