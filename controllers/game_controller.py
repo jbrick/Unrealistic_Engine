@@ -122,7 +122,7 @@ class GameController(Controller):
             self.previous_position = None
             self.changed_map = False
 
-    def __change_map(self, map_name):
+    def change_map(self, map_name):
         self.changed_map = True
         self.view.remove_model(self.current_map)
         self.current_map = self.model.maps[map_name]

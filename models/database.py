@@ -10,7 +10,8 @@ from Unrealistic_Engine.models.model import Model
 from Unrealistic_Engine.models.map import Map
 from Unrealistic_Engine.models.tile import Tile
 from Unrealistic_Engine.models.trigger import Trigger
-
+from Unrealistic_Engine.models.mementos.character import CharacterMemento
+from Unrealistic_Engine.models.mementos.game import GameMemento
 
 class Database(Model):
     def __init__(self):
@@ -100,3 +101,38 @@ class Database(Model):
             maps[each_map['Name']] = game_map
 
         return maps
+
+    def save_game(self, game_memento):
+        cursor = self.__database_execute(
+            """INSERT INTO GameState(Name, Current_Map, Character_Position_X, Character_Position_Y)
+            VALUES (?, ?, ?, ?)""",
+            game_memento.name, game_memento.current_map,
+            game_memento.character_memento.position.x_coord,
+            game_memento.character_memento.position.y_coord, None)
+
+    def get_saved_games(self):
+        cursor = self.__database_execute("SELECT Name FROM GameState", None)
+        memento_name_rows = cursor.fetchall()
+
+        memento_names = []
+        for row in memento_name_rows:
+                memento_names.append(row["Name"])
+
+        return memento_names
+
+    def load_saved_game(self, memento_name):
+        cursor = self.__database_execute(
+            """SELECT (Current_Map, Character_Position_X, Character_Position_Y) FROM GameState
+            WHERE Name = %s""" % memento_name, None)
+        memento_row = cursor.fetchone()
+        current_map = memento_row['Current_Map']
+        character_position = Position(
+                memento_row['Character_Position_X'], memento_row['Character_Position_Y'])
+
+        character_memento = CharacterMemento(character_position)
+        game_memento = GameMemento(memento_name, current_map, character_memento)
+
+        return game_memento
+
+
+
