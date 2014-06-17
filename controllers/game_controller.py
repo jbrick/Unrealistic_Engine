@@ -1,4 +1,3 @@
-# import sys
 import pygame
 import json
 from Unrealistic_Engine import event_types
