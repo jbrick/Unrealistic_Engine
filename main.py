@@ -25,7 +25,7 @@ controller = GameController(model, view, Position(0,0))
 # Draw the screen every 34 ms or 30 fps.
 pygame.time.set_timer(event_types.RENDER_SCREEN, 34)
 
-pygame.key.set_repeat(50, 50)
+pygame.key.set_repeat(75, 75)
 while True:
     for event in pygame.event.get():
         if event.type is event_types.RENDER_SCREEN:

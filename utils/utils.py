@@ -1,0 +1,40 @@
+import pygame
+
+class Utils:
+
+    # engine = __import__("Unrealistic_Engine")
+
+    @staticmethod
+    def dictify(list_to_change):
+        dictionary = {}
+        for item in list_to_change:
+            dictionary[item] = item
+        
+        return dictionary
+
+    @staticmethod
+    def fetch(path):
+        module = __import__(path)
+        
+        components = path.split(".")
+        
+        for component in components[1:]:
+            module = getattr(module, component)
+        
+        return module
+
+    @staticmethod
+    def qualify_model_name(name):
+        return ("Unrealistic_Engine.models." + name)
+
+    @staticmethod
+    def qualify_view_name(name):
+        return ("Unrealistic_Engine.views." + name)
+
+    @staticmethod
+    def qualify_controller_name(name):
+        return ("Unrealistic_Engine.controllers." + name)
+
+    @staticmethod
+    def quit():
+        pygame.event.post (pygame.event.Event(pygame.QUIT))

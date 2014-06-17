@@ -1,4 +1,4 @@
 class Node():
 
-    def __init__ (self):
-        raise NotImplementedError("You must specify the node type.")
+    def __init__(self, label):
+        self.label = label

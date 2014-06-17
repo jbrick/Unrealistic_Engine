@@ -1,20 +1,14 @@
-import sys
 import pygame
 import copy
+import sys
 
-from Unrealistic_Engine.controllers import battle_controller
-from Unrealistic_Engine.controllers import menu_controller
-from Unrealistic_Engine.controllers.controller import Controller
-from Unrealistic_Engine.views.battle_view import BattleView
-from Unrealistic_Engine.views.game_view import GameView
-from Unrealistic_Engine.views.main_menu import MainMenu
 from Unrealistic_Engine import event_types
-from Unrealistic_Engine.models.map import Map
-from Unrealistic_Engine.models.menu import Menu
-from Unrealistic_Engine.models.node_leaf import LeafNode
-from Unrealistic_Engine.models.node_menu import MenuNode
+from Unrealistic_Engine.utils.utils import Utils
 from Unrealistic_Engine.utils.position import Position
+from Unrealistic_Engine.models.map import Map
 from Unrealistic_Engine.models.trigger import Trigger
+from Unrealistic_Engine.views.game_view import GameView
+from Unrealistic_Engine.controllers.controller import Controller
 
 
 class GameController(Controller):
@@ -30,11 +24,19 @@ class GameController(Controller):
         self.__build_triggers()
 
         # Add Map model
-        view.add_model(
-            self.current_map, GameView.render_map, Position(0, 0), 1)
+        view.add_model(self.current_map, GameView.render_map, Position(0, 0), 1)
+        
         # Add Character model
         view.add_model(
             model.character, GameView.render_character, character_position, 2)
+
+    @staticmethod
+    def get_imports():
+        models = ["map", "trigger"]
+        views = ["game_view"]
+        controllers = ["game_controller"]
+        
+        return Controller.qualify_imports((models, views, controllers))
 
     def handle_key_press(self, pressed_key):
         position = self.view.get_visible_model_position(
@@ -61,40 +63,38 @@ class GameController(Controller):
             if(position.y_coord + 1) < Map.GRID_SIZE and destination_tile.walkable == 1:
                 position.set_y_coord(position.y_coord + 1)
         # For testing purposes pressing enter swaps controller / view.
-        if pressed_key == pygame.K_b:
-            view = BattleView()
-            
-            controller = battle_controller.BattleController(self.model, view, self.view._visible_models,
-                                                            self.current_map, position)
 
+        if pressed_key == pygame.K_b:
+            base = Utils.fetch(Utils.qualify_controller_name(
+                "battle_controller"))
+            
+            imports = base.BattleController.get_imports()
+            
+            view_module = Utils.fetch(imports [base.BattleController.VIEWS] ["battle_view"])
+            
+            view = view_module.BattleView()
+            
+            # Just give the battle view the same visible models as the
+            # game view for now.
+            view.visible_models = self.view._visible_models
+            controller = base.BattleController(self.model, view, self.view._visible_models,
+                                                            self.current_map, position)
             pygame.event.post(
                 pygame.event.Event(
                     event_types.UPDATE_GAME_STATE,
                     {"Controller": controller,
                      "View": view}))
         if pressed_key == pygame.K_ESCAPE:
-            view = MainMenu()
-
-            tmpMenu = Menu()
-            tmpChild1 = Menu()
-            tmpChild2 = Menu()
-
-            # Create test menus
-            tmpChild2.addItem(LeafNode(LeafNode.testFunc, "Child's child 1"))
-            tmpChild2.addItem(LeafNode(LeafNode.testFunc, "Child's child 2"))
-            tmpChild2.addItem(LeafNode(LeafNode.testFunc, "Child's child 3"))
-            tmpChild2.addItem(LeafNode(LeafNode.testFunc, "Child's child 4"))
-
-            tmpChild1.addItem(LeafNode(LeafNode.testFunc, "Child item 1"))
-            tmpChild1.addItem(MenuNode(tmpChild2, "Child item 2"))
-
-            tmpMenu.addItem(LeafNode(LeafNode.testFunc, "Test 1"))
-            tmpMenu.addItem(LeafNode(LeafNode.testFunc, "Test 2"))
-            tmpMenu.addItem(MenuNode(tmpChild1, "Test 3 (I have a submenu)"))
-
-            model = tmpMenu
-
-            controller = menu_controller.MenuController(model, view)
+            base = Utils.fetch(Utils.qualify_controller_name(
+                "menu_controller"))
+            
+            imports = base.MenuController.get_imports()
+            
+            view_module = Utils.fetch(imports [base.MenuController.VIEWS] ["main_menu"])
+            
+            model = base.MenuController.build_menu ()
+            view = view_module.MainMenu ()
+            controller = base.MenuController(model, view)
 
             pygame.event.post(
                 pygame.event.Event(

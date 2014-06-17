@@ -5,18 +5,19 @@ import pygame
 from pygame.constants import K_RETURN
 
 import Unrealistic_Engine.controllers
-from Unrealistic_Engine.controllers.controller import Controller
 from Unrealistic_Engine.models.menu import Menu
 from Unrealistic_Engine.models.node_leaf import LeafNode
 from Unrealistic_Engine.models.action import Action
-from Unrealistic_Engine.views.view import View
 from Unrealistic_Engine.views.game_view import GameView
 from Unrealistic_Engine.views.battle_view import BattleView
 from Unrealistic_Engine.models.target_window import TargetWindow
 from Unrealistic_Engine.models.map import Map
 from Unrealistic_Engine.models.character import Character
 from Unrealistic_Engine import event_types
+from Unrealistic_Engine.utils.utils import Utils
 from Unrealistic_Engine.utils.position import Position
+from Unrealistic_Engine.views.view import View
+from Unrealistic_Engine.controllers.controller import Controller
 
 
 class BattleController(Controller):
@@ -65,6 +66,14 @@ class BattleController(Controller):
         self.action_menu.addItem(LeafNode(self.set_attack_action, "Attack"))
         self.action_menu.addItem(LeafNode(LeafNode.testFunc, "Items"))
         self.view.add_model(self.action_menu, BattleView.render_action_menu, 0, View.FOREGROUND)
+
+    @staticmethod
+    def get_imports():
+        models = ["map", "trigger"]
+        views = ["battle_view"]
+        controllers = ["battle_controller"]
+        
+        return Controller.qualify_imports((models, views, controllers))
 
     def handle_key_press(self, pressed_key):
         print("State is: %s" % self.state)
@@ -115,14 +124,21 @@ class BattleController(Controller):
         #if pressed_key == pygame.K_DOWN:
 
         # For testing purposes pressing enter swaps controller / view.
+
         if pressed_key == pygame.K_b:
-            view = GameView()
+            base = Utils.fetch(Utils.qualify_controller_name("game_controller"))
+            
+            imports = base.GameController.get_imports()
+            
+            view_module = Utils.fetch(imports [base.GameController.VIEWS] ["game_view"])
+            
+            view = view_module.GameView()
+            
             # Just give the game view the same visible models as the battle
             # view for now.
-            view.visible_models = self.current_visible_models
-            # This long reference is necessary otherwise we get cyclic imports
-            controller = Unrealistic_Engine.controllers.game_controller.GameController(self.model, view,
-                                                                                       self.character_start_position)
+            view.visible_models = self.view.visible_models
+            
+            controller = base.GameController(self.model, view, self.character_start_position)
 
             pygame.event.post(pygame.event.Event(
                 event_types.UPDATE_GAME_STATE,
