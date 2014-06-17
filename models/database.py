@@ -75,13 +75,15 @@ class Database(Model):
 
                 # Add trigger for this tile.
                 cursor = self.__database_execute(
-                    """SELECT Chance, Action_Type, Action_Data FROM Trigger
+                    """SELECT Chance, Action_Type, Triggered_On, Action_Data FROM Trigger
                     WHERE MapTileId = %s""" % (map_tile_id), None)
 
                 trigger_row = cursor.fetchone()
                 if trigger_row is not None:
                     trigger = Trigger(
-                        trigger_row['Chance'], trigger_row['Action_Type'],
+                        trigger_row['Chance'],
+                        trigger_row['Action_Type'],
+                        trigger_row['Triggered_On'],
                         trigger_row['Action_Data'])
                 else:
                     trigger = None
