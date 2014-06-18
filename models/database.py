@@ -1,5 +1,4 @@
 import sqlite3 as lite
-import sys
 import pygame
 import os
 
@@ -19,7 +18,8 @@ class Database(Model):
     def load_application(self):
         character = self.__load_characters()
         maps = self.__load_maps()
-        game = Game(character, maps)
+        enemies = self._load_enemies()
+        game = Game(character, maps, enemies)
         return game
 
     def __database_execute(self, sql, args):
@@ -37,13 +37,26 @@ class Database(Model):
 
     def __load_characters(self):
         # Currently game only consists of one character.
-        cursor = self.__database_execute("SELECT * FROM Character", None)
+        cursor = self.__database_execute("SELECT * FROM Character WHERE Name = 'Player'", None)
         row = cursor.fetchone()
         character_image = pygame.image.load(
             os.path.join('Images', row['Image']))
         character_image_scaled = pygame.transform.scale(
             character_image, (Character.SIZE, Character.SIZE))
-        return Character('Player', character_image_scaled, 200, 50)
+        return Character(row['Name'], character_image_scaled, row['Health'], row['Attack'])
+
+    def _load_enemies(self):
+        cursor = self.__database_execute("SELECT * FROM Character WHERE Name != 'Player'", None)
+        enemies = cursor.fetchall()
+        enemy_dict = {}
+        for enemy in enemies:
+            enemy_image = character_image = pygame.image.load(
+                os.path.join('Images', enemy['Image']))
+            enemy_image_scaled = pygame.transform.scale(
+                enemy_image, (Character.SIZE, Character.SIZE))
+            enemy_dict[enemy['Name']] = Character(enemy['Name'], enemy_image_scaled, enemy['Health'], enemy['Attack'])
+
+        return enemy_dict
 
     def __load_maps(self):
 
@@ -76,7 +89,7 @@ class Database(Model):
                 # Add trigger for this tile.
                 cursor = self.__database_execute(
                     """SELECT Chance, Action_Type, Triggered_On, Action_Data FROM Trigger
-                    WHERE MapTileId = %s""" % (map_tile_id), None)
+                    WHERE MapTileId = %s""" % map_tile_id, None)
 
                 trigger_row = cursor.fetchone()
                 if trigger_row is not None:

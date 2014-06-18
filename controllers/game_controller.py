@@ -94,7 +94,7 @@ class GameController(Controller):
             
             model = base.MenuController.build_menu ()
             view = view_module.MainMenu ()
-            controller = base.MenuController(model, view)
+            controller = base.MenuController(model, view, self, self.view)
 
             pygame.event.post(
                 pygame.event.Event(

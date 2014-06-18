@@ -1,5 +1,6 @@
 import sys
 import pygame
+
 from Unrealistic_Engine import event_types
 from Unrealistic_Engine.utils.utils import Utils
 from Unrealistic_Engine.controllers.controller import Controller
@@ -13,10 +14,12 @@ from Unrealistic_Engine.models.database import Database
 
 class MenuController(Controller):
 
-    def __init__(self, model, view):
+    def __init__(self, model, view, previous_controller, previous_view):
         self.model = model
         self.view = view
-        
+        self.previous_controller = previous_controller
+        self.previous_view = previous_view
+
         view.add_model(self.model, MainMenu.render_menu, 0, View.BACKGROUND)
         MenuController.activeMenu = model
 
@@ -30,68 +33,68 @@ class MenuController(Controller):
 
     @staticmethod
     def build_menu():
-        tmpMenu = Menu()
-        tmpChild1 = Menu()
-        tmpChild2 = Menu()
+        tmp_menu = Menu()
+        tmp_child1 = Menu()
+        tmp_child2 = Menu()
 
         # Create test menus
-        tmpChild2.addItem(LeafNode
+        tmp_child2.addItem(LeafNode
             (LeafNode.testFunc, "Ta"))
-        tmpChild2.addItem(LeafNode
+        tmp_child2.addItem(LeafNode
             (LeafNode.testFunc, "Ta"))
-        tmpChild2.addItem(LeafNode
+        tmp_child2.addItem(LeafNode
             (LeafNode.testFunc, "For"))
-        tmpChild2.addItem(LeafNode
+        tmp_child2.addItem(LeafNode
             (LeafNode.testFunc, "Now"))
 
-        tmpChild1.addItem(LeafNode
+        tmp_child1.addItem(LeafNode
             (LeafNode.testFunc, "Do Nothing"))
-        tmpChild1.addItem(MenuNode
-            (tmpChild2, "See More"))
+        tmp_child1.addItem(MenuNode
+            (tmp_child2, "See More"))
 
-        tmpMenu.addItem(LeafNode
+        tmp_menu.addItem(LeafNode
             (Utils.quit, "Quit"))
-        tmpMenu.addItem(LeafNode
+        tmp_menu.addItem(LeafNode
             (LeafNode.testFunc, "Save"))
-        tmpMenu.addItem(MenuNode
-            (tmpChild1, "See More"))
+        tmp_menu.addItem(MenuNode
+            (tmp_child1, "See More"))
         
-        return tmpMenu
+        return tmp_menu
 
     def handle_key_press(self, pressed_key):
-        if (pressed_key == pygame.K_LEFT):
-            if (len(Menu.breadcrumbs) > 0):
+        if pressed_key == pygame.K_LEFT:
+            if len(Menu.breadcrumbs) > 0:
                 # Go to previous menu
                 self.view.remove_model(self.model)
                 self.model = Menu.breadcrumbs.pop();
                 self.view.add_model(self.model, MainMenu.render_menu, 0,
                     View.BACKGROUND)
-        if (pressed_key == pygame.K_RIGHT or pressed_key == pygame.K_RETURN):
-            if (isinstance(self.model.nodes [self.model.activeNode], MenuNode)):
+        if pressed_key == pygame.K_RIGHT or pressed_key == pygame.K_RETURN:
+            if isinstance(self.model.nodes [self.model.activeNode], MenuNode):
                 # Traverse into submenu
                 Menu.breadcrumbs.append(self.model)
                 self.view.remove_model(self.model)
                 self.model = self.model.nodes [self.model.activeNode].submenu
                 self.view.add_model(self.model, MainMenu.render_menu, 0,
-                    View.BACKGROUND)
-            elif (isinstance(self.model.nodes [self.model.activeNode], LeafNode)):
+                                    View.BACKGROUND)
+            elif isinstance(self.model.nodes [self.model.activeNode], LeafNode):
                 # Activate action associate with menu item
                 self.model.nodes [self.model.activeNode].action()
-        if (pressed_key == pygame.K_UP):
+        if pressed_key == pygame.K_UP:
             # Previous item in current menu
             self.model.activeNode -= 1
             
             # Default behaviour is to wrap around at the end of the menu
-            if (self.model.activeNode < 0):
+            if self.model.activeNode < 0:
                 self.model.activeNode = (self.model.nodeCount - 1)
-        if (pressed_key == pygame.K_DOWN):
+        if pressed_key == pygame.K_DOWN:
             # Next item in current menu
             self.model.activeNode += 1
             
             # Default behaviour is to wrap around at the end of the menu
-            if (self.model.activeNode >= self.model.nodeCount):
+            if self.model.activeNode >= self.model.nodeCount:
                 self.model.activeNode = 0
-        if (pressed_key == pygame.K_ESCAPE):
+        if pressed_key == pygame.K_ESCAPE:
             base = Utils.fetch(Utils.qualify_controller_name("game_controller"))
             
             imports = base.GameController.get_imports()
@@ -99,8 +102,11 @@ class MenuController(Controller):
             view_module = Utils.fetch(imports [base.GameController.VIEWS] ["game_view"])
             
             model = Database().load_application()
-            view = view_module.GameView()
-            controller = base.GameController(model, view)
+            #view = view_module.GameView()
+            #controller = base.GameController(model, view)
+            view = self.previous_view
+
+            controller = self.previous_controller
 
             Menu.breadcrumbs = []
 

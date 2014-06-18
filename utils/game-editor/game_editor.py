@@ -5,7 +5,6 @@ import os
 import json
 import argparse
 
-from Unrealistic_Engine.models.trigger import Trigger
 from Unrealistic_Engine.models.map import Map
 
 
@@ -60,6 +59,12 @@ def main():
         help="Shows all currently active triggers"
     )
 
+    parser.add_argument(
+        "--add_enemies", dest="to_run", action="store_const",
+        const=add_enemies, default=None,
+        help="Adds a .json file definied enemy list to the game"
+    )
+
     parser.add_argument("input_files", type=str, nargs="*",
                    help="input files")
 
@@ -77,11 +82,13 @@ def main():
         cursor = db.cursor()
         args.to_run(cursor, args.input_files)
 
+
 def show_triggers(cursor, *args, **kwargs):
     cursor.execute("SELECT * FROM Trigger")
     rows = cursor.fetchall()
     for row in rows:
         print "MapTileId: %3d | Chance: %3d | Action_Type: %3d | Action_Data: %s" % (row['MapTileId'], row['Chance'], row['Action_Type'], str(json.loads(row['Action_Data'])))
+
 
 def add_triggers(cursor, json_triggers_set, *args, **kwargs):
     for json_triggers in json_triggers_set:
@@ -95,6 +102,7 @@ def add_triggers(cursor, json_triggers_set, *args, **kwargs):
                  Action_Data) VALUES (?, ?, ?, ?, ?)""",
                 (trigger["MapTileId"], trigger["Chance"],
                  trigger["Action_Type"], trigger["Triggered_On"], json.dumps(trigger["Action_Data"])))
+
 
 def show_map_layout(cursor, map_names, *args, **kwargs):
     show_tiles(cursor)
@@ -119,7 +127,7 @@ def show_map_layout(cursor, map_names, *args, **kwargs):
     for column in range(Map.GRID_SIZE):
         for row in range(Map.GRID_SIZE):
             sys.stdout.write( "%5d" % (matrix[column][row]["TileId"]))
-            count = count + 1
+            count += 1
         print ""
 
     print ""
@@ -130,7 +138,7 @@ def show_map_layout(cursor, map_names, *args, **kwargs):
     for column in range(Map.GRID_SIZE):
         for row in range(Map.GRID_SIZE):
             sys.stdout.write( "%5d" % (matrix[column][row]["Id"]))
-            count = count + 1
+            count += 1
         print ""
 
     print ""
@@ -140,6 +148,7 @@ def show_map_layout(cursor, map_names, *args, **kwargs):
     show_triggers(cursor)
 
     print ""
+
 
 def show_map_names(cursor, *args, **kwargs):
     result = cursor.execute(
@@ -166,6 +175,7 @@ def insert_maptile(cursor, map_id, tile_id, x_pos, y_pos):
     cursor.execute(
         "INSERT INTO MapTile (MapId, TileId, Index_X, Index_Y) VALUES (?, ?, ?, ?)",
         (map_id, tile_id, x_pos, y_pos))
+
 
 def create_maps(cursor, maps, *args, **kwargs):
 
@@ -203,7 +213,7 @@ def update_map(cursor, map_arg, *args, **kwargs):
     # Removes all current MapTiles with the found map id
     delete_map_tiles(cursor, map_id)
 
-    #Re-adds updated MapTIles
+    #Re-adds updated MapTiles
     cur_row = 0
     for row in reader:
         cur_col = 0
@@ -218,6 +228,7 @@ def delete_map_tiles(cursor, map_id,):
     cursor.execute(
         "DELETE FROM MapTile WHERE MapId = %s" % map_id)
 
+
 def show_tiles(cursor, *args, **kwargs):
     cursor.execute("SELECT * FROM Tile")
     rows = cursor.fetchall()
@@ -231,10 +242,23 @@ def add_tilesets(cursor, json_tilesets, *args, **kwargs):
         tiles = json.load(tiles_file)
         tiles_file.close()
 
+
         for tile in tiles["tiles"]:
             cursor.execute(
                 "INSERT INTO Tile (Name, Image, Walkable) VALUES (?, ?, ?)",
                 (tile["Name"], tile["Image"], tile["Walkable"]))
+
+
+def add_enemies(cursor, json_enemies_set, *args, **kwargs):
+    for json_enemies in json_enemies_set:
+        enemies_file = open(json_enemies)
+        enemies = json.load(enemies_file)
+        enemies_file.close()
+
+        for enemy in enemies["enemGreybackies"]:
+            cursor.execute(
+                """INSERT INTO Character (Name, Image, Health, Attack) VALUES (?, ?, ?, ?)""",
+                (enemy["Name"], enemy["Image"],enemy["Health"], enemy["Attack"]))
 
 
 def reset_database(cursor, *args, **kwargs):
@@ -244,7 +268,6 @@ def reset_database(cursor, *args, **kwargs):
     cursor.execute("DROP TABLE IF EXISTS MapTile")
     cursor.execute("DROP TABLE IF EXISTS Character")
     cursor.execute("DROP TABLE IF EXISTS Trigger")
-
 
     # Create tables (again if dropped before)
     cursor.execute(
@@ -261,7 +284,7 @@ def reset_database(cursor, *args, **kwargs):
    
     cursor.execute(
         "CREATE TABLE Character"
-        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Image TEXT)")
+        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Image TEXT, Health INTEGER, Attack INTEGER)")
 
     cursor.execute(
         "CREATE TABLE Trigger"
@@ -270,8 +293,8 @@ def reset_database(cursor, *args, **kwargs):
     # Insert default data
     # Insert default character entry
     cursor.execute(
-        "INSERT INTO Character (Image) VALUES (?)",
-        ["ranger_m.png"])
+        "INSERT INTO Character (Name, Image, Health, Attack) VALUES (?, ?, ?, ?)",
+        ("Player", "ranger_m.png", 200, 50))
 
     print("Database successfully reset to base data.")
 

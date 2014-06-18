@@ -9,7 +9,7 @@
 			{"Name" : "Big Stairs", "Image" : "rpgTile118.png", "Walkable" : 1 },
 			{"Name" : "Brown Brick", "Image" : "brick-brown.png", "Walkable" : 1 },
 			{"Name" : "Boards", "Image" : "rpgTile084.png", "Walkable" : 1 },
-			{"Name" : "Blue Brick", "Image" : "brick-blue.png", "Walkable" : 1 },
+			{"Name" : "Blue Brick", "Image" : "brick-blue.png", "Walkable" : 0 },
 			{"Name" : "Stairs Down", "Image" : "stairs-down.png", "Walkable" : 1 },
 			{"Name" : "Stairs Up", "Image" : "stairs-up.png", "Walkable" : 1 },
 			{"Name" : "Water", "Image" : "water-solid.png", "Walkable" : 0 }

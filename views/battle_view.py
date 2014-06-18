@@ -3,7 +3,9 @@ import os
 
 from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine.models.map import Map
+
 from Unrealistic_Engine.views.battle_view_interface import BattleViewInterface
+from Unrealistic_Engine.utils.utils import Utils
 
 
 class BattleView(BattleViewInterface):
@@ -38,26 +40,31 @@ class BattleView(BattleViewInterface):
     def render_target_window(target_window, screen, position, *args, **kwargs):
         large_offset = Map.MAP_SIZE - (Map.MAP_SIZE / 4)
 
-        window_surface = pygame.Surface((Map.MAP_SIZE/4, Map.MAP_SIZE/8))
-        screen.blit(window_surface, (large_offset, Map.MAP_SIZE/4))
+        base = Utils.fetch(Utils.qualify_controller_name(
+                           "battle_controller"))
 
-        # Render the target icon over the new target
-        target_image = pygame.image.load(
-            os.path.join('Images', "target_icon.png"))
-        target_image_scaled = pygame.transform.scale(
-            target_image, (10, 10))
-        screen.blit(target_image_scaled, position.convert_to_pixels(BattleView.TARGET_ICON_OFFSET))
+        if target_window.battle_state is base.BattleController.TARGET_SELECT:
+            # Render black background
+            window_surface = pygame.Surface((Map.MAP_SIZE/4, Map.MAP_SIZE/8))
+            screen.blit(window_surface, (large_offset, Map.MAP_SIZE/4))
 
-        # Update stats window on the right of screen
-        font = pygame.font.SysFont("monospace", BattleView.FONT_SIZE)
+            # Render the target icon over the new target
+            target_image = pygame.image.load(
+                os.path.join('Images', "target_icon.png"))
+            target_image_scaled = pygame.transform.scale(
+                target_image, (10, 10))
+            screen.blit(target_image_scaled, position.convert_to_pixels(BattleView.TARGET_ICON_OFFSET))
 
-        name_label = font.render("Name: %s" % target_window.current_target.name, 1, (255, 255, 255))
-        health_label = font.render("Health: %d" % target_window.current_target.health, 1, (255, 255, 255))
-        attack_label = font.render("Attack: %d" % target_window.current_target.attack, 1, (255, 255, 255))
+            # Update stats window on the right of screen
+            font = pygame.font.SysFont("monospace", BattleView.FONT_SIZE)
 
-        screen.blit(name_label, (large_offset, (Map.MAP_SIZE / 4)))
-        screen.blit(health_label, (large_offset, (Map.MAP_SIZE / 4) + 20))
-        screen.blit(attack_label, (large_offset, (Map.MAP_SIZE / 4) + 40))
+            name_label = font.render("Name: %s" % target_window.current_target.name, 1, (255, 255, 255))
+            health_label = font.render("Health: %d" % target_window.current_target.health, 1, (255, 255, 255))
+            attack_label = font.render("Attack: %d" % target_window.current_target.attack, 1, (255, 255, 255))
+
+            screen.blit(name_label, (large_offset, (Map.MAP_SIZE / 4)))
+            screen.blit(health_label, (large_offset, (Map.MAP_SIZE / 4) + 20))
+            screen.blit(attack_label, (large_offset, (Map.MAP_SIZE / 4) + 40))
 
     @staticmethod
     def render_action_menu(action_menu, screen, position, *args, **kwargs):

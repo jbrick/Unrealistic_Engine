@@ -1,18 +1,14 @@
 import sys
-import os
 import pygame
 
 from pygame.constants import K_RETURN
 
-import Unrealistic_Engine.controllers
 from Unrealistic_Engine.models.menu import Menu
 from Unrealistic_Engine.models.node_leaf import LeafNode
 from Unrealistic_Engine.models.action import Action
-from Unrealistic_Engine.views.game_view import GameView
 from Unrealistic_Engine.views.battle_view import BattleView
 from Unrealistic_Engine.models.target_window import TargetWindow
 from Unrealistic_Engine.models.map import Map
-from Unrealistic_Engine.models.character import Character
 from Unrealistic_Engine import event_types
 from Unrealistic_Engine.utils.utils import Utils
 from Unrealistic_Engine.utils.position import Position
@@ -34,6 +30,7 @@ class BattleController(Controller):
         self.current_map = current_map
         self.character_start_position = character_start_position
         self.current_action = None
+        self.enemy = model.enemies['Greyback']
 
         # Add Character model
         self.view.add_model(
@@ -48,16 +45,11 @@ class BattleController(Controller):
             BattleView.render_map, Position(0, 0), 1)
 
         #Add test Enemy
-        npc_image = pygame.image.load(
-            os.path.join('Images', "boss1.png"))
-        npc_image_scaled = pygame.transform.scale(
-            npc_image, (Character.SIZE, Character.SIZE))
-        self.test_npc = Character("Boss1", npc_image_scaled, 100, 10)
         self.view.add_model(
-            self.test_npc, BattleView.render_enemy, Position(Map.GRID_SIZE/2, 2), 2)
+            self.enemy, BattleView.render_enemy, Position(Map.GRID_SIZE/2, 2), 2)
 
         # Add target window Model and set current target to player
-        self.target_window = TargetWindow(self.model.character)
+        self.target_window = TargetWindow(self.model.character, self.state)
         self.view.add_model(self.target_window, BattleView.render_target_window,
                             Position(Map.GRID_SIZE/2, Map.GRID_SIZE/2), 2)
 
@@ -109,44 +101,30 @@ class BattleController(Controller):
                 print(self.action_menu.nodes[self.action_menu.activeNode])
                 self.action_menu.nodes[self.action_menu.activeNode].action()
 
-
-        
-
-        #elif state is ENEMY:
-
-
-        #if pressed_key == pygame.K_LEFT:
-
-        #if pressed_key == pygame.K_RIGHT:
-
-        #if pressed_key == pygame.K_UP:
-
-        #if pressed_key == pygame.K_DOWN:
-
-        # For testing purposes pressing enter swaps controller / view.
-
         if pressed_key == pygame.K_b:
-            base = Utils.fetch(Utils.qualify_controller_name("game_controller"))
-            
-            imports = base.GameController.get_imports()
-            
-            view_module = Utils.fetch(imports [base.GameController.VIEWS] ["game_view"])
-            
-            view = view_module.GameView()
-            
-            # Just give the game view the same visible models as the battle
-            # view for now.
-            view.visible_models = self.view.visible_models
-            
-            controller = base.GameController(self.model, view, self.character_start_position)
+            self.end_battle()
 
-            pygame.event.post(pygame.event.Event(
-                event_types.UPDATE_GAME_STATE,
-                {"Controller": controller, "View": view}))
+        if pressed_key == pygame.K_ESCAPE:
+            base = Utils.fetch(Utils.qualify_controller_name(
+                "menu_controller"))
+
+            imports = base.MenuController.get_imports()
+
+            view_module = Utils.fetch(imports[base.MenuController.VIEWS] ["main_menu"])
+
+            model = base.MenuController.build_menu()
+            view = view_module.MainMenu()
+            controller = base.MenuController(model, view, self, self.view)
+
+            pygame.event.post(
+                pygame.event.Event(
+                    event_types.UPDATE_GAME_STATE,
+                    {"Controller": controller,
+                     "View": view}))
 
     def handle_player_start_point(self, pressed_key):
         if pressed_key == pygame.K_UP:
-            self.update_target_window(self.test_npc)
+            self.update_target_window(self.enemy, self.state)
 
     def handle_enemy_start_point(self, pressed_key):
         #if pressed_key == pygame.K_LEFT:
@@ -154,14 +132,15 @@ class BattleController(Controller):
             
         if pressed_key == pygame.K_DOWN:
             player_position = self.view.get_visible_model_position(self.model.character)
-            self.update_target_window(self.model.character)
+            self.update_target_window(self.model.character, self.state)
 
-    def update_target_window(self, new_target_model):
+    def update_target_window(self, new_target_model, battle_state):
         # Remove outdated target window from visible models
         self.view.remove_model(self.target_window)
 
-        # Update target window with new target model
+        # Update target window with new target model and/or battle state
         self.target_window.current_target = new_target_model
+        self.target_window.battle_state = battle_state
 
         # Get new target's position
         new_target_position = self.view.get_visible_model_position(new_target_model)
@@ -173,12 +152,36 @@ class BattleController(Controller):
     def set_attack_action(self):
         self.current_action = Action(Action.ATTACK, self.model.character.attack)
         self.state = BattleController.TARGET_SELECT
+        self.update_target_window(self.enemy, self.state)
 
     def execute_action(self, action):
         if action.type is Action.ATTACK:
             self.target_window.current_target.health -= action.action_arg
-            self.update_target_window(self.target_window.current_target)
             self.state = BattleController.ACTION_SELECT
+            self.update_target_window(self.target_window.current_target, self.state)
+
+            # End battle when someone dies
+            if self.target_window.current_target.health <= 0:
+                self.end_battle()
+
+    def end_battle(self, ):
+        base = Utils.fetch(Utils.qualify_controller_name("game_controller"))
+
+        imports = base.GameController.get_imports()
+
+        view_module = Utils.fetch(imports[base.GameController.VIEWS]["game_view"])
+
+        view = view_module.GameView()
+
+        # Just give the game view the same visible models as the battle
+        # view for now.
+        view.visible_models = self.view.visible_models
+
+        controller = base.GameController(self.model, view, self.character_start_position)
+
+        pygame.event.post(pygame.event.Event(
+            event_types.UPDATE_GAME_STATE,
+            {"Controller": controller, "View": view}))
 
     def handle_game_event(self, event):
         if event.type == pygame.QUIT:
