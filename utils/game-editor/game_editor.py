@@ -255,7 +255,7 @@ def add_enemies(cursor, json_enemies_set, *args, **kwargs):
         enemies = json.load(enemies_file)
         enemies_file.close()
 
-        for enemy in enemies["enemGreybackies"]:
+        for enemy in enemies["enemies"]:
             cursor.execute(
                 """INSERT INTO Character (Name, Image, Health, Attack) VALUES (?, ?, ?, ?)""",
                 (enemy["Name"], enemy["Image"],enemy["Health"], enemy["Attack"]))
