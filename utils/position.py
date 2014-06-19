@@ -24,3 +24,7 @@ class Position():
     def convert_to_pixels(self, offset):
         return ((self.x_coord * Position.TILE_SIZE) + offset,
                 (self.y_coord * Position.TILE_SIZE) + offset)
+
+    def add_vertical_offset(self, vert_offset):
+        return ((self.x_coord * Position.TILE_SIZE),
+                (self.y_coord * Position.TILE_SIZE) + vert_offset)

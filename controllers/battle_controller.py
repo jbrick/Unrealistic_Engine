@@ -1,5 +1,6 @@
 import sys
 import pygame
+import copy
 
 from pygame.constants import K_RETURN
 
@@ -22,15 +23,14 @@ class BattleController(Controller):
     TARGET_SELECT = "Target Select"
     ENEMY = "Enemy Turn"
 
-    def __init__(self, model, view, current_visible_models, current_map, character_start_position):
+    def __init__(self, model, view, current_map, character_start_position, enemy_name):
         self.model = model
         self.view = view
         self.state = BattleController.ACTION_SELECT
-        self.current_visible_models = current_visible_models
         self.current_map = current_map
         self.character_start_position = character_start_position
         self.current_action = None
-        self.enemy = model.enemies['Greyback']
+        self.enemy = copy.copy(model.enemies[enemy_name])
 
         # Add Character model
         self.view.add_model(
@@ -44,12 +44,14 @@ class BattleController(Controller):
             self.current_map.get_map_tile(character_start_position.x_coord, character_start_position.y_coord),
             BattleView.render_map, Position(0, 0), 1)
 
-        #Add test Enemy
+        #Add Enemy
         self.view.add_model(
             self.enemy, BattleView.render_enemy, Position(Map.GRID_SIZE/2, 2), 2)
 
         # Add target window Model and set current target to player
-        self.target_window = TargetWindow(self.model.character, self.state)
+        characters = {'Player': self.model.character,
+                      'Enemy': self.enemy}
+        self.target_window = TargetWindow(self.model.character, self.state, characters)
         self.view.add_model(self.target_window, BattleView.render_target_window,
                             Position(Map.GRID_SIZE/2, Map.GRID_SIZE/2), 2)
 
@@ -64,13 +66,10 @@ class BattleController(Controller):
         models = ["map", "trigger"]
         views = ["battle_view"]
         controllers = ["battle_controller"]
-        
+
         return Controller.qualify_imports((models, views, controllers))
 
     def handle_key_press(self, pressed_key):
-        print("State is: %s" % self.state)
-        position = self.view.get_visible_model_position(
-            self.model.character)
 
         if self.state is BattleController.TARGET_SELECT:
             if self.target_window.current_target.name == 'Player':
@@ -127,11 +126,7 @@ class BattleController(Controller):
             self.update_target_window(self.enemy, self.state)
 
     def handle_enemy_start_point(self, pressed_key):
-        #if pressed_key == pygame.K_LEFT:
-        #if pressed_key == pygame.K_RIGHT:
-            
         if pressed_key == pygame.K_DOWN:
-            player_position = self.view.get_visible_model_position(self.model.character)
             self.update_target_window(self.model.character, self.state)
 
     def update_target_window(self, new_target_model, battle_state):
@@ -163,8 +158,10 @@ class BattleController(Controller):
             # End battle when someone dies
             if self.target_window.current_target.health <= 0:
                 self.end_battle()
+                if self.target_window.current_target.name == 'Player':
+                    self.quit_game()
 
-    def end_battle(self, ):
+    def end_battle(self):
         base = Utils.fetch(Utils.qualify_controller_name("game_controller"))
 
         imports = base.GameController.get_imports()
@@ -177,7 +174,7 @@ class BattleController(Controller):
         # view for now.
         view.visible_models = self.view.visible_models
 
-        controller = base.GameController(self.model, view, self.character_start_position)
+        controller = base.GameController(self.model, view, self.character_start_position, self.current_map)
 
         pygame.event.post(pygame.event.Event(
             event_types.UPDATE_GAME_STATE,
@@ -185,5 +182,8 @@ class BattleController(Controller):
 
     def handle_game_event(self, event):
         if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+            self.quit_game()
+
+    def quit_game(self):
+        pygame.quit()
+        sys.exit()
