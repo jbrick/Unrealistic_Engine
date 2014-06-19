@@ -18,12 +18,12 @@ class Database(Model):
         self.db = None
 
     def load_application(self):
-        character = self.__load_characters()
-        maps = self.__load_maps()
-        game = Game(character, maps)
+        character = self._load_characters()
+        maps = self._load_maps()
+        game = Game(character, maps, maps["map3"])
         return game
 
-    def __database_execute(self, sql, args):
+    def _database_execute(self, sql, args):
         dir = os.path.dirname(__file__)
         filename = os.path.join(dir, "game.db")
         self.db = lite.connect(filename)
@@ -36,9 +36,9 @@ class Database(Model):
                 cursor.execute(sql, args)
         return cursor
 
-    def __load_characters(self):
+    def _load_characters(self):
         # Currently game only consists of one character.
-        cursor = self.__database_execute("SELECT * FROM Character", None)
+        cursor = self._database_execute("SELECT * FROM Character", None)
         row = cursor.fetchone()
         character_image = pygame.image.load(
             os.path.join('Images', row['Image']))
@@ -46,19 +46,19 @@ class Database(Model):
             character_image, (Character.SIZE, Character.SIZE))
         return Character(character_image_scaled)
 
-    def __load_maps(self):
+    def _load_maps(self):
 
         maps = {}
 
         # Game is now made up of multiple maps
-        cursor = self.__database_execute(
+        cursor = self._database_execute(
             "SELECT * FROM Map", None)
         loaded_maps = cursor.fetchall()
 
         for each_map in loaded_maps:
-            game_map = Map(Map.GRID_SIZE)
+            game_map = Map(Map.GRID_SIZE, each_map["Name"])
             # Load the map tiles for this map.
-            cursor = self.__database_execute(
+            cursor = self._database_execute(
                 """SELECT mt.TileId, mt.Index_X, mt.Index_Y, t.Name, t.Walkable,
                  t.Image, mt.Id FROM MapTile AS mt JOIN Tile as t
                  ON mt.TileId = t.Id
@@ -75,9 +75,9 @@ class Database(Model):
                 map_tile_id = row_map_tiles['Id']
 
                 # Add trigger for this tile.
-                cursor = self.__database_execute(
+                cursor = self._database_execute(
                     """SELECT Chance, Action_Type, Triggered_On, Action_Data FROM Trigger
-                    WHERE MapTileId = %s""" % (map_tile_id), None)
+                    WHERE MapTileId = %s""" % map_tile_id, None)
 
                 trigger_row = cursor.fetchone()
                 if trigger_row is not None:
@@ -102,16 +102,19 @@ class Database(Model):
 
         return maps
 
-    def save_game(self, game_memento):
-        cursor = self.__database_execute(
+    def save_game(self, args):
+        game_memento = args[0]
+        print game_memento.name
+        print game_memento.current_map
+        cursor = self._database_execute(
             """INSERT INTO GameState(Name, Current_Map, Character_Position_X, Character_Position_Y)
-            VALUES (?, ?, ?, ?)""",
-            game_memento.name, game_memento.current_map,
-            game_memento.character_memento.position.x_coord,
-            game_memento.character_memento.position.y_coord, None)
+             VALUES (?, ?, ?, ?)""",
+            [game_memento.name, game_memento.current_map.name,
+             game_memento.character_memento.position.x_coord,
+             game_memento.character_memento.position.y_coord])
 
     def get_saved_games(self):
-        cursor = self.__database_execute("SELECT Name FROM GameState", None)
+        cursor = self._database_execute("SELECT Name FROM GameState", None)
         memento_name_rows = cursor.fetchall()
 
         memento_names = []
@@ -121,13 +124,13 @@ class Database(Model):
         return memento_names
 
     def load_saved_game(self, memento_name):
-        cursor = self.__database_execute(
-            """SELECT (Current_Map, Character_Position_X, Character_Position_Y) FROM GameState
-            WHERE Name = %s""" % memento_name, None)
+        cursor = self._database_execute(
+            """SELECT Current_Map, Character_Position_X, Character_Position_Y FROM GameState
+            WHERE Name = '%s'""" % memento_name, None)
         memento_row = cursor.fetchone()
         current_map = memento_row['Current_Map']
         character_position = Position(
-                memento_row['Character_Position_X'], memento_row['Character_Position_Y'])
+            memento_row['Character_Position_X'], memento_row['Character_Position_Y'])
 
         character_memento = CharacterMemento(character_position)
         game_memento = GameMemento(memento_name, current_map, character_memento)

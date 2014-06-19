@@ -1,5 +1,5 @@
 from Unrealistic_Engine.models.mementos.saveable import Saveable
-from Unrealistic_Engine.models.memento.game import GameMemento
+from Unrealistic_Engine.models.mementos.game import GameMemento
 
 
 class Game(Saveable):
@@ -9,9 +9,9 @@ class Game(Saveable):
         self.current_map = current_map
 
     def create_memento(self, name):
-        character_memento = self.character.create_memento(name)
+        character_memento = self.character.create_memento()
         return GameMemento(name, self.current_map, character_memento)
 
     def set_memento(self, game_memento):
-        self.current_map = game_memento.current_map
+        self.current_map.name = game_memento.map_name
         self.character.set_memento(game_memento.character_memento)

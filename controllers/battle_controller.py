@@ -1,11 +1,7 @@
 import sys
 import pygame
-import Unrealistic_Engine.controllers
 from Unrealistic_Engine import event_types
-from Unrealistic_Engine.utils.utils import Utils
-from Unrealistic_Engine.utils.position import Position
-from Unrealistic_Engine.models.database import Database
-from Unrealistic_Engine.views.view import View
+from Unrealistic_Engine.utils import utils
 from Unrealistic_Engine.controllers.controller import Controller
 
 
@@ -38,7 +34,7 @@ class BattleController(Controller):
             position.set_y_coord(position.y_coord + 2)
         # For testing purposes pressing enter swaps controller / view.
         if pressed_key == pygame.K_RETURN:
-            base = Utils.fetch(Utils.qualify_controller_name("game_controller"))
+            base = utils.fetch(utils.qualify_controller_name("game_controller"))
             
             imports = base.GameController.get_imports()
             
