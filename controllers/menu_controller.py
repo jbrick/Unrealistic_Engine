@@ -16,9 +16,18 @@ class MenuController(Controller):
     def __init__(self, model, view):
         self.model = model
         self.view = view
-        
+
+        main_menu = Menu()
+
+        main_menu.addItem(LeafNode(Utils.quit, "Quit"))
+        model.addItem(LeafNode(Database().save_game(model.create_memento("test")), "Save Game"))
+        model.addItem(LeafNode(Database().load_saved_game("test"), "Load Saved Game"))
+        //cant do above since LeafNode only takes function pointer.. not atcual function.
+            //can be fixed by adding extra arguement for args in function
+        // also cant get anything returned --> game memento
+
         view.add_model(self.model, MainMenu.render_menu, 0, View.BACKGROUND)
-        MenuController.activeMenu = model
+        MenuController.activeMenu = main_menu
 
     @staticmethod
     def get_imports():
@@ -30,33 +39,10 @@ class MenuController(Controller):
 
     @staticmethod
     def build_menu():
-        tmpMenu = Menu()
-        tmpChild1 = Menu()
-        tmpChild2 = Menu()
+        main_menu = Menu()
 
-        # Create test menus
-        tmpChild2.addItem(LeafNode
-            (LeafNode.testFunc, "Ta"))
-        tmpChild2.addItem(LeafNode
-            (LeafNode.testFunc, "Ta"))
-        tmpChild2.addItem(LeafNode
-            (LeafNode.testFunc, "For"))
-        tmpChild2.addItem(LeafNode
-            (LeafNode.testFunc, "Now"))
-
-        tmpChild1.addItem(LeafNode
-            (LeafNode.testFunc, "Do Nothing"))
-        tmpChild1.addItem(MenuNode
-            (tmpChild2, "See More"))
-
-        tmpMenu.addItem(LeafNode
-            (Utils.quit, "Quit"))
-        tmpMenu.addItem(LeafNode
-            (LeafNode.testFunc, "Save"))
-        tmpMenu.addItem(MenuNode
-            (tmpChild1, "See More"))
-        
-        return tmpMenu
+        main_menu.addItem(LeafNode(Utils.quit, "Quit"))
+        return main_menu
 
     def handle_key_press(self, pressed_key):
         if (pressed_key == pygame.K_LEFT):

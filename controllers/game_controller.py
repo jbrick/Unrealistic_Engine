@@ -91,10 +91,9 @@ class GameController(Controller):
             imports = base.MenuController.get_imports()
             
             view_module = Utils.fetch(imports [base.MenuController.VIEWS] ["main_menu"])
-            
-            model = base.MenuController.build_menu ()
+
             view = view_module.MainMenu ()
-            controller = base.MenuController(model, view)
+            controller = base.MenuController(self.model, view)
 
             pygame.event.post(
                 pygame.event.Event(
