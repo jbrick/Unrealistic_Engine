@@ -30,6 +30,7 @@ class GameController(Controller):
         view.add_model(
             model.character, GameView.render_character, character_position, 2)
 
+
     @staticmethod
     def get_imports():
         models = ["map", "trigger"]

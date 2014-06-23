@@ -1,0 +1,89 @@
+{
+    "triggers": [
+        {
+        "MapTileId" : 222,
+        "Chance" : 100,
+        "Action_Type" : 1,
+        "Triggered_On" : "enter",
+        "Action_Data" : {
+                "map_name" : "tower_floor2",
+                "character_x": 13,
+                "character_y": 13
+            }
+        },
+        {
+            "MapTileId" : 478,
+            "Chance" : 100,
+            "Action_Type" : 1,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
+                "map_name" : "tower_floor1",
+                "character_x": 13,
+                "character_y": 13
+            }
+        },
+        {
+            "MapTileId" : 325,
+            "Chance" : 100,
+            "Action_Type" : 1,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
+                "map_name" : "tower_floor3",
+                "character_x": 4,
+                "character_y": 4
+            }
+        },
+        {
+            "MapTileId" : 581,
+            "Chance" : 100,
+            "Action_Type" : 1,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
+                "map_name" : "tower_floor2",
+                "character_x": 4,
+                "character_y": 4
+            }
+        },
+        {
+            "MapTileId" : 583,
+            "Chance" : 100,
+            "Action_Type" : 1,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
+                "map_name" : "tower_floor4",
+                "character_x": 6,
+                "character_y": 4
+            }
+        },
+        {
+            "MapTileId" : 839,
+            "Chance" : 100,
+            "Action_Type" : 1,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
+                "map_name" : "tower_floor3",
+                "character_x": 6,
+                "character_y": 4
+            }
+        },
+        {
+            "MapTileId" : 282,
+            "Chance" : 100,
+            "Action_Type" : 2,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
+                        "enemy":"Greyback"
+                }
+        },
+        {
+            "MapTileId" : 338,
+            "Chance" : 100,
+            "Action_Type" : 2,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
+                        "enemy":"Fenris"
+                }
+        }
+    ]
+
+}

@@ -183,7 +183,7 @@ def create_maps(cursor, maps, *args, **kwargs):
         reader = csv.reader(open(a_map, "rb"), delimiter=',')
         map_name = a_map
         if map_name.endswith(".csv"):
-            map_name = map_name[:len(".csv")]
+            map_name = map_name[:(len(map_name) - 4)]
         insert_map(cursor, map_name)
         map_id = get_map_id(cursor, map_name)
 

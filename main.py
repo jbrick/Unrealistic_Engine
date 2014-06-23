@@ -19,7 +19,7 @@ screen = pygame.display.set_mode(size)
 # Default game model is loaded from a sqlite database.
 model = Database().load_application()
 view = GameView()
-controller = GameController(model, view, Position(0, 0), model.maps["map3"])
+controller = GameController(model, view, Position(1, 1), model.maps["tower_floor1"])
 
 # Main game loop passes all events to controller and continually renders view.
 # Draw the screen every 34 ms or 30 fps.

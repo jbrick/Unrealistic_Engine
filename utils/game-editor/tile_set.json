@@ -12,7 +12,7 @@
 			{"Name" : "Blue Brick", "Image" : "brick-blue.png", "Walkable" : 0 },
 			{"Name" : "Stairs Down", "Image" : "stairs-down.png", "Walkable" : 1 },
 			{"Name" : "Stairs Up", "Image" : "stairs-up.png", "Walkable" : 1 },
-			{"Name" : "Water", "Image" : "water-solid.png", "Walkable" : 0 }
-
+			{"Name" : "Water", "Image" : "water-solid.png", "Walkable" : 0 },
+			{"Name" : "Brown Brick Wall", "Image" : "brick_wall_brown.png", "Walkable" : 0 }
 		]
 }
