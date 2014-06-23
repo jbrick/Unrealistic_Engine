@@ -18,7 +18,7 @@ class GameController(Controller):
         self.model = model
         self.view = view
         self.triggers = {}
-        self.current_map = model.maps["map3"]
+        self.current_map = model.maps["tower_floor1"]
         self.previous_position = None
         self.changed_map = False
 
@@ -29,7 +29,7 @@ class GameController(Controller):
         
         # Add Character model
         view.add_model(
-            model.character, GameView.render_character, Position(0, 0), 2)
+            model.character, GameView.render_character, Position(1, 1), 2)
 
     @staticmethod
     def get_imports():
