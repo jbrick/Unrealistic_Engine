@@ -21,7 +21,7 @@ class BattleController(Controller):
 
     ACTION_SELECT = "Action Select"
     TARGET_SELECT = "Target Select"
-    ENEMY = "Enemy Turn"
+    ENEMY_TURN = "Enemy Turn"
 
     def __init__(self, model, view, current_map, character_start_position, enemy_name):
         self.model = model
@@ -41,7 +41,8 @@ class BattleController(Controller):
 
         #Add Map Model
         self.view.add_model(
-            self.current_map.get_map_tile(character_start_position.x_coord, character_start_position.y_coord),
+            self.current_map.get_map_tile(character_start_position.x_coord,
+                                          character_start_position.y_coord),
             BattleView.render_map, Position(0, 0), 1)
 
         #Add Enemy
@@ -57,6 +58,7 @@ class BattleController(Controller):
 
         # Add action select menu to visible models
         self.action_menu = Menu()
+        self.action_menu.set_battle_log("%s Attacked!" % enemy_name)
         self.action_menu.addItem(LeafNode(self.set_attack_action, "Attack"))
         self.action_menu.addItem(LeafNode(LeafNode.testFunc, "Items"))
         self.view.add_model(self.action_menu, BattleView.render_action_menu, 0, View.FOREGROUND)
@@ -82,14 +84,14 @@ class BattleController(Controller):
                 self.current_action = None
 
         elif self.state is BattleController.ACTION_SELECT:
-            if pressed_key == pygame.K_UP:
+            if pressed_key == pygame.K_UP or pressed_key == pygame.K_w:
                 # Previous item in current menu
                 self.action_menu.activeNode -= 1
 
                 # Default behaviour is to wrap around at the end of the menu
                 if self.action_menu.activeNode < 0:
                     self.action_menu.activeNode = (self.action_menu.nodeCount - 1)
-            if pressed_key == pygame.K_DOWN:
+            if pressed_key == pygame.K_DOWN or pressed_key == pygame.K_s:
                 # Next item in current menu
                 self.action_menu.activeNode += 1
 
@@ -122,11 +124,11 @@ class BattleController(Controller):
                      "View": view}))
 
     def handle_player_start_point(self, pressed_key):
-        if pressed_key == pygame.K_UP:
+        if pressed_key == pygame.K_UP or pressed_key == pygame.K_w:
             self.update_target_window(self.enemy, self.state)
 
     def handle_enemy_start_point(self, pressed_key):
-        if pressed_key == pygame.K_DOWN:
+        if pressed_key == pygame.K_DOWN or pressed_key == pygame.K_s:
             self.update_target_window(self.model.character, self.state)
 
     def update_target_window(self, new_target_model, battle_state):
@@ -144,6 +146,11 @@ class BattleController(Controller):
         self.view.add_model(self.target_window, BattleView.render_target_window,
                             new_target_position, 2)
 
+    def update_battle_log(self, message):
+        self.view.remove_model(self.action_menu)
+        self.action_menu.set_battle_log(message)
+        self.view.add_model(self.action_menu, BattleView.render_action_menu, 0, View.FOREGROUND)
+
     def set_attack_action(self):
         self.current_action = Action(Action.ATTACK, self.model.character.attack)
         self.state = BattleController.TARGET_SELECT
@@ -152,14 +159,30 @@ class BattleController(Controller):
     def execute_action(self, action):
         if action.type is Action.ATTACK:
             self.target_window.current_target.health -= action.action_arg
-            self.state = BattleController.ACTION_SELECT
-            self.update_target_window(self.target_window.current_target, self.state)
+            self.update_battle_log("You hit %s for %d damage." %
+                                   (self.target_window.current_target.name, action.action_arg))
 
             # End battle when someone dies
             if self.target_window.current_target.health <= 0:
-                self.end_battle()
                 if self.target_window.current_target.name == 'Player':
                     self.quit_game()
+                else:
+                    # return to ensure enemy doesn't attack after being killed
+                    self.end_battle()
+                    return
+
+            self.state = BattleController.ENEMY_TURN
+            self.update_target_window(self.target_window.current_target, self.state)
+            self.execute_enemy_turn()
+
+    def execute_enemy_turn(self):
+        self.model.character.health -= self.enemy.attack
+        self.update_battle_log("%s hit you for %d damage." % (self.enemy.name, self.enemy.attack))
+        if self.model.character.health <= 0:
+            self.quit_game()
+
+        self.state = BattleController.ACTION_SELECT
+        self.update_target_window(self.target_window.current_target, self.state)
 
     def end_battle(self):
         base = Utils.fetch(Utils.qualify_controller_name("game_controller"))
@@ -174,7 +197,8 @@ class BattleController(Controller):
         # view for now.
         view.visible_models = self.view.visible_models
 
-        controller = base.GameController(self.model, view, self.character_start_position, self.current_map)
+        controller = base.GameController(self.model, view, self.character_start_position,
+                                         self.current_map)
 
         pygame.event.post(pygame.event.Event(
             event_types.UPDATE_GAME_STATE,

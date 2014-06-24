@@ -11,4 +11,5 @@ class Character:
         self.name = name
         self.image = image
         self.health = health
+        self.total_health = health
         self.attack = attack

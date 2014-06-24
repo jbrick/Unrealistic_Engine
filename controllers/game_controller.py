@@ -43,19 +43,19 @@ class GameController(Controller):
         position = self.view.get_visible_model_position(
             self.model.character)
         destination_tile = None
-        if pressed_key == pygame.K_LEFT:
+        if pressed_key == pygame.K_LEFT or pressed_key == pygame.K_a:
             destination_tile = self.current_map.get_map_tile(position.x_coord - 1, position.y_coord)
             if (position.x_coord - 1) >= 0 and destination_tile.walkable == 1:
                 position.set_x_coord(position.x_coord - 1)
-        if pressed_key == pygame.K_RIGHT:
+        if pressed_key == pygame.K_RIGHT or pressed_key == pygame.K_d:
             destination_tile = self.current_map.get_map_tile(position.x_coord + 1, position.y_coord)
             if(position.x_coord + 1) < Map.GRID_SIZE and destination_tile.walkable == 1:
                 position.set_x_coord(position.x_coord + 1)
-        if pressed_key == pygame.K_UP:
+        if pressed_key == pygame.K_UP or pressed_key == pygame.K_w:
             destination_tile = self.current_map.get_map_tile(position.x_coord, position.y_coord - 1)
             if(position.y_coord - 1) >= 0 and destination_tile.walkable == 1:
                 position.set_y_coord(position.y_coord - 1)
-        if pressed_key == pygame.K_DOWN:
+        if pressed_key == pygame.K_DOWN or pressed_key == pygame.K_s:
             destination_tile = self.current_map.get_map_tile(position.x_coord, position.y_coord + 1)
             if(position.y_coord + 1) < Map.GRID_SIZE and destination_tile.walkable == 1:
                 position.set_y_coord(position.y_coord + 1)

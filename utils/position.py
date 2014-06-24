@@ -25,6 +25,6 @@ class Position():
         return ((self.x_coord * Position.TILE_SIZE) + offset,
                 (self.y_coord * Position.TILE_SIZE) + offset)
 
-    def add_vertical_offset(self, vert_offset):
-        return ((self.x_coord * Position.TILE_SIZE),
-                (self.y_coord * Position.TILE_SIZE) + vert_offset)
+    def convert_with_offset(self, x_offset, y_offset):
+        return ((self.x_coord * Position.TILE_SIZE + x_offset),
+                (self.y_coord * Position.TILE_SIZE) + y_offset)
