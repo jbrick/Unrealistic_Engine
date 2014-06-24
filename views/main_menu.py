@@ -48,10 +48,10 @@ class MainMenu(MenuView):
         # Render breadcrumbs
         for crumb in range(0, len (Menu.breadcrumbs)):
             label = font.render(Menu.breadcrumbs [crumb].nodes
-                [Menu.breadcrumbs [crumb].activeNode].label, 1, (255, 255, 255))
+                [Menu.breadcrumbs [crumb].active_node].label, 1, (255, 255, 255))
             screen.blit(label, (left_corner + crumb_position, top_corner + MainMenu.PADDING))
             crumb_position += font.size(Menu.breadcrumbs [crumb].nodes
-                [Menu.breadcrumbs [crumb].activeNode].label) [0]
+                [Menu.breadcrumbs [crumb].active_node].label) [0]
             
             if crumb >= (len(Menu.breadcrumbs) - 1):
                 return

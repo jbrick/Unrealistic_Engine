@@ -13,7 +13,7 @@ class LeafNode(Node):
         return True
 
     def execute_action(self):
-        if self.action_args == {}:
+        if not self.action_args:
             return self.action()
         else:
             return self.action(self.action_args)

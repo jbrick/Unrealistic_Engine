@@ -270,7 +270,7 @@ def reset_database(cursor, *args, **kwargs):
 
     cursor.execute(
         "CREATE TABLE GameState"
-        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Current_Map TEXT, Character_Position_X INTEGER, Character_Position_Y INTEGER)")
+        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Current_Map TEXT, Character_Position_X INTEGER, Character_Position_Y INTEGER)")
 
     # Insert default data
     # Insert default character entry

@@ -8,10 +8,11 @@ class Game(Saveable):
         self.maps = maps
         self.current_map = current_map
 
-    def create_memento(self, name):
+    def create_memento(self):
         character_memento = self.character.create_memento()
-        return GameMemento(name, self.current_map, character_memento)
+        return GameMemento(self.current_map.name, character_memento)
 
     def set_memento(self, game_memento):
         self.current_map.name = game_memento.map_name
+        self.current_map  = self.maps[game_memento.map_name]
         self.character.set_memento(game_memento.character_memento)

@@ -104,9 +104,6 @@ class GameController(Controller):
         self.model.character.position = position
 
         # Check if any triggers have been activated.
-        print "previous position is %s" % str(self.previous_position)
-        print "position is %s" % str(position)
-
         if position in self.triggers:
             # TODO Handle chance here.
             self._handle_trigger(self.triggers[position], position, False)
