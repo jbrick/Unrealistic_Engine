@@ -7,6 +7,7 @@ class View():
 
     BACKGROUND = 1
     FOREGROUND = 2
+    OVERLAY = 99
 
     def __init__(self):
         # We maintain a dictionary mapping a model to the function to call to
