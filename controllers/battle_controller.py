@@ -6,9 +6,10 @@ from pygame.constants import K_RETURN
 
 from Unrealistic_Engine.models.menu import Menu
 from Unrealistic_Engine.models.node_leaf import LeafNode
-from Unrealistic_Engine.models.action import Action
+from Unrealistic_Engine.models.attack_action import AttackAction
 from Unrealistic_Engine.views.battle_view import BattleView
 from Unrealistic_Engine.models.target_window import TargetWindow
+from Unrealistic_Engine.models.battle_log import BattleLog
 from Unrealistic_Engine.models.map import Map
 from Unrealistic_Engine import event_types
 from Unrealistic_Engine.utils.utils import Utils
@@ -19,9 +20,9 @@ from Unrealistic_Engine.controllers.controller import Controller
 
 class BattleController(Controller):
 
-    ACTION_SELECT = "Action Select"
-    TARGET_SELECT = "Target Select"
-    ENEMY_TURN = "Enemy Turn"
+    ACTION_SELECT = 0
+    TARGET_SELECT = 1
+    ENEMY_TURN = 2
 
     def __init__(self, model, view, current_map, character_start_position, enemy_name):
         self.model = model
@@ -35,17 +36,17 @@ class BattleController(Controller):
         # Add Character model
         self.view.add_model(
             self.model.character, BattleView.render_character,
-            Position(Map.GRID_SIZE/2, Map.GRID_SIZE/2), 2)
+            Position(Map.GRID_SIZE/2, Map.GRID_SIZE/2), View.FOREGROUND)
         self.view.set_visible_model_position(
             self.model.character, Position(Map.GRID_SIZE/2, Map.GRID_SIZE/2))
 
-        #Add Map Model
+        # Add Map Model
         self.view.add_model(
             self.current_map.get_map_tile(character_start_position.x_coord,
                                           character_start_position.y_coord),
-            BattleView.render_map, Position(0, 0), 1)
+            BattleView.render_map, Position(0, 0), View.BACKGROUND)
 
-        #Add Enemy
+        # Add Enemy
         self.view.add_model(
             self.enemy, BattleView.render_enemy, Position(Map.GRID_SIZE/2, 2), 2)
 
@@ -54,11 +55,15 @@ class BattleController(Controller):
                       'Enemy': self.enemy}
         self.target_window = TargetWindow(self.model.character, self.state, characters)
         self.view.add_model(self.target_window, BattleView.render_target_window,
-                            Position(Map.GRID_SIZE/2, Map.GRID_SIZE/2), 2)
+                            Position(Map.GRID_SIZE/2, Map.GRID_SIZE/2), View.FOREGROUND)
+
+        # Add Battle Log
+        self.battle_log = BattleLog("%s Attacked!" % enemy_name)
+        self.view.add_model(self.battle_log, BattleView.render_battle_log,
+                            Position(0, 0), View.FOREGROUND)
 
         # Add action select menu to visible models
         self.action_menu = Menu()
-        self.action_menu.set_battle_log("%s Attacked!" % enemy_name)
         self.action_menu.addItem(LeafNode(self.set_attack_action, "Attack"))
         self.action_menu.addItem(LeafNode(LeafNode.testFunc, "Items"))
         self.view.add_model(self.action_menu, BattleView.render_action_menu, 0, View.FOREGROUND)
@@ -106,22 +111,7 @@ class BattleController(Controller):
             self.end_battle()
 
         if pressed_key == pygame.K_ESCAPE:
-            base = Utils.fetch(Utils.qualify_controller_name(
-                "menu_controller"))
-
-            imports = base.MenuController.get_imports()
-
-            view_module = Utils.fetch(imports[base.MenuController.VIEWS] ["main_menu"])
-
-            model = base.MenuController.build_menu()
-            view = view_module.MainMenu()
-            controller = base.MenuController(model, view, self, self.view)
-
-            pygame.event.post(
-                pygame.event.Event(
-                    event_types.UPDATE_GAME_STATE,
-                    {"Controller": controller,
-                     "View": view}))
+            self.open_main_menu(self.view)
 
     def handle_player_start_point(self, pressed_key):
         if pressed_key == pygame.K_UP or pressed_key == pygame.K_w:
@@ -147,33 +137,37 @@ class BattleController(Controller):
                             new_target_position, 2)
 
     def update_battle_log(self, message):
-        self.view.remove_model(self.action_menu)
-        self.action_menu.set_battle_log(message)
-        self.view.add_model(self.action_menu, BattleView.render_action_menu, 0, View.FOREGROUND)
+        self.view.remove_model(self.battle_log)
+        self.battle_log.add_battle_log_entry(message)
+        self.view.add_model(self.battle_log, BattleView.render_battle_log, 0, View.FOREGROUND)
 
     def set_attack_action(self):
-        self.current_action = Action(Action.ATTACK, self.model.character.attack)
+        self.current_action = AttackAction(self.model.character.attack)
         self.state = BattleController.TARGET_SELECT
         self.update_target_window(self.enemy, self.state)
 
     def execute_action(self, action):
-        if action.type is Action.ATTACK:
-            self.target_window.current_target.health -= action.action_arg
-            self.update_battle_log("You hit %s for %d damage." %
-                                   (self.target_window.current_target.name, action.action_arg))
+        action.execute_action(self.target_window, self.battle_log)
 
-            # End battle when someone dies
-            if self.target_window.current_target.health <= 0:
-                if self.target_window.current_target.name == 'Player':
-                    self.quit_game()
-                else:
-                    # return to ensure enemy doesn't attack after being killed
-                    self.end_battle()
-                    return
+        # End battle when someone dies
+        if self.target_window.current_target.health <= 0:
+            if self.target_window.current_target.name == 'Player':
+                self.quit_game()
+            else:
+                # return to ensure enemy doesn't attack after being killed
+                self.end_battle()
+                return
 
-            self.state = BattleController.ENEMY_TURN
-            self.update_target_window(self.target_window.current_target, self.state)
-            self.execute_enemy_turn()
+        # Update Battle log
+        self.view.remove_model(self.battle_log)
+        self.view.add_model(self.battle_log, BattleView.render_battle_log, 0, View.FOREGROUND)
+
+        # Change to enemy turn
+        self.state = BattleController.ENEMY_TURN
+
+        # Update target window
+        self.update_target_window(self.target_window.current_target, self.state)
+        self.execute_enemy_turn()
 
     def execute_enemy_turn(self):
         self.model.character.health -= self.enemy.attack
@@ -192,10 +186,6 @@ class BattleController(Controller):
         view_module = Utils.fetch(imports[base.GameController.VIEWS]["game_view"])
 
         view = view_module.GameView()
-
-        # Just give the game view the same visible models as the battle
-        # view for now.
-        view.visible_models = self.view.visible_models
 
         controller = base.GameController(self.model, view, self.character_start_position,
                                          self.current_map)

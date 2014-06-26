@@ -21,7 +21,7 @@ class GameController(Controller):
         self.previous_position = None
         self.changed_map = False
 
-        self.__build_triggers()
+        self._build_triggers()
 
         # Add Map model
         view.add_model(self.current_map, GameView.render_map, Position(0, 0), 1)
@@ -62,24 +62,7 @@ class GameController(Controller):
         # For testing purposes pressing enter swaps controller / view.
 
         if pressed_key == pygame.K_b:
-            base = Utils.fetch(Utils.qualify_controller_name(
-                "battle_controller"))
-            
-            imports = base.BattleController.get_imports()
-            
-            view_module = Utils.fetch(imports[base.BattleController.VIEWS]["battle_view"])
-            
-            view = view_module.BattleView()
-            
-            # Just give the battle view the same visible models as the
-            # game view for now.
-            view.visible_models = self.view._visible_models
-            controller = base.BattleController(self.model, view, self.current_map, position, 'Greyback')
-            pygame.event.post(
-                pygame.event.Event(
-                    event_types.UPDATE_GAME_STATE,
-                    {"Controller": controller,
-                     "View": view}))
+            self._start_battle('Greyback', position)
         if pressed_key == pygame.K_ESCAPE:
             base = Utils.fetch(Utils.qualify_controller_name(
                 "menu_controller"))
@@ -106,10 +89,10 @@ class GameController(Controller):
 
         if position in self.triggers:
             # TODO Handle chance here.
-            self.__handle_trigger(self.triggers[position], position, False)
+            self._handle_trigger(self.triggers[position], position, False)
         if self.previous_position in self.triggers:
             # TODO Handle chance here.
-            self.__handle_trigger(self.triggers[self.previous_position], self.previous_position, True)
+            self._handle_trigger(self.triggers[self.previous_position], self.previous_position, True)
 
         self.previous_position = copy.copy(position)
         if self.changed_map:
@@ -118,7 +101,7 @@ class GameController(Controller):
             self.previous_position = None
             self.changed_map = False
 
-    def __change_map(self, map_name):
+    def _change_map(self, map_name):
         self.changed_map = True
         self.view.remove_model(self.current_map)
         self.current_map = self.model.maps[map_name]
@@ -126,9 +109,9 @@ class GameController(Controller):
             self.current_map, GameView.render_map, Position(0, 0), 1)
         self.triggers = {}
         self.previous_position = None
-        self.__build_triggers()
+        self._build_triggers()
 
-    def __start_battle(self, enemy_name, position):
+    def _start_battle(self, enemy_name, position):
         base = Utils.fetch(Utils.qualify_controller_name(
             "battle_controller"))
 
@@ -138,9 +121,6 @@ class GameController(Controller):
 
         view = view_module.BattleView()
 
-        # Just give the battle view the same visible models as the
-        # game view for now.
-        view.visible_models = self.view._visible_models
         controller = base.BattleController(self.model, view, self.current_map, position, enemy_name)
         pygame.event.post(
             pygame.event.Event(
@@ -148,13 +128,13 @@ class GameController(Controller):
                 {"Controller": controller,
                  "View": view}))
 
-    def __build_triggers(self):
+    def _build_triggers(self):
         for row in self.current_map.tiles:
             for tile in row:
                 if tile != 0 and tile.trigger is not None:
                     self.triggers[tile.position] = tile.trigger
 
-    def __handle_trigger(self, trigger, position, is_previous):
+    def _handle_trigger(self, trigger, position, is_previous):
 
         # We support triggers being fired when entering or leaving a tile.
         valid_previous_trigger = trigger.triggered_on == "exit" and is_previous
@@ -162,7 +142,7 @@ class GameController(Controller):
 
         if valid_current_trigger or valid_previous_trigger:
             if trigger.action_type == Trigger.CHANGE_MAP:
-                self.__change_map(trigger.action_data['map_name'])
+                self._change_map(trigger.action_data['map_name'])
                 position = Position(
                     trigger.action_data['character_x'],
                     trigger.action_data['character_y'])
@@ -170,7 +150,7 @@ class GameController(Controller):
                 self.view.set_visible_model_position(self.model.character, position)
 
             if trigger.action_type == Trigger.START_BATTLE:
-                self.__start_battle(trigger.action_data['enemy'], position)
+                self._start_battle(trigger.action_data['enemy'], position)
 
             print("Action occurred with data: " + str(trigger.action_data))
 

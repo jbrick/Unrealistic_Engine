@@ -68,7 +68,7 @@ class MenuController(Controller):
                 self.view.remove_model(self.model)
                 self.model = Menu.breadcrumbs.pop();
                 self.view.add_model(self.model, MainMenu.render_menu, 0,
-                    View.BACKGROUND)
+                                    View.BACKGROUND)
         if pressed_key == pygame.K_RIGHT or pressed_key == pygame.K_RETURN:
             if isinstance(self.model.nodes [self.model.activeNode], MenuNode):
                 # Traverse into submenu

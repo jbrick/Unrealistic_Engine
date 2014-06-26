@@ -15,8 +15,10 @@ class BattleView(BattleViewInterface):
     TARGET_ICON_OFFSET = -10
     FONT_SIZE = 16
     PADDING = 10
-    LINE_HEIGHT = 25  # Height of each menu item
-    OFFSET = 50       # Leaving space for breadcrumbs
+    # Height of each menu item
+    LINE_HEIGHT = 25
+    # Leaving space for breadcrumbs
+    OFFSET = 50
 
     @staticmethod
     def render_character(character, screen, position, *args, **kwargs):
@@ -127,13 +129,16 @@ class BattleView(BattleViewInterface):
                                                      BattleView.OFFSET + BattleView.PADDING +
                                                      large_offset))
 
-        # Render battle log
-        num_logs = len(action_menu.battle_log)
+    @staticmethod
+    def render_battle_log(battle_log, screen, *args, **kwargs):
+        font = pygame.font.SysFont("monospace", BattleView.FONT_SIZE)
+        large_offset = Map.MAP_SIZE - (Map.MAP_SIZE / 4)
+        num_logs = len(battle_log.battle_log)
         for log_count in range(0, num_logs):
-            log_label = font.render(action_menu.battle_log[num_logs - log_count - 1],
+            log_label = font.render(battle_log.battle_log[num_logs - log_count - 1],
                                     1, (255, 255, 255))
             if log_count == 0:
-                log_label = font.render(action_menu.battle_log[num_logs - log_count - 1],
+                log_label = font.render(battle_log.battle_log[num_logs - log_count - 1],
                                         1, (255, 255, 0))
 
             screen.blit(log_label, (Map.MAP_SIZE/2, large_offset + BattleView.PADDING +

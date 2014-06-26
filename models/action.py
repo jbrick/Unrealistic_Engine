@@ -2,9 +2,9 @@
 
 class Action():
 
-    ATTACK = "ATTACK"
+    def __init__(self):
+        self.test = None
 
-    def __init__(self, type, action_arg):
-        self.type = type
-        self.action_arg = action_arg
-
+    @staticmethod
+    def execute_action(self, target_window, battle_log, *args, **kwargs):
+        raise NotImplementedError("Please Implement this method")

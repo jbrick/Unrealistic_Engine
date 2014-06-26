@@ -20,8 +20,7 @@ class Menu():
         self.activeNode = 0;
         self.activeIcon = pygame.image.load(os.path.join("Images",
             "menu_active.png"))
-        self.battle_log = None
-    
+
     """
     Adds a new menu item to this menu.
     
@@ -78,9 +77,3 @@ class Menu():
             self.activeNode = self.nodes.index(target)
         else:
             raise TypeError("This function only accepts Node objects or numerics.")
-
-    # Used only in battle view for showing the last action
-    def set_battle_log(self, log_item):
-        if self.battle_log is None:
-            self.battle_log = []
-        self.battle_log.append(log_item)
