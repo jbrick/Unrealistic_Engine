@@ -87,7 +87,7 @@
             "Triggered_On" : "enter",
             "Action_Data" : {
                         "enemy":"Greyback"
-                }
+            }
         },
         {
             "MapTileId" : 338,
@@ -98,8 +98,18 @@
             "Triggered_On" : "enter",
             "Action_Data" : {
                         "enemy":"Fenris"
-                }
+            }
+        },
+        {
+            "MapTileId" : 838,
+            "Chance" : 100,
+            "Action_Type" : 3,
+            "Triggerd_On" : "enter",
+            "Action_Data" : {
+                "dialog_text" : "Congratulations! You've made it to the end!",
+                "dialog_x" : 8,
+                "dialog_y" : 8
+            }
         }
     ]
-
 }
