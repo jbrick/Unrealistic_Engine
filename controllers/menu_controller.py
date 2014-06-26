@@ -36,7 +36,7 @@ class MenuController(Controller):
 
         active_menu = self.menu_model
 
-    # Builds a menu obect containing all saved games in the database. Each saved game
+    # Builds a menu object containing all saved games in the database. Each saved game
     # has an action associated with it. Also returns the ids of the created nodes.
     def _build_list_of_saved_games(self, parent, action, action_args):
         game_menu = Menu()

@@ -8,6 +8,7 @@ class MainMenu(MenuView):
 
     # Leaving space for breadcrumbs
     OFFSET = 50
+
     PADDING = 10
     FONT_SIZE = 12
 
