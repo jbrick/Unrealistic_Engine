@@ -28,7 +28,7 @@ class MainMenu(MenuView):
         # Menu background
         menu_background = pygame.Surface ((width, height), pygame.SRCALPHA)
 
-        #050447
+        # 0x050447
         menu_background.fill((5, 4, 71, 100))
         screen.blit(menu_background, (left_corner, top_corner))
 

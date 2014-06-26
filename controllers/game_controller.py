@@ -8,7 +8,6 @@ from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine.models.map import Map
 from Unrealistic_Engine.models.trigger import Trigger
 from Unrealistic_Engine.views.game_view import GameView
-from Unrealistic_Engine.views.view import View
 from Unrealistic_Engine.controllers.controller import Controller
 
 
@@ -24,11 +23,11 @@ class GameController(Controller):
         self._build_triggers()
 
         # Add Map model
-        view.add_model(model.current_map, GameView.render_map, Position(0, 0), View.BACKGROUND)
+        view.add_model(model.current_map, GameView.render_map, Position(0, 0), GameView.BACKGROUND)
         
         # Add Character model
         view.add_model(
-            model.character, GameView.render_character, model.character.position, View.FOREGROUND)
+            model.character, GameView.render_character, model.character.position, GameView.FOREGROUND)
 
     @staticmethod
     def get_imports():
@@ -104,7 +103,7 @@ class GameController(Controller):
         self.view.remove_model(self.model.current_map)
         self.model.current_map = self.model.maps[map_name]
         self.view.add_model(
-            self.model.current_map, GameView.render_map, Position(0, 0), 1)
+            self.model.current_map, GameView.render_map, Position(0, 0), View.BACKGROUND)
         self.triggers = {}
         self.previous_position = None
         self._build_triggers()
@@ -133,7 +132,6 @@ class GameController(Controller):
                     self.triggers[tile.position] = tile.trigger
 
     def _handle_trigger(self, trigger, position, is_previous):
-
         # We support triggers being fired when entering or leaving a tile.
         valid_previous_trigger = trigger.triggered_on == "exit" and is_previous
         valid_current_trigger = trigger.triggered_on == "enter" and not is_previous
@@ -150,11 +148,12 @@ class GameController(Controller):
             if trigger.action_type == Trigger.START_BATTLE:
                 self._start_battle(trigger.action_data['enemy'], position)
 
-            print("Action occurred with data: " + str(trigger.action_data))
+            print "Action occurred with data: " + str(trigger.action_data)
 
     def handle_game_event(self, event):
+        if event.type == event_types.KILL_DIALOG:
+            self.remove_model(event.Dialog)
+
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-
-
