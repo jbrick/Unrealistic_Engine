@@ -25,7 +25,6 @@ class MenuController(Controller):
             LeafNode("Quit", utils.quit))
 
         save_game_node = MenuNode("Save Game")
-        #, Database().save_game, self.game_model.create_memento())
         self.menu_model.nodes.append(save_game_node)
         self.save_game_node_id = save_game_node.id
 
