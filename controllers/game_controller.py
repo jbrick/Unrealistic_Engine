@@ -17,18 +17,17 @@ class GameController(Controller):
         self.view = view
         self.triggers = {}
 
-
         self.previous_position = None
         self.changed_map = False
 
         self._build_triggers()
 
         # Add Map model
-        view.add_model(model.current_map, GameView.render_map, Position(0, 0), 1)
+        view.add_model(model.current_map, GameView.render_map, Position(0, 0), GameView.BACKGROUND)
         
         # Add Character model
         view.add_model(
-            model.character, GameView.render_character, model.character.position, 2)
+            model.character, GameView.render_character, model.character.position, GameView.FOREGROUND)
 
     @staticmethod
     def get_imports():
@@ -123,7 +122,7 @@ class GameController(Controller):
         self.view.remove_model(self.model.current_map)
         self.model.current_map = self.model.maps[map_name]
         self.view.add_model(
-            self.model.current_map, GameView.render_map, Position(0, 0), 1)
+            self.model.current_map, GameView.render_map, Position(0, 0), View.BACKGROUND)
         self.triggers = {}
         self.previous_position = None
         self._build_triggers()
@@ -135,7 +134,6 @@ class GameController(Controller):
                     self.triggers[tile.position] = tile.trigger
 
     def _handle_trigger(self, trigger, position, is_previous):
-
         # We support triggers being fired when entering or leaving a tile.
         valid_previous_trigger = trigger.triggered_on == "exit" and is_previous
         valid_current_trigger = trigger.triggered_on == "enter" and not is_previous
@@ -149,12 +147,12 @@ class GameController(Controller):
 
                 self.view.set_visible_model_position(self.model.character, position)
 
-
             print "Action occurred with data: " + str(trigger.action_data)
 
     def handle_game_event(self, event):
+        if event.type == event_types.KILL_DIALOG:
+            self.remove_model(event.Dialog)
+
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-
-

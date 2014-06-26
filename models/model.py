@@ -8,7 +8,6 @@ class Model():
         """
         raise NotImplementedError("Please Implement this method")
 
-
     def save_game(self, game_memento):
         """
         The model must implement this to save a game's state such as character health position etc.
