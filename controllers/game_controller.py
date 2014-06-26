@@ -10,7 +10,6 @@ from Unrealistic_Engine.models.dialog import Dialog
 from Unrealistic_Engine.models.map import Map
 from Unrealistic_Engine.models.trigger import Trigger
 from Unrealistic_Engine.views.game_view import GameView
-from Unrealistic_Engine.views.view import View
 from Unrealistic_Engine.controllers.controller import Controller
 from Unrealistic_Engine.models.character import Character
 
@@ -35,12 +34,16 @@ class GameController(Controller):
         
         # Add Character model
         view.add_model(
+<<<<<<< HEAD
             model.character,
             GameView.render_character,
             model.character.position,
             GameView.FOREGROUND)
 
         self.unmoved = True
+=======
+            model.character, GameView.render_character, model.character.position, GameView.FOREGROUND)
+>>>>>>> Theoretical dialog functionality for rendering dialog background. Not yet tested. Dialog trigger not implemented.
 
     @staticmethod
     def get_imports():
