@@ -6,8 +6,9 @@ class Map:
     MAP_SIZE = 640
     GRID_SIZE = 16
 
-    def __init__(self, grid_size):
+    def __init__(self, grid_size, name):
         self.grid_size = grid_size
+        self.name = name
         self.tiles = [[0 for x in xrange(grid_size)]
                       for x in xrange(grid_size)]
 

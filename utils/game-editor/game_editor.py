@@ -238,12 +238,13 @@ def add_tilesets(cursor, json_tilesets, *args, **kwargs):
 
 
 def reset_database(cursor, *args, **kwargs):
-    # Clear DB of existing tables (focused on one map right now)
+    # Clear DB of existing tables
     cursor.execute("DROP TABLE IF EXISTS Map")
     cursor.execute("DROP TABLE IF EXISTS Tile")
     cursor.execute("DROP TABLE IF EXISTS MapTile")
     cursor.execute("DROP TABLE IF EXISTS Character")
     cursor.execute("DROP TABLE IF EXISTS Trigger")
+    cursor.execute("DROP TABLE IF EXISTS GameState")
 
 
     # Create tables (again if dropped before)
@@ -266,6 +267,10 @@ def reset_database(cursor, *args, **kwargs):
     cursor.execute(
         "CREATE TABLE Trigger"
         "(Id INTEGER PRIMARY KEY AUTOINCREMENT, MapTileId INTEGER, Chance INTEGER, Action_Type INTEGER, Triggered_On TEXT, Action_Data TEXT)")
+
+    cursor.execute(
+        "CREATE TABLE GameState"
+        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Current_Map TEXT, Character_Position_X INTEGER, Character_Position_Y INTEGER)")
 
     # Insert default data
     # Insert default character entry
