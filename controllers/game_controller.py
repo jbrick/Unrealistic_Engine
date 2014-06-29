@@ -120,7 +120,7 @@ class GameController(Controller):
         self.view.set_visible_model_position(self.model.character, position)
         self.model.character.position = position
 
-        # Check if any triggers have been activated.
+        # Check if any triggers have been activated
         if position in self.triggers:
             # TODO Handle chance here.
             self._handle_trigger(self.triggers[position], position, False)
