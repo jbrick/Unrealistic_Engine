@@ -39,6 +39,9 @@ class GameController(Controller):
             GameView.render_character,
             model.character.position,
             GameView.FOREGROUND)
+        
+        self.active_dialog = None
+        self.unmoved = True
 
     @staticmethod
     def get_imports():
@@ -52,6 +55,7 @@ class GameController(Controller):
         position = self.view.get_visible_model_position(
             self.model.character)
         destination_tile = None
+<<<<<<< HEAD
         if pressed_key == pygame.K_LEFT or pressed_key == pygame.K_a:
             self.model.character.direction = Character.LEFT
             destination_tile = self.model.current_map.get_map_tile(
@@ -94,6 +98,76 @@ class GameController(Controller):
                     event_types.UPDATE_GAME_STATE,
                     {"Controller": controller,
                      "View": view}))
+=======
+        
+        if not self.active_dialog:
+            if pressed_key == pygame.K_LEFT:
+                destination_tile = self.model.current_map.get_map_tile(
+                    position.x_coord - 1, position.y_coord)
+                if (position.x_coord - 1) >= 0 and destination_tile.walkable == 1:
+                    position.set_x_coord(position.x_coord - 1)
+                self.unmoved = False
+            if pressed_key == pygame.K_RIGHT:
+                destination_tile = self.model.current_map.get_map_tile(
+                    position.x_coord + 1, position.y_coord)
+                if(position.x_coord + 1) < Map.GRID_SIZE and destination_tile.walkable == 1:
+                    position.set_x_coord(position.x_coord + 1)
+                self.unmoved = False
+            if pressed_key == pygame.K_UP:
+                destination_tile = self.model.current_map.get_map_tile(
+                    position.x_coord, position.y_coord - 1)
+                if(position.y_coord - 1) >= 0 and destination_tile.walkable == 1:
+                    position.set_y_coord(position.y_coord - 1)
+                self.unmoved = False
+            if pressed_key == pygame.K_DOWN:
+                destination_tile = self.model.current_map.get_map_tile(
+                    position.x_coord, position.y_coord + 1)
+                if(position.y_coord + 1) < Map.GRID_SIZE and destination_tile.walkable == 1:
+                    position.set_y_coord(position.y_coord + 1)
+                self.unmoved = False
+            # For testing purposes pressing enter swaps controller / view.
+            if pressed_key == pygame.K_RETURN:
+                base = utils.fetch(utils.qualify_controller_name(
+                    "battle_controller"))
+                
+                imports = base.BattleController.get_imports()
+                
+                view_module = utils.fetch(imports [base.BattleController.VIEWS] ["battle_view"])
+                
+                view = view_module.BattleView()
+                
+                # Just give the battle view the same visible models as the
+                # game view for now.
+                view.visible_models = self.view.visible_models
+                controller = base.BattleController(self.model, view)
+
+                pygame.event.post(
+                    pygame.event.Event(
+                        event_types.UPDATE_GAME_STATE,
+                        {"Controller": controller,
+                         "View": view}))
+            if pressed_key == pygame.K_ESCAPE:
+                base = utils.fetch(utils.qualify_controller_name(
+                    "menu_controller"))
+                
+                imports = base.MenuController.get_imports()
+                
+                view_module = utils.fetch(imports [base.MenuController.VIEWS] ["main_menu"])
+
+                view = view_module.MainMenu ()
+                controller = base.MenuController(self.model, view)
+
+                pygame.event.post(
+                    pygame.event.Event(
+                        event_types.UPDATE_GAME_STATE,
+                        {"Controller": controller,
+                         "View": view}))
+        else:
+            if pressed_key == pygame.K_SPACE:
+                self.view.remove_model(self.active_dialog)
+                self.active_dialog = None
+                self.unmoved = True
+>>>>>>> Timed dialogs
 
         self.view.set_visible_model_position(self.model.character, position)
         self.model.character.position = position
@@ -163,16 +237,14 @@ class GameController(Controller):
 
     def _handle_trigger(self, trigger, position, is_previous, pressed_key):
         # We support triggers being fired when entering or leaving a tile.
-        valid_previous_trigger = trigger.triggered_on == Trigger.EXIT and \
-                                 is_previous
-        valid_current_trigger = trigger.triggered_on == Trigger.ENTER and not  \
-            is_previous
+<<<<<<< HEAD
+        valid_previous_trigger = trigger.triggered_on == Trigger.EXIT and is_previous
+        valid_current_trigger = trigger.triggered_on == Trigger.ENTER and not is_previous
 
-        valid_action_trigger = trigger.triggered_on == Trigger.KEY_ACTION and\
+        valid_action_trigger = trigger.triggered_on == Trigger.KEY_ACTION and \
                                pressed_key == pygame.K_e
 
-        if not (valid_previous_trigger or valid_current_trigger or  \
-                valid_action_trigger):
+        if not (valid_previous_trigger or valid_current_trigger or valid_action_trigger):
             return
 
         # Make sure the character is facing the appropriate direction
@@ -201,6 +273,19 @@ class GameController(Controller):
                 trigger.action_data['timeout'])
             self.view.add_model(
                 new_dialog, GameView.render_dialog, new_dialog.location, GameView.OVERLAY)
+        if trigger.action_type == Trigger.SHOW_DIALOG:
+            if not self.unmoved:
+                new_dialog = Dialog(
+                    Position(trigger.action_data['dialog_x'], trigger.action_data['dialog_y']),
+                    trigger.action_data['dialog_text'],
+                    trigger.action_data['timed'],
+                    trigger.action_data['timeout'])
+                self.view.add_model(
+                    new_dialog, GameView.render_dialog, new_dialog.location, GameView.OVERLAY)
+                
+                if not new_dialog.timed:
+                    # TODO: Render icon to indicate manual procession
+                    self.active_dialog = new_dialog
 
         print("Action occurred with data: " + str(trigger.action_data))
 
