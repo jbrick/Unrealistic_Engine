@@ -10,7 +10,7 @@ class Character(Saveable):
     SIZE = Map.MAP_SIZE / Map.GRID_SIZE
 
     def __init__(self, image):
-        self.position = Position (0, 0)
+        self.position = Position (1, 1)
         self.image = image
 
     def create_memento(self):

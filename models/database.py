@@ -20,7 +20,7 @@ class Database(Model):
     def load_application(self):
         character = self._load_characters()
         maps = self._load_maps()
-        game = Game(character, maps, maps["map3"])
+        game = Game(character, maps, maps["tower_floor1"])
         return game
 
     def _database_execute(self, sql, args):
