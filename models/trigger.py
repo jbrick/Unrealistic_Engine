@@ -8,6 +8,7 @@ class Trigger:
     # Trigger Types
     CHANGE_MAP = "change_map"
     START_BATTLE = "start_battle"
+    SHOW_DIALOG = "show_dialog"
 
     # Triggered On Types
     ENTER = "enter"
@@ -24,7 +25,6 @@ class Trigger:
 
     def __init__(self, chance, action_type, triggered_on, direction_facing,
                  one_time, action_data):
-
         self.chance = chance
         self.action_type = action_type
         self.triggered_on = triggered_on

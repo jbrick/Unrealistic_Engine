@@ -6,6 +6,7 @@ import os
 from Unrealistic_Engine import event_types
 from Unrealistic_Engine.utils import utils
 from Unrealistic_Engine.utils.position import Position
+from Unrealistic_Engine.models.dialog import Dialog
 from Unrealistic_Engine.models.map import Map
 from Unrealistic_Engine.models.trigger import Trigger
 from Unrealistic_Engine.views.game_view import GameView
@@ -34,7 +35,10 @@ class GameController(Controller):
         
         # Add Character model
         view.add_model(
-            model.character, GameView.render_character, model.character.position, GameView.FOREGROUND)
+            model.character,
+            GameView.render_character,
+            model.character.position,
+            GameView.FOREGROUND)
 
     @staticmethod
     def get_imports():
@@ -129,7 +133,7 @@ class GameController(Controller):
             pygame.mixer.music.play()
 
         self.view.add_model(
-            self.model.current_map, GameView.render_map, Position(0, 0), View.BACKGROUND)
+            self.model.current_map, GameView.render_map, Position(0, 0), GameView.BACKGROUND)
         self.triggers = {}
         self.previous_position = None
         self._build_triggers()
@@ -189,12 +193,20 @@ class GameController(Controller):
 
         if trigger.action_type == Trigger.START_BATTLE:
             self._start_battle(trigger.action_data['enemy'], position)
+        if trigger.action_type == Trigger.SHOW_DIALOG:
+            new_dialog = Dialog(
+                Position(trigger.action_data['dialog_x'], trigger.action_data['dialog_y']),
+                trigger.action_data['dialog_text'],
+                trigger.action_data['timed'],
+                trigger.action_data['timeout'])
+            self.view.add_model(
+                new_dialog, GameView.render_dialog, new_dialog.location, GameView.OVERLAY)
 
         print("Action occurred with data: " + str(trigger.action_data))
 
     def handle_game_event(self, event):
         if event.type == event_types.KILL_DIALOG:
-            self.remove_model(event.Dialog)
+            self.view.remove_model(event.Dialog)
 
         if event.type == pygame.QUIT:
             pygame.quit()
