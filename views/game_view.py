@@ -1,3 +1,6 @@
+import pygame
+
+from Unrealistic_Engine import event_types
 from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine.views.map_view import MapView
 
@@ -15,7 +18,7 @@ class GameView(MapView):
     @staticmethod
     def render_character(character, screen, position, *args, **kwargs):
         screen.blit(character.image,
-                    position.convert_to_pixels(GameView.CHARACTER_OFFSET))
+                    position.convert_to_pixels(GameView.CHARACTER_OFFSET,GameView.CHARACTER_OFFSET))
 
     @staticmethod
     def render_dialog(dialog, screen, position, *args, **kwargs):
@@ -34,14 +37,22 @@ class GameView(MapView):
         text = dialog.content
         
         dialog_size = font.size(text)
-        dialog_background = pygame.Surface ((dialog_size[0], dialog_size[1]), pygame.SRCALPHA)
+        dialog_background = pygame.Surface ((
+            dialog_size[0] + 2*GameView.DIALOG_PADDING,
+            dialog_size[1] + 2*GameView.DIALOG_PADDING), pygame.SRCALPHA)
         dialog_background.fill((5, 4, 71, 255))
         
         render_position = position.convert_to_pixels(
-            -1*(dialog_size[0]/2 + DIALOG_PADDING),
-            -1*(dialog_size[1]/2 + DIALOG_PADDING))
+            -1*(dialog_size[0]/2 + GameView.DIALOG_PADDING),
+            -1*(dialog_size[1]/2 + GameView.DIALOG_PADDING))
         
         screen.blit(dialog_background, render_position)
+        
+        label = font.render(dialog.content, 1, (255, 255, 255))
+        
+        screen.blit(label, (
+                render_position[0] + GameView.DIALOG_PADDING,
+                render_position[1] + GameView.DIALOG_PADDING))
 
     @staticmethod
     def render_map(game_map, screen, *args, **kwargs):
@@ -50,4 +61,4 @@ class GameView(MapView):
                 position = Position(x, y)
                 if game_map.tiles[x][y] != 0:
                     screen.blit(game_map.tiles[x][y].image,
-                                position.convert_to_pixels(0))
+                                position.convert_to_pixels(0, 0))
