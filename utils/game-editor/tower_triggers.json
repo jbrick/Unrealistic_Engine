@@ -114,7 +114,7 @@
             }
         },
         {
-            "MapTileId" : 838,
+            "MapTileId" : 221,
             "Chance" : 100,
             "Action_Type" : "show_dialog",
             "Triggered_On" : "enter",

@@ -27,9 +27,10 @@ class View():
         for model in self.visible_models:
             # Find the tuple (renderfunction, position) for the current model.
             # Call the associated render function
-            if self.visible_models[model][LAYER] == View.BACKGROUND:
-                self.visible_models[model][RENDER_FUNCTION](model, screen,
-                                              self.visible_models[model][View.POSITION])
+            if self.visible_models[model][View.LAYER] == View.BACKGROUND:
+                self.visible_models[model][RENDER_FUNCTION](
+                    model, screen, self.visible_models[model][View.POSITION])
+
         # Repeat above for other layers
         for model in self.visible_models:
             if self.visible_models[model][View.LAYER] == View.FOREGROUND:

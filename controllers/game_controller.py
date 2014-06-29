@@ -35,15 +35,21 @@ class GameController(Controller):
         # Add Character model
         view.add_model(
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Dialog bug crunch.
             model.character,
             GameView.render_character,
             model.character.position,
             GameView.FOREGROUND)
+<<<<<<< HEAD
 
         self.unmoved = True
 =======
             model.character, GameView.render_character, model.character.position, GameView.FOREGROUND)
 >>>>>>> Theoretical dialog functionality for rendering dialog background. Not yet tested. Dialog trigger not implemented.
+=======
+>>>>>>> Dialog bug crunch.
 
     @staticmethod
     def get_imports():
@@ -194,14 +200,6 @@ class GameController(Controller):
         if trigger.action_type == Trigger.START_BATTLE:
             self._start_battle(trigger.action_data['enemy'], position)
 
-        if trigger.action_type == Trigger.SHOW_DIALOG:
-            new_dialog = Dialog(
-                Position(trigger.action_data['dialog_x'], trigger.action_data['dialog_y']),
-                trigger.action_data['dialog_text'],
-                trigger.action_data['timed'],
-                trigger.action_data['timeout'])
-            self.view.add_model(
-                new_dialog, GameView.render_dialog, new_dialog.location, GameView.OVERLAY)
         if trigger.action_type == Trigger.SHOW_DIALOG:
             if not self.unmoved:
                 self.unmoved = True

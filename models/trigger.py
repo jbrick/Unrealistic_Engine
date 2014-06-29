@@ -22,7 +22,6 @@ class Trigger:
     DIRECTION_RIGHT = Character.RIGHT
     DIRECTION_ANY = "any"
 
-
     def __init__(self, chance, action_type, triggered_on, direction_facing,
                  one_time, action_data):
         self.chance = chance
