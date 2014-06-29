@@ -34,22 +34,12 @@ class GameController(Controller):
         
         # Add Character model
         view.add_model(
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Dialog bug crunch.
             model.character,
             GameView.render_character,
             model.character.position,
             GameView.FOREGROUND)
-<<<<<<< HEAD
 
         self.unmoved = True
-=======
-            model.character, GameView.render_character, model.character.position, GameView.FOREGROUND)
->>>>>>> Theoretical dialog functionality for rendering dialog background. Not yet tested. Dialog trigger not implemented.
-=======
->>>>>>> Dialog bug crunch.
 
     @staticmethod
     def get_imports():
