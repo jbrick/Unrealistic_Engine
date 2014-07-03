@@ -20,6 +20,7 @@ class GameController(Controller):
         self.triggers = {}
         self.previous_position = None
         self.changed_map = False
+        self.unmoved = True
 
         self._build_triggers()
 
@@ -45,28 +46,53 @@ class GameController(Controller):
         position = self.view.get_visible_model_position(
             self.model.character)
         destination_tile = None
+        
         if pressed_key == pygame.K_LEFT or pressed_key == pygame.K_a:
+            self.unmoved = False
             destination_tile = self.model.current_map.get_map_tile(
                 position.x_coord - 1, position.y_coord)
             if (position.x_coord - 1) >= 0 and destination_tile.walkable == 1:
                 position.set_x_coord(position.x_coord - 1)
         if pressed_key == pygame.K_RIGHT or pressed_key == pygame.K_d:
+            self.unmoved = False
             destination_tile = self.model.current_map.get_map_tile(
                 position.x_coord + 1, position.y_coord)
             if(position.x_coord + 1) < Map.GRID_SIZE and destination_tile.walkable == 1:
                 position.set_x_coord(position.x_coord + 1)
         if pressed_key == pygame.K_UP or pressed_key == pygame.K_w:
+            self.unmoved = False
             destination_tile = self.model.current_map.get_map_tile(
                 position.x_coord, position.y_coord - 1)
             if(position.y_coord - 1) >= 0 and destination_tile.walkable == 1:
                 position.set_y_coord(position.y_coord - 1)
         if pressed_key == pygame.K_DOWN or pressed_key == pygame.K_s:
+            self.unmoved = False
             destination_tile = self.model.current_map.get_map_tile(
                 position.x_coord, position.y_coord + 1)
             if(position.y_coord + 1) < Map.GRID_SIZE and destination_tile.walkable == 1:
                 position.set_y_coord(position.y_coord + 1)
         if pressed_key == pygame.K_b:
             self._start_battle('Greyback', position)
+        # For testing purposes pressing enter swaps controller / view.
+        if pressed_key == pygame.K_RETURN:
+            base = utils.fetch(utils.qualify_controller_name("battle_controller"))
+            
+            imports = base.BattleController.get_imports()
+            
+            view_module = utils.fetch(imports [base.BattleController.VIEWS] ["battle_view"])
+            
+            view = view_module.BattleView()
+            
+            # Just give the battle view the same visible models as the
+            # game view for now.
+            view.visible_models = self.view.visible_models
+            controller = base.BattleController(self.model, view)
+
+            pygame.event.post(
+                pygame.event.Event(
+                    event_types.UPDATE_GAME_STATE,
+                    {"Controller": controller,
+                     "View": view}))
         if pressed_key == pygame.K_ESCAPE:
             base = utils.fetch(utils.qualify_controller_name(
                 "menu_controller"))
@@ -149,13 +175,27 @@ class GameController(Controller):
 
                 self.view.set_visible_model_position(self.model.character, position)
             if trigger.action_type == Trigger.SHOW_DIALOG:
-                new_dialog = Dialog(
-                    Position(trigger.action_data['dialog_x'], trigger.action_data['dialog_y']),
-                    trigger.action_data['dialog_text'],
-                    trigger.action_data['timed'],
-                    trigger.action_data['timeout'])
-                self.view.add_model(
-                    new_dialog, GameView.render_dialog, new_dialog.location, GameView.OVERLAY)
+                if not self.unmoved:
+                    self.unmoved = True
+                    new_dialog = Dialog(
+                        Position(trigger.action_data['dialog_x'], trigger.action_data['dialog_y']),
+                        trigger.action_data['dialog_text'],
+                        trigger.action_data['timed'],
+                        trigger.action_data['timeout'],
+                        self)
+                    self.view.add_model(
+                        new_dialog, GameView.render_dialog, new_dialog.location, GameView.OVERLAY)
+                    
+                    if not new_dialog.timed:
+                        base = utils.fetch(utils.qualify_controller_name("dialog_controller"))
+                        
+                        controller = base.DialogController(new_dialog, self.view)
+
+                        pygame.event.post(
+                            pygame.event.Event(
+                                event_types.UPDATE_GAME_STATE,
+                                {"Controller": controller,
+                                 "View": self.view}))
 
             if trigger.action_type == Trigger.START_BATTLE:
                 self._start_battle(trigger.action_data['enemy'], position)
