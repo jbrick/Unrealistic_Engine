@@ -1,7 +1,7 @@
 import pygame
 
-from Unrealistic_Engine.utils.utils import Utils
 from Unrealistic_Engine import event_types
+from Unrealistic_Engine.utils import utils
 
 
 # Every class that requires input from user should inherit this class.
@@ -11,7 +11,7 @@ class Controller():
     MODELS = 0
     VIEWS = 1
     CONTROLLERS = 2
-    
+
     def __init__(self, model, view):
         raise NotImplementedError("Please Implement this method")
 
@@ -21,13 +21,14 @@ class Controller():
 
     @staticmethod
     def qualify_imports(collections):
-        models = Utils.dictify(collections[Controller.MODELS])
-        views = Utils.dictify(collections[Controller.VIEWS])
-        controllers = Utils.dictify(collections[Controller.CONTROLLERS])
+
+        models = utils.dictify(collections[Controller.MODELS])
+        views = utils.dictify(collections[Controller.VIEWS])
+        controllers = utils.dictify(collections[Controller.CONTROLLERS])
         
-        models = {k: Utils.qualify_model_name(v) for k, v in models.items()}
-        views = {k: Utils.qualify_view_name(v) for k, v in views.items()}
-        controllers = {k: Utils.qualify_controller_name(v) for k, v in controllers.items ()}
+        models = {k: utils.qualify_model_name(v) for k, v in models.items()}
+        views = {k: utils.qualify_view_name(v) for k, v in views.items()}
+        controllers = {k: utils.qualify_controller_name(v) for k, v in controllers.items()}
 
         return models, views, controllers
 
@@ -42,12 +43,12 @@ class Controller():
         raise NotImplementedError("Please Implement this method")
 
     def open_main_menu(self, source_view):
-        base = Utils.fetch(Utils.qualify_controller_name(
+        base = utils.fetch(utils.qualify_controller_name(
             "menu_controller"))
 
         imports = base.MenuController.get_imports()
 
-        view_module = Utils.fetch(imports[base.MenuController.VIEWS]["main_menu"])
+        view_module = utils.fetch(imports[base.MenuController.VIEWS]["main_menu"])
 
         model = base.MenuController.build_menu()
         view = view_module.MainMenu()

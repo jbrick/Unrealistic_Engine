@@ -102,6 +102,7 @@ def add_triggers(cursor, json_triggers_set, *args, **kwargs):
                  Action_Data) VALUES (?, ?, ?, ?, ?)""",
                 (trigger["MapTileId"], trigger["Chance"],
                  trigger["Action_Type"], trigger["Triggered_On"], json.dumps(trigger["Action_Data"])))
+    print("Triggers added successfully.")
 
 
 def show_map_layout(cursor, map_names, *args, **kwargs):
@@ -227,6 +228,7 @@ def update_map(cursor, map_arg, *args, **kwargs):
 def delete_map_tiles(cursor, map_id,):
     cursor.execute(
         "DELETE FROM MapTile WHERE MapId = %s" % map_id)
+    print("Map with id %s deleted successfully." % map_id)
 
 
 def show_tiles(cursor, *args, **kwargs):
@@ -242,11 +244,11 @@ def add_tilesets(cursor, json_tilesets, *args, **kwargs):
         tiles = json.load(tiles_file)
         tiles_file.close()
 
-
         for tile in tiles["tiles"]:
             cursor.execute(
                 "INSERT INTO Tile (Name, Image, Walkable) VALUES (?, ?, ?)",
                 (tile["Name"], tile["Image"], tile["Walkable"]))
+    print("Tilesets added successfully.")
 
 
 def add_enemies(cursor, json_enemies_set, *args, **kwargs):
@@ -259,15 +261,17 @@ def add_enemies(cursor, json_enemies_set, *args, **kwargs):
             cursor.execute(
                 """INSERT INTO Character (Name, Image, Health, Attack) VALUES (?, ?, ?, ?)""",
                 (enemy["Name"], enemy["Image"],enemy["Health"], enemy["Attack"]))
+    print("Enemies added successfully.")
 
 
 def reset_database(cursor, *args, **kwargs):
-    # Clear DB of existing tables (focused on one map right now)
+    # Clear DB of existing tables
     cursor.execute("DROP TABLE IF EXISTS Map")
     cursor.execute("DROP TABLE IF EXISTS Tile")
     cursor.execute("DROP TABLE IF EXISTS MapTile")
     cursor.execute("DROP TABLE IF EXISTS Character")
     cursor.execute("DROP TABLE IF EXISTS Trigger")
+    cursor.execute("DROP TABLE IF EXISTS GameState")
 
     # Create tables (again if dropped before)
     cursor.execute(
@@ -280,15 +284,24 @@ def reset_database(cursor, *args, **kwargs):
 
     cursor.execute(
         "CREATE TABLE MapTile"
-        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, MapId INTEGER, TileId INTEGER, Index_X INTEGER, Index_Y INTEGER)")
+        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, MapId INTEGER, TileId INTEGER, Index_X INTEGER, "
+        "Index_Y INTEGER)")
    
     cursor.execute(
         "CREATE TABLE Character"
-        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Image TEXT, Health INTEGER, Attack INTEGER)")
+        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Image TEXT, Health INTEGER, "
+        "Attack INTEGER)")
 
     cursor.execute(
         "CREATE TABLE Trigger"
-        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, MapTileId INTEGER, Chance INTEGER, Action_Type INTEGER, Triggered_On TEXT, Action_Data TEXT)")
+        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, MapTileId INTEGER, Chance INTEGER, "
+        "Action_Type INTEGER, Triggered_On TEXT, Action_Data TEXT)")
+
+    cursor.execute(
+        "CREATE TABLE GameState"
+        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Current_Map TEXT, Character_Position_X INTEGER, "
+        "Character_Position_Y INTEGER, Character_Health INTEGER, Character_Total_Health INTEGER,"
+        "Character_Attack INTEGER)")
 
     # Insert default data
     # Insert default character entry

@@ -1,11 +1,10 @@
 import pygame
 import os
 
-from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine.models.map import Map
-
 from Unrealistic_Engine.views.battle_view_interface import BattleViewInterface
-from Unrealistic_Engine.utils.utils import Utils
+from Unrealistic_Engine.utils import utils
+from Unrealistic_Engine.utils.position import Position
 
 
 class BattleView(BattleViewInterface):
@@ -42,7 +41,7 @@ class BattleView(BattleViewInterface):
     def render_target_window(target_window, screen, position, *args, **kwargs):
         font = pygame.font.SysFont("monospace", BattleView.FONT_SIZE)
 
-        base = Utils.fetch(Utils.qualify_controller_name(
+        base = utils.fetch(utils.qualify_controller_name(
                            "battle_controller"))
 
         if target_window.battle_state is base.BattleController.TARGET_SELECT:
@@ -113,26 +112,31 @@ class BattleView(BattleViewInterface):
         large_offset = Map.MAP_SIZE - (Map.MAP_SIZE / 4)
         font = pygame.font.SysFont("monospace", BattleView.FONT_SIZE)
 
-        menu_surface = pygame.Surface((Map.MAP_SIZE, Map.MAP_SIZE/4))
+        menu_surface = pygame.Surface((Map.MAP_SIZE/2, Map.MAP_SIZE/4))
         menu_surface.fill((5, 4, 71, 100))
         screen.blit(menu_surface, (0, large_offset))
 
         # Render menu items
-        for count in range(0, action_menu.nodeCount):
-            label = font.render(action_menu.nodes [count].label, 1, (255, 255, 255))
+        for count in range(0, len(action_menu.nodes)):
+            label = font.render(action_menu.nodes[count].label, 1, (255, 255, 255))
             screen.blit(label, (2*BattleView.PADDING,
                         count*BattleView.LINE_HEIGHT + BattleView.OFFSET + large_offset))
 
-            if count == action_menu.activeNode:
-                screen.blit(action_menu.activeIcon, (BattleView.PADDING,
-                                                     count*BattleView.LINE_HEIGHT +
-                                                     BattleView.OFFSET + BattleView.PADDING +
-                                                     large_offset))
+            if count == action_menu.active_node:
+                screen.blit(action_menu.active_icon, (BattleView.PADDING,
+                                                      count*BattleView.LINE_HEIGHT +
+                                                      BattleView.OFFSET + BattleView.PADDING +
+                                                      large_offset))
 
     @staticmethod
     def render_battle_log(battle_log, screen, *args, **kwargs):
         font = pygame.font.SysFont("monospace", BattleView.FONT_SIZE)
         large_offset = Map.MAP_SIZE - (Map.MAP_SIZE / 4)
+
+        menu_surface = pygame.Surface((Map.MAP_SIZE/2, Map.MAP_SIZE/4))
+        menu_surface.fill((5, 4, 71, 100))
+        screen.blit(menu_surface, (Map.MAP_SIZE/2, large_offset))
+
         num_logs = len(battle_log.battle_log)
         for log_count in range(0, num_logs):
             log_label = font.render(battle_log.battle_log[num_logs - log_count - 1],

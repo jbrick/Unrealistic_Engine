@@ -5,16 +5,16 @@ import copy
 from pygame.constants import K_RETURN
 
 from Unrealistic_Engine.models.menu import Menu
-from Unrealistic_Engine.models.node_leaf import LeafNode
 from Unrealistic_Engine.models.attack_action import AttackAction
 from Unrealistic_Engine.views.battle_view import BattleView
 from Unrealistic_Engine.models.target_window import TargetWindow
 from Unrealistic_Engine.models.battle_log import BattleLog
 from Unrealistic_Engine.models.map import Map
-from Unrealistic_Engine import event_types
-from Unrealistic_Engine.utils.utils import Utils
 from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine.views.view import View
+from Unrealistic_Engine.models.leaf_node import LeafNode
+from Unrealistic_Engine import event_types
+from Unrealistic_Engine.utils import utils
 from Unrealistic_Engine.controllers.controller import Controller
 
 
@@ -24,12 +24,12 @@ class BattleController(Controller):
     TARGET_SELECT = 1
     ENEMY_TURN = 2
 
-    def __init__(self, model, view, current_map, character_start_position, enemy_name):
+    def __init__(self, model, view, enemy_name):
         self.model = model
         self.view = view
         self.state = BattleController.ACTION_SELECT
-        self.current_map = current_map
-        self.character_start_position = character_start_position
+        #self.current_map = current_map
+        #self.character_start_position = character_start_position
         self.current_action = None
         self.enemy = copy.copy(model.enemies[enemy_name])
 
@@ -42,8 +42,8 @@ class BattleController(Controller):
 
         # Add Map Model
         self.view.add_model(
-            self.current_map.get_map_tile(character_start_position.x_coord,
-                                          character_start_position.y_coord),
+            self.model.current_map.get_map_tile(self.model.character.position.x_coord,
+                                                self.model.character.position.y_coord),
             BattleView.render_map, Position(0, 0), View.BACKGROUND)
 
         # Add Enemy
@@ -57,16 +57,16 @@ class BattleController(Controller):
         self.view.add_model(self.target_window, BattleView.render_target_window,
                             Position(Map.GRID_SIZE/2, Map.GRID_SIZE/2), View.FOREGROUND)
 
+        # Add action select menu to visible models
+        self.action_menu = Menu()
+        self.action_menu.nodes.append(LeafNode("Attack", self.set_attack_action))
+        self.action_menu.nodes.append(LeafNode("Items", None))
+        self.view.add_model(self.action_menu, BattleView.render_action_menu, 0, View.FOREGROUND)
+
         # Add Battle Log
         self.battle_log = BattleLog("%s Attacked!" % enemy_name)
         self.view.add_model(self.battle_log, BattleView.render_battle_log,
                             Position(0, 0), View.FOREGROUND)
-
-        # Add action select menu to visible models
-        self.action_menu = Menu()
-        self.action_menu.addItem(LeafNode(self.set_attack_action, "Attack"))
-        self.action_menu.addItem(LeafNode(LeafNode.testFunc, "Items"))
-        self.view.add_model(self.action_menu, BattleView.render_action_menu, 0, View.FOREGROUND)
 
     @staticmethod
     def get_imports():
@@ -77,7 +77,6 @@ class BattleController(Controller):
         return Controller.qualify_imports((models, views, controllers))
 
     def handle_key_press(self, pressed_key):
-
         if self.state is BattleController.TARGET_SELECT:
             if self.target_window.current_target.name == 'Player':
                 self.handle_player_start_point(pressed_key)
@@ -91,27 +90,24 @@ class BattleController(Controller):
         elif self.state is BattleController.ACTION_SELECT:
             if pressed_key == pygame.K_UP or pressed_key == pygame.K_w:
                 # Previous item in current menu
-                self.action_menu.activeNode -= 1
+                self.action_menu.active_node -= 1
 
                 # Default behaviour is to wrap around at the end of the menu
-                if self.action_menu.activeNode < 0:
-                    self.action_menu.activeNode = (self.action_menu.nodeCount - 1)
+                if self.action_menu.active_node < 0:
+                    self.action_menu.active_node = (len(self.action_menu.nodes) - 1)
             if pressed_key == pygame.K_DOWN or pressed_key == pygame.K_s:
                 # Next item in current menu
-                self.action_menu.activeNode += 1
+                self.action_menu.active_node += 1
 
                 # Default behaviour is to wrap around at the end of the menu
-                if self.action_menu.activeNode >= self.action_menu.nodeCount:
-                    self.action_menu.activeNode = 0
+                if self.action_menu.active_node >= len(self.action_menu.nodes):
+                    self.action_menu.active_node = 0
             if pressed_key == K_RETURN:
-                print(self.action_menu.nodes[self.action_menu.activeNode])
-                self.action_menu.nodes[self.action_menu.activeNode].action()
+                print(self.action_menu.nodes[self.action_menu.active_node])
+                self.action_menu.nodes[self.action_menu.active_node].action()
 
         if pressed_key == pygame.K_b:
             self.end_battle()
-
-        if pressed_key == pygame.K_ESCAPE:
-            self.open_main_menu(self.view)
 
     def handle_player_start_point(self, pressed_key):
         if pressed_key == pygame.K_UP or pressed_key == pygame.K_w:
@@ -179,16 +175,15 @@ class BattleController(Controller):
         self.update_target_window(self.target_window.current_target, self.state)
 
     def end_battle(self):
-        base = Utils.fetch(Utils.qualify_controller_name("game_controller"))
+        base = utils.fetch(utils.qualify_controller_name("game_controller"))
 
         imports = base.GameController.get_imports()
 
-        view_module = Utils.fetch(imports[base.GameController.VIEWS]["game_view"])
+        view_module = utils.fetch(imports[base.GameController.VIEWS]["game_view"])
 
         view = view_module.GameView()
 
-        controller = base.GameController(self.model, view, self.character_start_position,
-                                         self.current_map)
+        controller = base.GameController(self.model, view)
 
         pygame.event.post(pygame.event.Event(
             event_types.UPDATE_GAME_STATE,
