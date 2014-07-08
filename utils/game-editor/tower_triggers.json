@@ -65,6 +65,24 @@
                 "character_x": 6,
                 "character_y": 4
             }
+        },
+        {
+            "MapTileId" : 282,
+            "Chance" : 100,
+            "Action_Type" : 2,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
+                        "enemy":"Greyback"
+                }
+        },
+        {
+            "MapTileId" : 338,
+            "Chance" : 100,
+            "Action_Type" : 2,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
+                        "enemy":"Fenris"
+                }
         }
     ]
 

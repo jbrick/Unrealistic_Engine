@@ -1,12 +1,14 @@
 import pygame
 import copy
 import sys
+
 from Unrealistic_Engine import event_types
 from Unrealistic_Engine.utils import utils
 from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine.models.map import Map
 from Unrealistic_Engine.models.trigger import Trigger
 from Unrealistic_Engine.views.game_view import GameView
+from Unrealistic_Engine.views.view import View
 from Unrealistic_Engine.controllers.controller import Controller
 
 
@@ -16,19 +18,17 @@ class GameController(Controller):
         self.model = model
         self.view = view
         self.triggers = {}
-
-
         self.previous_position = None
         self.changed_map = False
 
         self._build_triggers()
 
         # Add Map model
-        view.add_model(model.current_map, GameView.render_map, Position(0, 0), 1)
+        view.add_model(model.current_map, GameView.render_map, Position(0, 0), View.BACKGROUND)
         
         # Add Character model
         view.add_model(
-            model.character, GameView.render_character, model.character.position, 2)
+            model.character, GameView.render_character, model.character.position, View.FOREGROUND)
 
     @staticmethod
     def get_imports():
@@ -42,57 +42,38 @@ class GameController(Controller):
         position = self.view.get_visible_model_position(
             self.model.character)
         destination_tile = None
-        if pressed_key == pygame.K_LEFT:
+        if pressed_key == pygame.K_LEFT or pressed_key == pygame.K_a:
             destination_tile = self.model.current_map.get_map_tile(
                 position.x_coord - 1, position.y_coord)
             if (position.x_coord - 1) >= 0 and destination_tile.walkable == 1:
                 position.set_x_coord(position.x_coord - 1)
-        if pressed_key == pygame.K_RIGHT:
+        if pressed_key == pygame.K_RIGHT or pressed_key == pygame.K_d:
             destination_tile = self.model.current_map.get_map_tile(
                 position.x_coord + 1, position.y_coord)
             if(position.x_coord + 1) < Map.GRID_SIZE and destination_tile.walkable == 1:
                 position.set_x_coord(position.x_coord + 1)
-        if pressed_key == pygame.K_UP:
+        if pressed_key == pygame.K_UP or pressed_key == pygame.K_w:
             destination_tile = self.model.current_map.get_map_tile(
                 position.x_coord, position.y_coord - 1)
             if(position.y_coord - 1) >= 0 and destination_tile.walkable == 1:
                 position.set_y_coord(position.y_coord - 1)
-        if pressed_key == pygame.K_DOWN:
+        if pressed_key == pygame.K_DOWN or pressed_key == pygame.K_s:
             destination_tile = self.model.current_map.get_map_tile(
                 position.x_coord, position.y_coord + 1)
             if(position.y_coord + 1) < Map.GRID_SIZE and destination_tile.walkable == 1:
                 position.set_y_coord(position.y_coord + 1)
-        # For testing purposes pressing enter swaps controller / view.
-        if pressed_key == pygame.K_RETURN:
-            base = utils.fetch(utils.qualify_controller_name(
-                "battle_controller"))
-            
-            imports = base.BattleController.get_imports()
-            
-            view_module = utils.fetch(imports [base.BattleController.VIEWS] ["battle_view"])
-            
-            view = view_module.BattleView()
-            
-            # Just give the battle view the same visible models as the
-            # game view for now.
-            view.visible_models = self.view.visible_models
-            controller = base.BattleController(self.model, view)
-
-            pygame.event.post(
-                pygame.event.Event(
-                    event_types.UPDATE_GAME_STATE,
-                    {"Controller": controller,
-                     "View": view}))
+        if pressed_key == pygame.K_b:
+            self._start_battle('Greyback', position)
         if pressed_key == pygame.K_ESCAPE:
             base = utils.fetch(utils.qualify_controller_name(
                 "menu_controller"))
             
             imports = base.MenuController.get_imports()
-            
+
             view_module = utils.fetch(imports [base.MenuController.VIEWS] ["main_menu"])
 
-            view = view_module.MainMenu ()
-            controller = base.MenuController(self.model, view)
+            view = view_module.MainMenu()
+            controller = base.MenuController(self.model, view, self, self.view)
 
             pygame.event.post(
                 pygame.event.Event(
@@ -128,6 +109,23 @@ class GameController(Controller):
         self.previous_position = None
         self._build_triggers()
 
+    def _start_battle(self, enemy_name, position):
+        base = utils.fetch(utils.qualify_controller_name(
+            "battle_controller"))
+
+        imports = base.BattleController.get_imports()
+
+        view_module = utils.fetch(imports[base.BattleController.VIEWS]["battle_view"])
+
+        view = view_module.BattleView()
+
+        controller = base.BattleController(self.model, view, enemy_name)
+        pygame.event.post(
+            pygame.event.Event(
+                event_types.UPDATE_GAME_STATE,
+                {"Controller": controller,
+                 "View": view}))
+
     def _build_triggers(self):
         for row in self.model.current_map.tiles:
             for tile in row:
@@ -149,8 +147,10 @@ class GameController(Controller):
 
                 self.view.set_visible_model_position(self.model.character, position)
 
+            if trigger.action_type == Trigger.START_BATTLE:
+                self._start_battle(trigger.action_data['enemy'], position)
 
-            print "Action occurred with data: " + str(trigger.action_data)
+            print("Action occurred with data: " + str(trigger.action_data))
 
     def handle_game_event(self, event):
         if event.type == pygame.QUIT:

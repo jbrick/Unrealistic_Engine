@@ -1,5 +1,6 @@
 import sys
 import pygame
+
 from Unrealistic_Engine import event_types
 from Unrealistic_Engine.utils import utils
 from Unrealistic_Engine.controllers.controller import Controller
@@ -13,9 +14,11 @@ from Unrealistic_Engine.models.database import Database
 
 class MenuController(Controller):
 
-    def __init__(self, model, view):
+    def __init__(self, model, view, previous_controller, previous_view):
         self.game_model = model
         self.view = view
+        self.previous_controller = previous_controller
+        self.previous_view = previous_view
         self.save_node_ids = []
         self.load_node_ids = []
 
@@ -83,7 +86,6 @@ class MenuController(Controller):
             self.game_model.set_memento(result)
             self._return_to_game()
 
-
     @staticmethod
     def get_imports():
         models = ["menu", "node_menu", "node_leaf"]
@@ -123,6 +125,7 @@ class MenuController(Controller):
             self.menu_model.active_node += 1
             
             # Default behaviour is to wrap around at the end of the menu
+
             if self.menu_model.active_node >= len(self.menu_model.nodes):
                 self.menu_model.active_node = 0
 

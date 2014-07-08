@@ -1,8 +1,10 @@
 import json
 
+
 class Trigger:
 
     CHANGE_MAP = 1
+    START_BATTLE = 2
 
     def __init__(self, chance, action_type, triggered_on, action_data):
         self.chance = chance

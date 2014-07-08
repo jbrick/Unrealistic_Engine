@@ -1,3 +1,6 @@
+import pygame
+
+from Unrealistic_Engine import event_types
 from Unrealistic_Engine.utils import utils
 
 
@@ -5,10 +8,10 @@ from Unrealistic_Engine.utils import utils
 class Controller():
 
     # For use with the get_imports function
-    MODELS = 0;
-    VIEWS = 1;
-    CONTROLLERS = 2;
-    
+    MODELS = 0
+    VIEWS = 1
+    CONTROLLERS = 2
+
     def __init__(self, model, view):
         raise NotImplementedError("Please Implement this method")
 
@@ -18,16 +21,16 @@ class Controller():
 
     @staticmethod
     def qualify_imports(collections):
-        models = utils.dictify(collections [Controller.MODELS])
-        views = utils.dictify(collections [Controller.VIEWS])
-        controllers = utils.dictify(collections [Controller.CONTROLLERS])
+
+        models = utils.dictify(collections[Controller.MODELS])
+        views = utils.dictify(collections[Controller.VIEWS])
+        controllers = utils.dictify(collections[Controller.CONTROLLERS])
         
         models = {k: utils.qualify_model_name(v) for k, v in models.items()}
         views = {k: utils.qualify_view_name(v) for k, v in views.items()}
         controllers = {k: utils.qualify_controller_name(v) for k, v in controllers.items()}
 
         return models, views, controllers
-
 
     # This method gets passed all the pygame events such as a user pressing a
     # key.
@@ -38,3 +41,21 @@ class Controller():
     # pressed keys.
     def handle_key_press(self, pressed_key):
         raise NotImplementedError("Please Implement this method")
+
+    def open_main_menu(self, source_view):
+        base = utils.fetch(utils.qualify_controller_name(
+            "menu_controller"))
+
+        imports = base.MenuController.get_imports()
+
+        view_module = utils.fetch(imports[base.MenuController.VIEWS]["main_menu"])
+
+        model = base.MenuController.build_menu()
+        view = view_module.MainMenu()
+        controller = base.MenuController(model, view, self, source_view)
+
+        pygame.event.post(
+            pygame.event.Event(
+                event_types.UPDATE_GAME_STATE,
+                {"Controller": controller,
+                 "View": view}))

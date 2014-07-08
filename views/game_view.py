@@ -1,5 +1,3 @@
-import pygame
-
 from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine.views.map_view import MapView
 

@@ -1,5 +1,4 @@
 import sqlite3 as lite
-import sys
 import pygame
 import os
 
@@ -13,14 +12,17 @@ from Unrealistic_Engine.models.trigger import Trigger
 from Unrealistic_Engine.models.mementos.character import CharacterMemento
 from Unrealistic_Engine.models.mementos.game import GameMemento
 
+
 class Database(Model):
     def __init__(self):
         self.db = None
 
     def load_application(self):
+
         character = self._load_characters()
         maps = self._load_maps()
-        game = Game(character, maps, maps["map3"])
+        enemies = self._load_enemies()
+        game = Game(character, maps, enemies, maps["tower_floor1"])
         return game
 
     def _database_execute(self, sql, args):
@@ -38,13 +40,26 @@ class Database(Model):
 
     def _load_characters(self):
         # Currently game only consists of one character.
-        cursor = self._database_execute("SELECT * FROM Character", None)
+        cursor = self._database_execute("SELECT * FROM Character WHERE Name = 'Player'", None)
         row = cursor.fetchone()
         character_image = pygame.image.load(
             os.path.join('Images', row['Image']))
         character_image_scaled = pygame.transform.scale(
             character_image, (Character.SIZE, Character.SIZE))
-        return Character(character_image_scaled)
+        return Character(row['Name'], character_image_scaled, row['Health'], row['Attack'])
+
+    def _load_enemies(self):
+        cursor = self._database_execute("SELECT * FROM Character WHERE Name != 'Player'", None)
+        enemies = cursor.fetchall()
+        enemy_dict = {}
+        for enemy in enemies:
+            enemy_image = character_image = pygame.image.load(
+                os.path.join('Images', enemy['Image']))
+            enemy_image_scaled = pygame.transform.scale(
+                enemy_image, (Character.SIZE, Character.SIZE))
+            enemy_dict[enemy['Name']] = Character(enemy['Name'], enemy_image_scaled, enemy['Health'], enemy['Attack'])
+
+        return enemy_dict
 
     def _load_maps(self):
 
@@ -96,7 +111,7 @@ class Database(Model):
                     row_map_tiles['Name'], tile_image_scaled, position,
                     trigger, row_map_tiles['Walkable'])
                 
-                game_map.addOrReplaceTile(tile)
+                game_map.add_or_replace_tile(tile)
 
             maps[each_map['Name']] = game_map
 
@@ -105,20 +120,28 @@ class Database(Model):
     def save_game(self, args):
         game_memento = args[0]
         cursor = self._database_execute(
-            "INSERT INTO GameState(Current_Map, Character_Position_X, Character_Position_Y) "
-            "VALUES (?, ?, ?)",
+            "INSERT INTO GameState(Current_Map, Character_Position_X, Character_Position_Y, "
+            "Character_Health, Character_Total_Health, Character_Attack) "
+            "VALUES (?, ?, ?, ?, ?, ?)",
             (game_memento.map_name,
              game_memento.character_memento.position.x_coord,
-             game_memento.character_memento.position.y_coord))
+             game_memento.character_memento.position.y_coord,
+             game_memento.character_memento.health,
+             game_memento.character_memento.total_health,
+             game_memento.character_memento.attack))
 
     def save_game_overwrite(self, args):
         saved_game_id = args[0]
         game_memento = args[1]
         cursor = self._database_execute(
             "UPDATE GameState SET Current_Map='%s', Character_Position_X='%s', "
-            "Character_Position_Y='%s' WHERE Id='%s'" % (game_memento.map_name,
+            "Character_Position_Y='%s', Character_Health='%s', Character_Total_Health='%s',"
+            "Character_Attack='%s' WHERE Id='%s'" % (game_memento.map_name,
             game_memento.character_memento.position.x_coord,
             game_memento.character_memento.position.y_coord,
+            game_memento.character_memento.health,
+            game_memento.character_memento.total_health,
+            game_memento.character_memento.attack,
             saved_game_id), None)
 
     def get_saved_games(self):
@@ -134,14 +157,18 @@ class Database(Model):
     def load_saved_game(self, args):
         memento_id = args[0]
         cursor = self._database_execute(
-            "SELECT Current_Map, Character_Position_X, Character_Position_Y FROM GameState "
-            "WHERE Id = %s" % memento_id, None)
+            "SELECT Current_Map, Character_Position_X, Character_Position_Y, Character_Health, "
+            "Character_Total_Health, Character_Attack FROM GameState WHERE Id = %s" % memento_id,
+            None)
         memento_row = cursor.fetchone()
         current_map = memento_row['Current_Map']
         character_position = Position(
             memento_row['Character_Position_X'], memento_row['Character_Position_Y'])
 
-        character_memento = CharacterMemento(character_position)
+        character_memento = CharacterMemento(character_position,
+                                             memento_row['Character_Health'],
+                                             memento_row['Character_Total_Health'],
+                                             memento_row['Character_Attack'])
         game_memento = GameMemento(current_map, character_memento)
 
         return game_memento
