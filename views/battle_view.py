@@ -125,7 +125,7 @@ class BattleView(BattleViewInterface):
             screen.blit(label, (2*BattleView.PADDING,
                         count*BattleView.LINE_HEIGHT + BattleView.OFFSET + large_offset))
 
-            if count == action_menu.active_node:
+            if count == action_menu.get_active_node_index():
                 screen.blit(action_menu.active_icon, (BattleView.PADDING,
                                                       count*BattleView.LINE_HEIGHT +
                                                       BattleView.OFFSET + BattleView.PADDING +

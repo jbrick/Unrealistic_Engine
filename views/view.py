@@ -18,7 +18,8 @@ class View():
             # Find the tuple (renderfunction, position) for the current model.
             # Call the associated render function
             if self.visible_models[model][2] == View.BACKGROUND:
-                self.visible_models[model][0](model, screen)
+                self.visible_models[model][0](model, screen,
+                                              self.visible_models[model][1])
 
         for model in self.visible_models:
             # Find the tuple (renderfunction, position) for the current model.
