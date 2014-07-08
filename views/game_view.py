@@ -17,8 +17,7 @@ class GameView(MapView):
 
     @staticmethod
     def render_character(character, screen, position, *args, **kwargs):
-        screen.blit(character.image,
-                    position.convert_to_pixels(GameView.CHARACTER_OFFSET,GameView.CHARACTER_OFFSET))
+        screen.blit(character.image, position.convert_to_pixels(GameView.CHARACTER_OFFSET))
 
     @staticmethod
     def render_dialog(dialog, screen, position, *args, **kwargs):
@@ -42,7 +41,7 @@ class GameView(MapView):
             dialog_size[1] + 2*GameView.DIALOG_PADDING), pygame.SRCALPHA)
         dialog_background.fill((5, 4, 71, 255))
         
-        render_position = position.convert_to_pixels(
+        render_position = position.convert_with_offset(
             -1*(dialog_size[0]/2 + GameView.DIALOG_PADDING),
             -1*(dialog_size[1]/2 + GameView.DIALOG_PADDING))
         
@@ -60,5 +59,4 @@ class GameView(MapView):
             for y in range(0, game_map.grid_size):
                 position = Position(x, y)
                 if game_map.tiles[x][y] != 0:
-                    screen.blit(game_map.tiles[x][y].image,
-                                position.convert_to_pixels(0, 0))
+                    screen.blit(game_map.tiles[x][y].image, position.convert_to_pixels(0))
