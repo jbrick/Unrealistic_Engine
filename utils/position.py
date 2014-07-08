@@ -21,10 +21,15 @@ class Position():
     def set_y_coord(self, y_coord):
         self.y_coord = y_coord
 
+<<<<<<< HEAD
     def convert_to_pixels(self, offset):
         return ((self.x_coord * Position.TILE_SIZE) + offset,
                 (self.y_coord * Position.TILE_SIZE) + offset)
 
     def convert_with_offset(self, x_offset, y_offset):
         return ((self.x_coord * Position.TILE_SIZE + x_offset),
+=======
+    def convert_to_pixels(self, x_offset, y_offset):
+        return ((self.x_coord * Position.TILE_SIZE) + x_offset,
+>>>>>>> 6354a04d5420158f3f4111e14279c1516a0ae4c2
                 (self.y_coord * Position.TILE_SIZE) + y_offset)

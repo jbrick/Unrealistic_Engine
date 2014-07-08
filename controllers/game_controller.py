@@ -46,7 +46,7 @@ class GameController(Controller):
         position = self.view.get_visible_model_position(
             self.model.character)
         destination_tile = None
-        
+
         if pressed_key == pygame.K_LEFT or pressed_key == pygame.K_a:
             self.unmoved = False
             destination_tile = self.model.current_map.get_map_tile(
@@ -196,7 +196,6 @@ class GameController(Controller):
                                 event_types.UPDATE_GAME_STATE,
                                 {"Controller": controller,
                                  "View": self.view}))
-
             if trigger.action_type == Trigger.START_BATTLE:
                 self._start_battle(trigger.action_data['enemy'], position)
 
