@@ -11,11 +11,14 @@ class BattleView(BattleViewInterface):
 
     # offset in pixels - centres character in tile
     CHARACTER_OFFSET = 0
+
     TARGET_ICON_OFFSET = -10
     FONT_SIZE = 16
     PADDING = 10
+
     # Height of each menu item
     LINE_HEIGHT = 25
+
     # Leaving space for breadcrumbs
     OFFSET = 50
 

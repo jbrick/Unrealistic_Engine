@@ -28,8 +28,6 @@ class BattleController(Controller):
         self.model = model
         self.view = view
         self.state = BattleController.ACTION_SELECT
-        #self.current_map = current_map
-        #self.character_start_position = character_start_position
         self.current_action = None
         self.enemy = copy.copy(model.enemies[enemy_name])
 
@@ -37,8 +35,6 @@ class BattleController(Controller):
         self.view.add_model(
             self.model.character, BattleView.render_character,
             Position(Map.GRID_SIZE/2, Map.GRID_SIZE/2), View.FOREGROUND)
-        self.view.set_visible_model_position(
-            self.model.character, Position(Map.GRID_SIZE/2, Map.GRID_SIZE/2))
 
         # Add Map Model
         self.view.add_model(
@@ -48,7 +44,7 @@ class BattleController(Controller):
 
         # Add Enemy
         self.view.add_model(
-            self.enemy, BattleView.render_enemy, Position(Map.GRID_SIZE/2, 2), 2)
+            self.enemy, BattleView.render_enemy, Position(Map.GRID_SIZE/2, 2), View.FOREGROUND)
 
         # Add target window Model and set current target to player
         characters = {'Player': self.model.character,
@@ -118,24 +114,16 @@ class BattleController(Controller):
             self.update_target_window(self.model.character, self.state)
 
     def update_target_window(self, new_target_model, battle_state):
-        # Remove outdated target window from visible models
-        self.view.remove_model(self.target_window)
-
         # Update target window with new target model and/or battle state
         self.target_window.current_target = new_target_model
         self.target_window.battle_state = battle_state
 
-        # Get new target's position
+        # Get new target's position and set it for the target window
         new_target_position = self.view.get_visible_model_position(new_target_model)
-
-        # Re-add to visible models with new position
-        self.view.add_model(self.target_window, BattleView.render_target_window,
-                            new_target_position, 2)
+        self.view.set_visible_model_position(self.target_window, new_target_position)
 
     def update_battle_log(self, message):
-        self.view.remove_model(self.battle_log)
         self.battle_log.add_battle_log_entry(message)
-        self.view.add_model(self.battle_log, BattleView.render_battle_log, 0, View.FOREGROUND)
 
     def set_attack_action(self):
         self.current_action = AttackAction(self.model.character.attack)
@@ -153,10 +141,6 @@ class BattleController(Controller):
                 # return to ensure enemy doesn't attack after being killed
                 self.end_battle()
                 return
-
-        # Update Battle log
-        self.view.remove_model(self.battle_log)
-        self.view.add_model(self.battle_log, BattleView.render_battle_log, 0, View.FOREGROUND)
 
         # Change to enemy turn
         self.state = BattleController.ENEMY_TURN
