@@ -98,10 +98,13 @@ def add_triggers(cursor, json_triggers_set, *args, **kwargs):
 
         for trigger in triggers["triggers"]:
             cursor.execute(
-                """INSERT INTO Trigger (MapTileId, Chance, Action_Type, Triggered_On,
-                 Action_Data) VALUES (?, ?, ?, ?, ?)""",
+                """INSERT INTO Trigger (MapTileId, Chance, Action_Type,
+                Triggered_On, Direction_Facing, One_Time,
+                 Action_Data) VALUES (?, ?, ?, ?, ?, ?, ?)""",
                 (trigger["MapTileId"], trigger["Chance"],
-                 trigger["Action_Type"], trigger["Triggered_On"], json.dumps(trigger["Action_Data"])))
+                 trigger["Action_Type"], trigger["Triggered_On"], trigger[
+                    "Direction_Facing"], trigger["One_Time"],
+                 json.dumps(trigger["Action_Data"])))
     print("Triggers added successfully.")
 
 
@@ -295,7 +298,8 @@ def reset_database(cursor, *args, **kwargs):
     cursor.execute(
         "CREATE TABLE Trigger"
         "(Id INTEGER PRIMARY KEY AUTOINCREMENT, MapTileId INTEGER, Chance INTEGER, "
-        "Action_Type INTEGER, Triggered_On TEXT, Action_Data TEXT)")
+        "Action_Type INTEGER, Triggered_On TEXT, Direction_Facing TEXT, "
+        "One_Time INTEGER,  Action_Data TEXT)")
 
     cursor.execute(
         "CREATE TABLE GameState"
