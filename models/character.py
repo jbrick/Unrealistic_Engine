@@ -7,6 +7,13 @@ from Unrealistic_Engine.models.mementos.character import CharacterMemento
 
 class Character(Saveable):
 
+    #Directions
+    UP = "up"
+    DOWN = "down"
+    LEFT = "left"
+    RIGHT = "right"
+
+
     SIZE = Map.MAP_SIZE / Map.GRID_SIZE
 
     def __init__(self, name, image, health, attack):
@@ -16,6 +23,7 @@ class Character(Saveable):
         self.total_health = health
         self.attack = attack
         self.position = Position(1, 1)
+        self.direction = Character.DOWN
         self.inventory = Inventory()
 
     def create_memento(self):

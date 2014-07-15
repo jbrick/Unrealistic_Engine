@@ -10,6 +10,7 @@ from Unrealistic_Engine.models.trigger import Trigger
 from Unrealistic_Engine.views.game_view import GameView
 from Unrealistic_Engine.views.view import View
 from Unrealistic_Engine.controllers.controller import Controller
+from Unrealistic_Engine.models.character import Character
 
 
 class GameController(Controller):
@@ -43,21 +44,25 @@ class GameController(Controller):
             self.model.character)
         destination_tile = None
         if pressed_key == pygame.K_LEFT or pressed_key == pygame.K_a:
+            self.model.character.direction = Character.LEFT
             destination_tile = self.model.current_map.get_map_tile(
                 position.x_coord - 1, position.y_coord)
             if (position.x_coord - 1) >= 0 and destination_tile.walkable == 1:
                 position.set_x_coord(position.x_coord - 1)
         if pressed_key == pygame.K_RIGHT or pressed_key == pygame.K_d:
+            self.model.character.direction = Character.RIGHT
             destination_tile = self.model.current_map.get_map_tile(
                 position.x_coord + 1, position.y_coord)
             if(position.x_coord + 1) < Map.GRID_SIZE and destination_tile.walkable == 1:
                 position.set_x_coord(position.x_coord + 1)
         if pressed_key == pygame.K_UP or pressed_key == pygame.K_w:
+            self.model.character.direction = Character.UP
             destination_tile = self.model.current_map.get_map_tile(
                 position.x_coord, position.y_coord - 1)
             if(position.y_coord - 1) >= 0 and destination_tile.walkable == 1:
                 position.set_y_coord(position.y_coord - 1)
         if pressed_key == pygame.K_DOWN or pressed_key == pygame.K_s:
+            self.model.character.direction = Character.DOWN
             destination_tile = self.model.current_map.get_map_tile(
                 position.x_coord, position.y_coord + 1)
             if(position.y_coord + 1) < Map.GRID_SIZE and destination_tile.walkable == 1:
@@ -87,12 +92,15 @@ class GameController(Controller):
         self.model.character.position = position
 
         # Check if any triggers have been activated.
-        if position in self.triggers:
+        if position in self.triggers and self.triggers[position].is_active:
             # TODO Handle chance here.
-            self._handle_trigger(self.triggers[position], position, False)
-        if self.previous_position in self.triggers:
+            self._handle_trigger(self.triggers[position], position, False,
+                                 pressed_key)
+        if self.previous_position in self.triggers and self.triggers[
+            self.previous_position].is_active:
             # TODO Handle chance here.
-            self._handle_trigger(self.triggers[self.previous_position], self.previous_position, True)
+            self._handle_trigger(self.triggers[self.previous_position],
+                                 self.previous_position, True, pressed_key)
 
         self.previous_position = copy.copy(position)
         if self.changed_map:
@@ -151,30 +159,46 @@ class GameController(Controller):
                 if tile != 0 and tile.trigger is not None:
                     self.triggers[tile.position] = tile.trigger
 
-    def _handle_trigger(self, trigger, position, is_previous):
+    def _handle_trigger(self, trigger, position, is_previous, pressed_key):
 
         # We support triggers being fired when entering or leaving a tile.
-        valid_previous_trigger = trigger.triggered_on == "exit" and is_previous
-        valid_current_trigger = trigger.triggered_on == "enter" and not is_previous
+        valid_previous_trigger = trigger.triggered_on == Trigger.EXIT and \
+                                 is_previous
+        valid_current_trigger = trigger.triggered_on == Trigger.ENTER and not  \
+            is_previous
 
-        if valid_current_trigger or valid_previous_trigger:
-            if trigger.action_type == Trigger.CHANGE_MAP:
-                self._change_map(trigger.action_data['map_name'])
-                position = Position(
-                    trigger.action_data['character_x'],
-                    trigger.action_data['character_y'])
+        valid_action_trigger = trigger.triggered_on == Trigger.KEY_ACTION and\
+                               pressed_key == pygame.K_e
 
-                self.view.set_visible_model_position(self.model.character, position)
+        if not (valid_previous_trigger or valid_current_trigger or  \
+                valid_action_trigger):
+            return
 
-            if trigger.action_type == Trigger.START_BATTLE:
-                self._start_battle(trigger.action_data['enemy'], position)
+        # Make sure the character is facing the appropriate direction
+        if not (self.model.character.direction == trigger.direction_facing or \
+                trigger.direction_facing == Trigger.DIRECTION_ANY):
+            return
 
-            if trigger.action_type == Trigger.GET_ITEM:
-                self.model.character.inventory.\
+        if trigger.is_one_time:
+            trigger.is_active = False
+
+        if trigger.action_type == Trigger.CHANGE_MAP:
+            self._change_map(trigger.action_data['map_name'])
+            position = Position(
+                trigger.action_data['character_x'],
+                trigger.action_data['character_y'])
+
+            self.view.set_visible_model_position(self.model.character, position)
+
+        if trigger.action_type == Trigger.START_BATTLE:
+            self._start_battle(trigger.action_data['enemy'], position)
+
+        if trigger.action_type == Trigger.GET_ITEM:
+            self.model.character.inventory.\
                     add_item(self.model.items[trigger.action_data['item']])
                 # Use a dialog here to show that an item is acquired
 
-            print("Action occurred with data: " + str(trigger.action_data))
+        print("Action occurred with data: " + str(trigger.action_data))
 
     def handle_game_event(self, event):
         if event.type == pygame.QUIT:
