@@ -5,6 +5,7 @@ from Unrealistic_Engine.models.map import Map
 from Unrealistic_Engine.views.battle_view_interface import BattleViewInterface
 from Unrealistic_Engine.utils import utils
 from Unrealistic_Engine.utils.position import Position
+from Unrealistic_Engine.models.character import Character
 
 
 class BattleView(BattleViewInterface):
@@ -24,7 +25,13 @@ class BattleView(BattleViewInterface):
 
     @staticmethod
     def render_character(character, screen, position, *args, **kwargs):
-        screen.blit(character.image,
+
+        character_image = pygame.image.load(os.path.join('Images',
+                                                         character.image +
+                                                         "_up.png"))
+        character_image_scaled = pygame.transform.scale(
+            character_image, (Character.SIZE, Character.SIZE))
+        screen.blit(character_image_scaled,
                     position.convert_to_pixels(BattleView.CHARACTER_OFFSET))
 
     @staticmethod

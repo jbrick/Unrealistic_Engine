@@ -1,5 +1,10 @@
+import os
+import pygame
+
 from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine.views.map_view import MapView
+from Unrealistic_Engine.models.character import Character
+
 
 
 # Default view for rendering models
@@ -10,7 +15,14 @@ class GameView(MapView):
 
     @staticmethod
     def render_character(character, screen, position, *args, **kwargs):
-        screen.blit(character.image,
+        qualifier = "_" + character.direction + ".png"
+
+        character_image = pygame.image.load(os.path.join('Images',
+                                                         character.image +
+                                                         qualifier))
+        character_image_scaled = pygame.transform.scale(
+            character_image, (Character.SIZE, Character.SIZE))
+        screen.blit(character_image_scaled,
                     position.convert_to_pixels(GameView.CHARACTER_OFFSET))
 
     @staticmethod
