@@ -16,7 +16,7 @@
 			},
 			{
 				"Name" : "Santa's Hat",
-				"Type" : 2,
+				"Type" : 3,
 				"Modifier" : 20,
 				"Slot" : 2,
 				"Description" : "This piece of armor doesn't have much protection, but it does give you the urge to give gifts."
