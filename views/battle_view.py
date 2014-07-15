@@ -6,16 +6,17 @@ from Unrealistic_Engine.views.battle_view_interface import BattleViewInterface
 from Unrealistic_Engine.utils import utils
 from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine.models.character import Character
+from Unrealistic_Engine.views.menu_view import MenuView
 
 
-class BattleView(BattleViewInterface):
+class BattleView(BattleViewInterface, MenuView):
 
     # offset in pixels - centres character in tile
     CHARACTER_OFFSET = 0
 
     TARGET_ICON_OFFSET = -10
     FONT_SIZE = 16
-    PADDING = 10
+    PADDING = 101
 
     # Height of each menu item
     LINE_HEIGHT = 25
