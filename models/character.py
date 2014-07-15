@@ -1,4 +1,5 @@
 from Unrealistic_Engine.models.map import Map
+from Unrealistic_Engine.models.inventory import Inventory
 from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine.models.mementos.saveable import Saveable
 from Unrealistic_Engine.models.mementos.character import CharacterMemento
@@ -15,6 +16,7 @@ class Character(Saveable):
         self.total_health = health
         self.attack = attack
         self.position = Position(1, 1)
+        self.inventory = Inventory()
 
     def create_memento(self):
         return CharacterMemento(self.position, self.health, self.total_health, self.attack)

@@ -1,0 +1,26 @@
+{
+	"items": [
+	        {
+				"Name" : "Lesser Healing Potion",
+				"Type" : 2,
+				"Modifier" : 50,
+				"Slot" : 0,
+				"Description" : "Heals you for 50 Hit Points."
+			},
+			{
+				"Name" : "Sword of Noob",
+				"Type" : 0,
+				"Modifier" : 10,
+				"Slot" : 1,
+				"Description" : "This sword is dingy and quite awful. It is mostly fit for the inexperienced"
+			},
+			{
+				"Name" : "Santa's Hat",
+				"Type" : 2,
+				"Modifier" : 20,
+				"Slot" : 2,
+				"Description" : "This piece of armor doesn't have much protection, but it does give you the urge to give gifts."
+			}
+		]
+
+}

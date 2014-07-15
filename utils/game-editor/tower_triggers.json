@@ -83,6 +83,33 @@
             "Action_Data" : {
                         "enemy":"Fenris"
                 }
+        },
+        {
+            "MapTileId" : 22,
+            "Chance" : 100,
+            "Action_Type" : 3,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
+                        "item":"Lesser Healing Potion"
+                }
+        },
+        {
+            "MapTileId" : 23,
+            "Chance" : 100,
+            "Action_Type" : 3,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
+                        "item":"Sword of Noob"
+                }
+        },
+        {
+            "MapTileId" : 24,
+            "Chance" : 100,
+            "Action_Type" : 3,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
+                        "item":"Santa's Hat"
+                }
         }
     ]
 

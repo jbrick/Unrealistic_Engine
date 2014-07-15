@@ -80,6 +80,8 @@ class GameController(Controller):
                     event_types.UPDATE_GAME_STATE,
                     {"Controller": controller,
                      "View": view}))
+        if pressed_key == pygame.K_i:
+            self.open_inventory()
 
         self.view.set_visible_model_position(self.model.character, position)
         self.model.character.position = position
@@ -126,6 +128,23 @@ class GameController(Controller):
                 {"Controller": controller,
                  "View": view}))
 
+    def open_inventory(self):
+        base = utils.fetch(utils.qualify_controller_name(
+                           "inventory_controller"))
+
+        imports = base.InventoryController.get_imports()
+
+        view_module = utils.fetch(imports[base.InventoryController.VIEWS]["inventory_view"])
+
+        view = view_module.InventoryView()
+        controller = base.InventoryController(self.model, view)
+
+        pygame.event.post(
+            pygame.event.Event(
+                event_types.UPDATE_GAME_STATE,
+                {"Controller": controller,
+                 "View": view}))
+
     def _build_triggers(self):
         for row in self.model.current_map.tiles:
             for tile in row:
@@ -149,6 +168,11 @@ class GameController(Controller):
 
             if trigger.action_type == Trigger.START_BATTLE:
                 self._start_battle(trigger.action_data['enemy'], position)
+
+            if trigger.action_type == Trigger.GET_ITEM:
+                self.model.character.inventory.\
+                    add_item(self.model.items[trigger.action_data['item']])
+                # Use a dialog here to show that an item is acquired
 
             print("Action occurred with data: " + str(trigger.action_data))
 

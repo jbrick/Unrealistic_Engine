@@ -62,7 +62,13 @@ def main():
     parser.add_argument(
         "--add_enemies", dest="to_run", action="store_const",
         const=add_enemies, default=None,
-        help="Adds a .json file definied enemy list to the game"
+        help="Adds a .json file defined enemy list to the game"
+    )
+
+    parser.add_argument(
+        "--add_items", dest="to_run", action="store_const",
+        const=add_items, default=None,
+        help="Adds a .json file defined item list to the game"
     )
 
     parser.add_argument("input_files", type=str, nargs="*",
@@ -260,8 +266,21 @@ def add_enemies(cursor, json_enemies_set, *args, **kwargs):
         for enemy in enemies["enemies"]:
             cursor.execute(
                 """INSERT INTO Character (Name, Image, Health, Attack) VALUES (?, ?, ?, ?)""",
-                (enemy["Name"], enemy["Image"],enemy["Health"], enemy["Attack"]))
+                (enemy["Name"], enemy["Image"], enemy["Health"], enemy["Attack"]))
     print("Enemies added successfully.")
+
+
+def add_items(cursor, json_items_set, *args, **kwargs):
+    for json_items in json_items_set:
+        items_file = open(json_items)
+        items = json.load(items_file)
+        items_file.close()
+
+        for item in items["items"]:
+            cursor.execute(
+                """INSERT INTO Item (Name, Type, Modifier, Slot, Description) VALUES (?, ?, ?, ?, ?)""",
+                (item["Name"], item["Type"], item["Modifier"], item['Slot'], item["Description"]))
+    print("Items added successfully")
 
 
 def reset_database(cursor, *args, **kwargs):
@@ -272,6 +291,7 @@ def reset_database(cursor, *args, **kwargs):
     cursor.execute("DROP TABLE IF EXISTS Character")
     cursor.execute("DROP TABLE IF EXISTS Trigger")
     cursor.execute("DROP TABLE IF EXISTS GameState")
+    cursor.execute("DROP TABLE IF EXISTS Item")
 
     # Create tables (again if dropped before)
     cursor.execute(
@@ -302,6 +322,12 @@ def reset_database(cursor, *args, **kwargs):
         "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Current_Map TEXT, Character_Position_X INTEGER, "
         "Character_Position_Y INTEGER, Character_Health INTEGER, Character_Total_Health INTEGER,"
         "Character_Attack INTEGER)")
+
+    cursor.execute(
+        "CREATE TABLE Item"
+        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Type INTEGER, Slot INTEGER, Modifier INTEGER, "
+        "Description TEXT)"
+    )
 
     # Insert default data
     # Insert default character entry

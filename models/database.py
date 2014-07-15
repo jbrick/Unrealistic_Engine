@@ -11,6 +11,10 @@ from Unrealistic_Engine.models.tile import Tile
 from Unrealistic_Engine.models.trigger import Trigger
 from Unrealistic_Engine.models.mementos.character import CharacterMemento
 from Unrealistic_Engine.models.mementos.game import GameMemento
+from Unrealistic_Engine.models.armor_item import ArmorItem
+from Unrealistic_Engine.models.healing_item import HealingItem
+from Unrealistic_Engine.models.weapon_item import WeaponItem
+from Unrealistic_Engine.models.item import Item
 
 
 class Database(Model):
@@ -22,7 +26,8 @@ class Database(Model):
         character = self._load_characters()
         maps = self._load_maps()
         enemies = self._load_enemies()
-        game = Game(character, maps, enemies, maps["tower_floor1"])
+        items = self._load_items()
+        game = Game(character, maps, enemies, items, maps["tower_floor1"])
         return game
 
     def _database_execute(self, sql, args):
@@ -60,6 +65,23 @@ class Database(Model):
             enemy_dict[enemy['Name']] = Character(enemy['Name'], enemy_image_scaled, enemy['Health'], enemy['Attack'])
 
         return enemy_dict
+
+    def _load_items(self):
+        cursor = self._database_execute("SELECT * FROM Item", None)
+        items = cursor.fetchall()
+        item_dict = {}
+        for item in items:
+            if item['Type'] is Item.Weapon:
+                item_dict[item['Name']] = WeaponItem(item['Name'], item['Description'],
+                                                     item['Slot'], item['Modifier'])
+            elif item['Type'] is Item.Armor:
+                item_dict[item['Name']] = ArmorItem(item['Name'], item['Description'],
+                                                     item['Slot'], item['Modifier'])
+            elif item['Type'] is Item.Healing:
+                item_dict[item['Name']] = HealingItem(item['Name'], item['Description'],
+                                                     item['Slot'], item['Modifier'])
+
+        return item_dict
 
     def _load_maps(self):
 
