@@ -307,7 +307,7 @@ def reset_database(cursor, *args, **kwargs):
     # Insert default character entry
     cursor.execute(
         "INSERT INTO Character (Name, Image, Health, Attack) VALUES (?, ?, ?, ?)",
-        ("Player", "ranger_m.png", 200, 50))
+        ("Player", "warrior", 200, 50))
 
     print("Database successfully reset to base data.")
 

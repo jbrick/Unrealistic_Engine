@@ -10,6 +10,7 @@ from Unrealistic_Engine.models.trigger import Trigger
 from Unrealistic_Engine.views.game_view import GameView
 from Unrealistic_Engine.views.view import View
 from Unrealistic_Engine.controllers.controller import Controller
+from Unrealistic_Engine.models.character import Character
 
 
 class GameController(Controller):
@@ -43,21 +44,25 @@ class GameController(Controller):
             self.model.character)
         destination_tile = None
         if pressed_key == pygame.K_LEFT or pressed_key == pygame.K_a:
+            self.model.character.direction = Character.Left
             destination_tile = self.model.current_map.get_map_tile(
                 position.x_coord - 1, position.y_coord)
             if (position.x_coord - 1) >= 0 and destination_tile.walkable == 1:
                 position.set_x_coord(position.x_coord - 1)
         if pressed_key == pygame.K_RIGHT or pressed_key == pygame.K_d:
+            self.model.character.direction = Character.Right
             destination_tile = self.model.current_map.get_map_tile(
                 position.x_coord + 1, position.y_coord)
             if(position.x_coord + 1) < Map.GRID_SIZE and destination_tile.walkable == 1:
                 position.set_x_coord(position.x_coord + 1)
         if pressed_key == pygame.K_UP or pressed_key == pygame.K_w:
+            self.model.character.direction = Character.Up
             destination_tile = self.model.current_map.get_map_tile(
                 position.x_coord, position.y_coord - 1)
             if(position.y_coord - 1) >= 0 and destination_tile.walkable == 1:
                 position.set_y_coord(position.y_coord - 1)
         if pressed_key == pygame.K_DOWN or pressed_key == pygame.K_s:
+            self.model.character.direction = Character.Down
             destination_tile = self.model.current_map.get_map_tile(
                 position.x_coord, position.y_coord + 1)
             if(position.y_coord + 1) < Map.GRID_SIZE and destination_tile.walkable == 1:

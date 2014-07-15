@@ -42,11 +42,8 @@ class Database(Model):
         # Currently game only consists of one character.
         cursor = self._database_execute("SELECT * FROM Character WHERE Name = 'Player'", None)
         row = cursor.fetchone()
-        character_image = pygame.image.load(
-            os.path.join('Images', row['Image']))
-        character_image_scaled = pygame.transform.scale(
-            character_image, (Character.SIZE, Character.SIZE))
-        return Character(row['Name'], character_image_scaled, row['Health'], row['Attack'])
+        return Character(row['Name'], row['Image'], row['Health'],
+                         row['Attack'])
 
     def _load_enemies(self):
         cursor = self._database_execute("SELECT * FROM Character WHERE Name != 'Player'", None)
