@@ -22,7 +22,8 @@ class MenuController(Controller):
         self.save_node_ids = []
         self.load_node_ids = []
 
-        self.menu_model = Menu()
+        self.menu_model = Menu(self.view, MainMenu.render_menu,
+                               self.on_node_activated)
 
         self.menu_model.nodes.append(
             LeafNode("Quit", utils.quit))
@@ -35,14 +36,11 @@ class MenuController(Controller):
         self.menu_model.nodes.append(load_game_node)
         self.load_game_node_id = load_game_node.id
 
-        view.add_model(self.menu_model, MainMenu.render_menu, 0, View.BACKGROUND)
-
-        active_menu = self.menu_model
 
     # Builds a menu object containing all saved games in the database. Each saved game
     # has an action associated with it. Also returns the ids of the created nodes.
     def _build_list_of_saved_games(self, parent, action, action_args):
-        game_menu = Menu()
+        game_menu = Menu(self.view, MainMenu.render_menu, self.on_node_activated)
         game_ids = Database().get_saved_games()
         node_ids = []
         for id in game_ids:
@@ -96,38 +94,18 @@ class MenuController(Controller):
 
     def handle_key_press(self, pressed_key):
 
-        active_node = self.menu_model.get_active_node()
         if pressed_key == pygame.K_LEFT:
             if len(Menu.breadcrumbs) > 0:
-                # Go to previous menu
-                self.view.remove_model(self.menu_model)
-                self.menu_model = Menu.breadcrumbs.pop();
-                self.view.add_model(self.menu_model, MainMenu.render_menu, 0, View.BACKGROUND)
+                self.menu_model = self.menu_model.go_to_previous_menu()
+
         if pressed_key == pygame.K_RIGHT or pressed_key == pygame.K_RETURN:
-            self.on_node_activated(active_node)
-            if not active_node.is_leaf_node():
-                # Traverse into submenu
-                Menu.breadcrumbs.append(self.menu_model)
-                self.view.remove_model(self.menu_model)
-                self.menu_model = active_node.submenu
-                self.view.add_model(self.menu_model, MainMenu.render_menu, 0,View.BACKGROUND)
+            self.menu_model = self.menu_model.activate_node()
 
         if pressed_key == pygame.K_UP:
-            # Previous item in current menu
-            self.menu_model.active_node -= 1
-            
-            # Default behaviour is to wrap around at the end of the menu
-            if self.menu_model.active_node < 0:
-                self.menu_model.active_node = len(self.menu_model.nodes) - 1
+            self.menu_model.dec_active_node()
 
         if pressed_key == pygame.K_DOWN:
-            # Next item in current menu
-            self.menu_model.active_node += 1
-            
-            # Default behaviour is to wrap around at the end of the menu
-
-            if self.menu_model.active_node >= len(self.menu_model.nodes):
-                self.menu_model.active_node = 0
+            self.menu_model.inc_active_node()
 
         if pressed_key == pygame.K_ESCAPE:
             self._return_to_game()

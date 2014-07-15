@@ -54,15 +54,19 @@ class BattleController(Controller):
                             Position(Map.GRID_SIZE/2, Map.GRID_SIZE/2), View.FOREGROUND)
 
         # Add action select menu to visible models
-        self.action_menu = Menu()
+        self.action_menu = Menu(self.view, BattleView.render_action_menu,
+                                self.on_node_activated)
         self.action_menu.nodes.append(LeafNode("Attack", self.set_attack_action))
         self.action_menu.nodes.append(LeafNode("Items", None))
-        self.view.add_model(self.action_menu, BattleView.render_action_menu, 0, View.FOREGROUND)
 
         # Add Battle Log
         self.battle_log = BattleLog("%s Attacked!" % enemy_name)
         self.view.add_model(self.battle_log, BattleView.render_battle_log,
                             Position(0, 0), View.FOREGROUND)
+
+    def on_node_activated(self, node):
+        if node.is_leaf_node():
+            node.execute_action()
 
     @staticmethod
     def get_imports():
@@ -85,22 +89,11 @@ class BattleController(Controller):
 
         elif self.state is BattleController.ACTION_SELECT:
             if pressed_key == pygame.K_UP or pressed_key == pygame.K_w:
-                # Previous item in current menu
-                self.action_menu.active_node -= 1
-
-                # Default behaviour is to wrap around at the end of the menu
-                if self.action_menu.active_node < 0:
-                    self.action_menu.active_node = (len(self.action_menu.nodes) - 1)
+                self.action_menu.dec_active_node()
             if pressed_key == pygame.K_DOWN or pressed_key == pygame.K_s:
-                # Next item in current menu
-                self.action_menu.active_node += 1
-
-                # Default behaviour is to wrap around at the end of the menu
-                if self.action_menu.active_node >= len(self.action_menu.nodes):
-                    self.action_menu.active_node = 0
+                self.action_menu.inc_active_node
             if pressed_key == K_RETURN:
-                print(self.action_menu.nodes[self.action_menu.active_node])
-                self.action_menu.nodes[self.action_menu.active_node].action()
+                self.action_menu = self.action_menu.activate_node()
 
         if pressed_key == pygame.K_b:
             self.end_battle()
