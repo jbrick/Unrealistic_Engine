@@ -55,7 +55,7 @@ class BattleController(Controller):
 
         # Add action select menu to visible models
         self.action_menu = Menu(self.view, BattleView.render_action_menu,
-                                self.on_node_activated)
+                                self.on_node_activated, Position(0,0))
         self.action_menu.nodes.append(LeafNode("Attack", self.set_attack_action))
         self.action_menu.nodes.append(LeafNode("Items", None))
 

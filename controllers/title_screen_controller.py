@@ -5,7 +5,7 @@ from Unrealistic_Engine import event_types
 from Unrealistic_Engine.utils import utils
 from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine.controllers.controller import Controller
-from Unrealistic_Engine.models.map import Map
+from Unrealistic_Engine.views.title_screen_view import TitleScreenView
 from Unrealistic_Engine.views.main_menu import MainMenu
 from Unrealistic_Engine.models.leaf_node import LeafNode
 from Unrealistic_Engine.models.menu_node import MenuNode
@@ -13,40 +13,34 @@ from Unrealistic_Engine.models.menu import Menu
 from Unrealistic_Engine.models.database import Database
 
 
-class MenuController(Controller):
+class TitleScreenController(Controller):
 
-    def __init__(self, model, view, previous_controller, previous_view):
+    def __init__(self, model, view):
         self.game_model = model
         self.view = view
-        self.previous_controller = previous_controller
-        self.previous_view = previous_view
         self.save_node_ids = []
         self.load_node_ids = []
 
-        self.menu_model = Menu(self.view, MainMenu.render_menu,
-                               self.on_node_activated, Position(
-                Map.MAP_SIZE/2 - MainMenu.WIDTH /2, Map.MAP_SIZE/2 -
-                MainMenu.HEIGHT /2))
+        self.menu_model = Menu(self.view, TitleScreenView.render_menu,
+                               self.on_node_activated, Position(0,0))
 
-        self.menu_model.nodes.append(
-            LeafNode("Quit", utils.quit))
-
-        save_game_node = MenuNode("Save Game")
-        self.menu_model.nodes.append(save_game_node)
-        self.save_game_node_id = save_game_node.id
+        new_game_node = LeafNode("New Game", self._return_to_game)
+        self.menu_model.nodes.append(new_game_node)
+        self.new_game_node_id = new_game_node.id
 
         load_game_node = MenuNode("Load Saved Game")
         self.menu_model.nodes.append(load_game_node)
         self.load_game_node_id = load_game_node.id
+
+        self.menu_model.nodes.append(
+            LeafNode("Quit", utils.quit))
 
 
     # Builds a menu object containing all saved games in the database. Each saved game
     # has an action associated with it. Also returns the ids of the created nodes.
     def _build_list_of_saved_games(self, parent, action, action_args):
         game_menu = Menu(self.view, MainMenu.render_menu,
-                         self.on_node_activated,Position(
-                Map.MAP_SIZE / 2 - MainMenu.WIDTH / 2, Map.MAP_SIZE / 2 -
-                MainMenu.HEIGHT / 2))
+                         self.on_node_activated, Position(0,0))
         game_ids = Database().get_saved_games()
         node_ids = []
         for id in game_ids:
@@ -61,19 +55,6 @@ class MenuController(Controller):
         if node.is_leaf_node():
             result = node.execute_action()
 
-        # Add save game nodes to menu it consists of allowing the user to overwrite any
-        # existing save or add a new one.
-        if node.id == self.save_game_node_id:
-            saved_games_menu = self._build_list_of_saved_games(
-                node, Database().save_game_overwrite, self.game_model.create_memento())
-            self.save_node_ids = saved_games_menu[1]
-
-            new_node = LeafNode(
-                "New Saved Game", Database().save_game, self.game_model.create_memento())
-            saved_games_menu[0].nodes.append(new_node)
-            self.save_node_ids.append(new_node.id)
-            node.submenu = saved_games_menu[0]
-
         # Add load game nodes to menu it allows a user to load any existing save.
         if node.id == self.load_game_node_id:
             saved_games_menu = self._build_list_of_saved_games(
@@ -81,8 +62,8 @@ class MenuController(Controller):
             self.load_node_ids = saved_games_menu[1]
             node.submenu = saved_games_menu[0]
 
-        # If user has selected a save node
-        if node.id in self.save_node_ids:
+        # If user has selected new game
+        if node.id == self.new_game_node_id:
             self._return_to_game()
 
         # If user has selected a load node

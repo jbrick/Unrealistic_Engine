@@ -4,12 +4,10 @@ from Unrealistic_Engine.models.menu import Menu
 from Unrealistic_Engine.models.map import Map
 
 
-class MainMenu(MenuView):
+class TitleScreenView(MenuView):
 
     OFFSET = 50
     PADDING = 10
-    FONT_SIZE = 12
-    WIDTH = 200
-    HEIGHT = 200
-
-
+    FONT_SIZE = 24
+    WIDTH = 640
+    HEIGHT = 640
