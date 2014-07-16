@@ -19,7 +19,7 @@ class Menu():
         self.render_function = render_function
         self.position = position
         self.view.add_model(self, self.render_function, position,
-                        View.BACKGROUND)
+                        View.FOREGROUND)
 
     def get_active_node(self):
         return self.nodes[self._active_node_index]

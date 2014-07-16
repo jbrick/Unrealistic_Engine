@@ -25,8 +25,8 @@ class MenuController(Controller):
 
         self.menu_model = Menu(self.view, MainMenu.render_menu,
                                self.on_node_activated, Position(
-                Map.MAP_SIZE/2 - MainMenu.WIDTH /2, Map.MAP_SIZE/2 -
-                MainMenu.HEIGHT /2))
+                Map.MAP_SIZE/2 - MainMenu.MENU_WIDTH /2, Map.MAP_SIZE/2 -
+                MainMenu.MENU_HEIGHT /2))
 
         self.menu_model.nodes.append(
             LeafNode("Quit", utils.quit))
@@ -45,8 +45,8 @@ class MenuController(Controller):
     def _build_list_of_saved_games(self, parent, action, action_args):
         game_menu = Menu(self.view, MainMenu.render_menu,
                          self.on_node_activated,Position(
-                Map.MAP_SIZE / 2 - MainMenu.WIDTH / 2, Map.MAP_SIZE / 2 -
-                MainMenu.HEIGHT / 2))
+                Map.MAP_SIZE / 2 - MainMenu.MENU_WIDTH / 2, Map.MAP_SIZE / 2 -
+                MainMenu.MENU_HEIGHT / 2))
         game_ids = Database().get_saved_games()
         node_ids = []
         for id in game_ids:

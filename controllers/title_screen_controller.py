@@ -39,7 +39,7 @@ class TitleScreenController(Controller):
     # Builds a menu object containing all saved games in the database. Each saved game
     # has an action associated with it. Also returns the ids of the created nodes.
     def _build_list_of_saved_games(self, parent, action, action_args):
-        game_menu = Menu(self.view, MainMenu.render_menu,
+        game_menu = Menu(self.view, TitleScreenView.render_menu,
                          self.on_node_activated, Position(0,0))
         game_ids = Database().get_saved_games()
         node_ids = []

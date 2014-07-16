@@ -6,10 +6,10 @@ from Unrealistic_Engine.models.map import Map
 
 class MainMenu(MenuView):
 
-    OFFSET = 50
-    PADDING = 10
-    FONT_SIZE = 12
-    WIDTH = 200
-    HEIGHT = 200
+    MENU_OFFSET = 50
+    MENU_PADDING = 10
+    MENU_FONT_SIZE = 12
+    MENU_WIDTH = 200
+    MENU_HEIGHT = 200
 
 
