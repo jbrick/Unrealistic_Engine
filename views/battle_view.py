@@ -6,9 +6,10 @@ from Unrealistic_Engine.views.battle_view_interface import BattleViewInterface
 from Unrealistic_Engine.utils import utils
 from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine.models.character import Character
+from Unrealistic_Engine.views.menu_view import MenuView
 
 
-class BattleView(BattleViewInterface):
+class BattleView(BattleViewInterface, MenuView):
 
     # offset in pixels - centres character in tile
     CHARACTER_OFFSET = 0
@@ -16,6 +17,9 @@ class BattleView(BattleViewInterface):
     TARGET_ICON_OFFSET = -10
     FONT_SIZE = 16
     PADDING = 10
+    MENU_HEIGHT = Map.MAP_SIZE / 4
+    MENU_WIDTH = Map.MAP_SIZE / 2
+    MENU_FONT_SIZE = 16
 
     # Height of each menu item
     LINE_HEIGHT = 25
@@ -116,27 +120,6 @@ class BattleView(BattleViewInterface):
                     player_stats_position.convert_with_offset(BattleView.PADDING,
                                                               2 * BattleView.LINE_HEIGHT +
                                                               BattleView.PADDING))
-
-    @staticmethod
-    def render_action_menu(action_menu, screen, position, *args, **kwargs):
-        large_offset = Map.MAP_SIZE - (Map.MAP_SIZE / 4)
-        font = pygame.font.SysFont("monospace", BattleView.FONT_SIZE)
-
-        menu_surface = pygame.Surface((Map.MAP_SIZE/2, Map.MAP_SIZE/4))
-        menu_surface.fill((5, 4, 71, 100))
-        screen.blit(menu_surface, (0, large_offset))
-
-        # Render menu items
-        for count in range(0, len(action_menu.nodes)):
-            label = font.render(action_menu.nodes[count].label, 1, (255, 255, 255))
-            screen.blit(label, (2*BattleView.PADDING,
-                        count*BattleView.LINE_HEIGHT + BattleView.OFFSET + large_offset))
-
-            if count == action_menu.get_active_node_index():
-                screen.blit(action_menu.active_icon, (BattleView.PADDING,
-                                                      count*BattleView.LINE_HEIGHT +
-                                                      BattleView.OFFSET + BattleView.PADDING +
-                                                      large_offset))
 
     @staticmethod
     def render_battle_log(battle_log, screen, *args, **kwargs):

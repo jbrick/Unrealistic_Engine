@@ -1,9 +1,9 @@
 import pygame
 
 from Unrealistic_Engine.models.database import Database
-from Unrealistic_Engine.controllers.game_controller import GameController
-from Unrealistic_Engine.views.game_view import GameView
-from Unrealistic_Engine.utils.position import Position
+from Unrealistic_Engine.controllers.title_screen_controller import \
+    TitleScreenController
+from Unrealistic_Engine.views.title_screen_view import TitleScreenView
 from Unrealistic_Engine import event_types
 from Unrealistic_Engine.models.map import Map
 
@@ -18,8 +18,8 @@ screen = pygame.display.set_mode(size)
 
 # Default game model is loaded from a sqlite database.
 model = Database().load_application()
-view = GameView()
-controller = GameController(model, view)
+view = TitleScreenView()
+controller = TitleScreenController(model, view)
 
 # Main game loop passes all events to controller and continually renders view.
 # Draw the screen every 34 ms or 30 fps.

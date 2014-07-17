@@ -10,15 +10,16 @@ class Menu():
     """
     Constructor.
     """
-    def __init__(self, view, render_function, on_node_activated):
+    def __init__(self, view, render_function, on_node_activated, position):
         self.view = view
         self.nodes = []
         self.on_node_activated = on_node_activated
         self._active_node_index = 0;
         self.active_icon = pygame.image.load(os.path.join("Images", "menu_active.png"))
         self.render_function = render_function
-        self.view.add_model(self, self.render_function, 0,
-                        View.BACKGROUND)
+        self.position = position
+        self.view.add_model(self, self.render_function, position,
+                        View.FOREGROUND)
 
     def get_active_node(self):
         return self.nodes[self._active_node_index]
@@ -39,7 +40,8 @@ class Menu():
     def go_to_previous_menu(self):
         self.view.remove_model(self)
         self = Menu.breadcrumbs.pop()
-        self.view.add_model(self, self.render_function, 0, View.BACKGROUND)
+        self.view.add_model(self, self.render_function, self.position,
+                            View.BACKGROUND)
         return self
 
     def activate_node(self):
@@ -52,5 +54,6 @@ class Menu():
         Menu.breadcrumbs.append(self)
         self.view.remove_model(self)
         self = self.get_active_node().submenu
-        self.view.add_model(self, self.render_function, 0,View.BACKGROUND)
+        self.view.add_model(self, self.render_function, self.position,
+                            View.BACKGROUND)
         return self

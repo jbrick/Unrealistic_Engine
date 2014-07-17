@@ -40,7 +40,9 @@ class BattleController(Controller):
         self.view.add_model(
             self.model.current_map.get_map_tile(self.model.character.position.x_coord,
                                                 self.model.character.position.y_coord),
-            BattleView.render_map, Position(0, 0), View.BACKGROUND)
+            BattleView.render_map, Position(0, Map.MAP_SIZE -
+                                            BattleView.MENU_HEIGHT),
+            View.BACKGROUND)
 
         # Add Enemy
         self.view.add_model(
@@ -54,8 +56,10 @@ class BattleController(Controller):
                             Position(Map.GRID_SIZE/2, Map.GRID_SIZE/2), View.FOREGROUND)
 
         # Add action select menu to visible models
-        self.action_menu = Menu(self.view, BattleView.render_action_menu,
-                                self.on_node_activated)
+        self.action_menu = Menu(
+            self.view, BattleView.render_menu,self.on_node_activated,
+            Position(0, Map.MAP_SIZE - BattleView.MENU_HEIGHT))
+
         self.action_menu.nodes.append(LeafNode("Attack", self.set_attack_action))
         self.action_menu.nodes.append(LeafNode("Items", None))
 
