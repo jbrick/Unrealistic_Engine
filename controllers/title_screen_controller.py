@@ -48,7 +48,7 @@ class TitleScreenController(Controller):
             game_menu = Menu(self.view, TitleScreenView.render_menu,
                              self.on_node_activated, Position(0, 0))
 
-            self.load_node_ids = utils.build_list_of_saved_games(
+            self.load_node_ids = utils.add_saved_game_nodes(
                 game_menu, Database().load_saved_game, None)
 
             node.submenu = game_menu
@@ -60,7 +60,7 @@ class TitleScreenController(Controller):
         # If user has selected a load node
         if node.id in self.load_node_ids:
             self.game_model.set_memento(result)
-            self._return_to_game()
+            utils.return_to_game(self.game_model)
 
     @staticmethod
     def get_imports():
