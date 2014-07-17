@@ -1,12 +1,11 @@
 import sqlite3 as lite
-import csv
 import sys
 import os
 import json
 import argparse
+import Image
 
 from Unrealistic_Engine.models.map import Map
-
 
 def main():
     parser = argparse.ArgumentParser(
@@ -28,9 +27,9 @@ def main():
         help="Creates a map using a passed in .json file")
 
     parser.add_argument(
-        "--add_tileset", dest="to_run", action="store_const", 
-        const=add_tilesets, default=None,
-        help="Adds a .json defined tileset to the game")
+        "--add_tiles", dest="to_run", action="store_const",
+        const=add_tiles, default=None,
+        help="Adds a .png defined tileset to the game")
 
     parser.add_argument(
         "--show_tiles", dest="to_run", action="store_const", 
@@ -204,19 +203,24 @@ def show_tiles(cursor, *args, **kwargs):
     cursor.execute("SELECT * FROM Tile")
     rows = cursor.fetchall()
     for row in rows:
-        print "Id: %3d | Name: %s" % (row['Id'], row['Name'])
+        print "Id: %3d | Name: %s | X_Pos: %d | Y_Pos: %d Image: %s" % (
+            row['Id'], row['Name'],  row['X_Pos'],  row['Y_Pos'], row['Image'])
 
 
-def add_tilesets(cursor, json_tilesets, *args, **kwargs):
-    for json_tiles in json_tilesets:
-        tiles_file = open(json_tiles)
-        tiles = json.load(tiles_file)
-        tiles_file.close()
+def add_tiles(cursor, tile_sets, *args, **kwargs):
+    for filename in tile_sets:
+        image_width, image_height = Image.open(filename).size
 
-        for tile in tiles["tiles"]:
-            cursor.execute(
-                "INSERT INTO Tile (Name, Image, Walkable) VALUES (?, ?, ?)",
-                (tile["Name"], tile["Image"], tile["Walkable"]))
+        #TODO support more than just 16 / 16
+        width = image_width / Map.GRID_SIZE
+        height = image_height / Map.GRID_SIZE
+        for tile_y in range(0, image_width/height):
+            for tile_x in range(0, image_height/width):
+                cursor.execute(
+                    "INSERT INTO Tile (Name, Image, X_Pos, Y_Pos, Walkable) "
+                    "VALUES (?, ?, ?, ?, ?)",
+                    ("default", filename, tile_x*width, tile_y*height, 1))
+
     print("Tilesets added successfully.")
 
 
@@ -249,7 +253,8 @@ def reset_database(cursor, *args, **kwargs):
 
     cursor.execute(
         "CREATE TABLE Tile"
-        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Image TEXT, Walkable INTEGER)")
+        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Image TEXT, X_Pos,"
+        " Y_Pos, Walkable INTEGER)")
 
     cursor.execute(
         "CREATE TABLE MapTile"

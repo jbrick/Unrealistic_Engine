@@ -1,6 +1,6 @@
-class Position():
+from Unrealistic_Engine.models.tile import Tile
 
-    TILE_SIZE = 40
+class Position():
 
     def __init__(self, x_coord, y_coord):
         self.x_coord = x_coord
@@ -22,9 +22,9 @@ class Position():
         self.y_coord = y_coord
 
     def convert_to_pixels(self, offset):
-        return ((self.x_coord * Position.TILE_SIZE) + offset,
-                (self.y_coord * Position.TILE_SIZE) + offset)
+        return ((self.x_coord * Tile.SIZE) + offset,
+                (self.y_coord * Tile.SIZE) + offset)
 
     def convert_with_offset(self, x_offset, y_offset):
-        return ((self.x_coord * Position.TILE_SIZE + x_offset),
-                (self.y_coord * Position.TILE_SIZE) + y_offset)
+        return ((self.x_coord * Tile.SIZE + x_offset),
+                (self.y_coord * Tile.SIZE) + y_offset)

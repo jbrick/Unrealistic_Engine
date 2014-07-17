@@ -22,7 +22,7 @@ class Database(Model):
         character = self._load_characters()
         maps = self._load_maps()
         enemies = self._load_enemies()
-        game = Game(character, maps, enemies, maps["tower_floor1"])
+        game = Game(character, maps, enemies, maps["castle"])
         return game
 
     def _database_execute(self, sql, args):
@@ -71,10 +71,10 @@ class Database(Model):
             game_map = Map(Map.GRID_SIZE, each_map["Name"], each_map["Music"])
             # Load the map tiles for this map.
             cursor = self._database_execute(
-                """SELECT mt.TileId, mt.Index_X, mt.Index_Y, t.Name, t.Walkable,
-                 t.Image, mt.Id FROM MapTile AS mt JOIN Tile as t
-                 ON mt.TileId = t.Id
-                WHERE MapId = %d""" % each_map['Id'], None)
+                "SELECT mt.TileId, mt.Index_X, mt.Index_Y, t.Name, "
+                "t.Walkable, t.Image, t.X_Pos, t.Y_Pos, mt.Id FROM MapTile AS "
+                "mt JOIN Tile as t ON mt.TileId = t.Id WHERE MapId = %d"
+                % each_map['Id'], None)
 
             map_tiles = cursor.fetchall()
 
@@ -82,8 +82,13 @@ class Database(Model):
             for row_map_tiles in map_tiles:
                 tile_image = pygame.image.load(
                     os.path.join('Images', row_map_tiles['Image']))
+
+                rect = (row_map_tiles["X_Pos"], row_map_tiles["Y_Pos"],
+                        Tile.SIZE, Tile.SIZE)
+
+
                 tile_image_scaled = pygame.transform.scale(
-                    tile_image, (Tile.SIZE, Tile.SIZE))
+                    tile_image.subsurface(rect), (Tile.SIZE, Tile.SIZE))
                 map_tile_id = row_map_tiles['Id']
 
                 # Add trigger for this tile.
