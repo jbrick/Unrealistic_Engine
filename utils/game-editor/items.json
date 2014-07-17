@@ -2,25 +2,90 @@
 	"items": [
 	        {
 				"Name" : "Lesser Healing Potion",
-				"Type" : 2,
+				"Type" : "Healing",
 				"Modifier" : 50,
-				"Slot" : 0,
+				"Slot" : "Bag",
 				"Description" : "Heals you for 50 Hit Points."
 			},
 			{
 				"Name" : "Sword of Noob",
-				"Type" : 0,
+				"Type" : "Weapon",
 				"Modifier" : 10,
-				"Slot" : 1,
+				"Slot" : "Right Hand",
 				"Description" : "This sword is dingy and quite awful. It is mostly fit for the inexperienced"
 			},
 			{
 				"Name" : "Santa's Hat",
-				"Type" : 3,
+				"Type" : "Armor",
 				"Modifier" : 20,
-				"Slot" : 2,
+				"Slot" : "Head",
 				"Description" : "This piece of armor doesn't have much protection, but it does give you the urge to give gifts."
+			},
+			{
+				"Name" : "10 Gallon Hat",
+				"Type" : "Armor",
+				"Modifier" : 30,
+				"Slot" : "Head",
+				"Description" : "It appears this hat can fit at 10 jugs of milk within it"
+			},
+			{
+				"Name" : "Sword of a Thousand Truths",
+				"Type" : "Weapon",
+				"Modifier" : 100,
+				"Slot" : "Left Hand",
+				"Description" : "Foretold by Saltzman"
+			},
+			{
+				"Name" : "Frostmourne",
+				"Type" : "Weapon",
+				"Modifier" : 90,
+				"Slot" : "Right Hand",
+				"Description" : "The Lich King's sword speaks to you as if from within."
+			},
+			{
+				"Name" : "Red Plate Chestpiece",
+				"Type" : "Armor",
+				"Modifier" : 50,
+				"Slot" : "Chest",
+				"Description" : "It gleams red as if from the back of a Derethi Gyorn"
+			},
+			{
+				"Name" : "Cafeteria Tray",
+				"Type" : "Armor",
+				"Modifier" : 5,
+				"Slot" : "Chest",
+				"Description" : "This can't be safe..."
+			},
+			{
+				"Name" : "Bag of Dicks",
+				"Type" : "Healing",
+				"Modifier" : -5,
+				"Slot" : "Bag",
+				"Description" : "It's quite literally what it advertised. Quite revolting."
+			},
+			{
+				"Name" : "High Heels",
+				"Type" : "Armor",
+				"Modifier" : 10,
+				"Slot" : "Boots",
+				"Description" : "You feel much more fabulous while wearing these."
+			},
+			{
+				"Name" : "Red Plate Gauntlets",
+				"Type" : "Armor",
+				"Modifier" : 10,
+				"Slot" : "Gloves",
+				"Description" : "These look mostly ornamental."
+			},
+			{
+				"Name" : "Hulk Fists",
+				"Type" : "Armor",
+				"Modifier" : 50,
+				"Slot" : "Gloves",
+				"Description" : "These glowing green gauntlets appear slightly irradiated."
 			}
+
+
 		]
 
 }

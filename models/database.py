@@ -48,7 +48,7 @@ class Database(Model):
         cursor = self._database_execute("SELECT * FROM Character WHERE Name = 'Player'", None)
         row = cursor.fetchone()
         return Character(row['Name'], row['Image'], row['Health'],
-                         row['Attack'])
+                         row['Attack'], 10)
 
     def _load_enemies(self):
         cursor = self._database_execute("SELECT * FROM Character WHERE Name != 'Player'", None)
@@ -59,7 +59,7 @@ class Database(Model):
                 os.path.join('Images', enemy['Image']))
             enemy_image_scaled = pygame.transform.scale(
                 enemy_image, (Character.SIZE, Character.SIZE))
-            enemy_dict[enemy['Name']] = Character(enemy['Name'], enemy_image_scaled, enemy['Health'], enemy['Attack'])
+            enemy_dict[enemy['Name']] = Character(enemy['Name'], enemy_image_scaled, enemy['Health'], enemy['Attack'], 0)
 
         return enemy_dict
 
@@ -68,13 +68,14 @@ class Database(Model):
         items = cursor.fetchall()
         item_dict = {}
         for item in items:
-            if item['Type'] is Item.Weapon:
+            if item['Type'] == Item.Weapon:
                 item_dict[item['Name']] = WeaponItem(item['Name'], item['Description'],
                                                      item['Slot'], item['Modifier'])
-            elif item['Type'] is Item.Armor:
+            elif item['Type'] == Item.Armor:
                 item_dict[item['Name']] = ArmorItem(item['Name'], item['Description'],
                                                      item['Slot'], item['Modifier'])
-            elif item['Type'] is Item.Healing:
+
+            elif item['Type'] == Item.Healing:
                 item_dict[item['Name']] = HealingItem(item['Name'], item['Description'],
                                                      item['Slot'], item['Modifier'])
 

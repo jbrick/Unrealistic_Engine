@@ -16,31 +16,15 @@ class InventoryView(InventoryViewInterface):
     OFFSET = 50
 
     @staticmethod
-    def render_inventory(inventory, screen, position, *args, **kwargs):
-        font = pygame.font.SysFont("monospace", InventoryView.FONT_SIZE)
-
-        background = pygame.Surface((Map.MAP_SIZE - 200, Map.MAP_SIZE/2))
+    def render_background(model, screen, position, *args, **kwargs):
+        background = pygame.Surface((Map.MAP_SIZE, Map.MAP_SIZE))
         background.fill((5, 4, 71, 100))
-        screen.blit(background, (200, 0))
-
-        count = 0
-        for item in inventory.item_list:
-            quantity_label = font.render(str(inventory.item_list[item]), 1, (255, 255, 255))
-            screen.blit(quantity_label, (2*InventoryView.PADDING + 200,
-                        count*InventoryView.LINE_HEIGHT + InventoryView.OFFSET))
-
-            type_label = font.render((item).__class__.__name__, 1, (255, 255, 255))
-            screen.blit(type_label, (2*InventoryView.PADDING + 300,
-                        count*InventoryView.LINE_HEIGHT + InventoryView.OFFSET))
-            count += 1
+        screen.blit(background, (0, 0))
 
     @staticmethod
     def render_inventory_menu(inventory_menu, screen, position, *args, **kwargs):
         font = pygame.font.SysFont("monospace", InventoryView.FONT_SIZE)
 
-        background = pygame.Surface((200, Map.MAP_SIZE/2))
-        background.fill((5, 4, 71, 100))
-        screen.blit(background, (0, 0))
 
         # Render menu items
         for count in range(0, len(inventory_menu.nodes)):
@@ -57,9 +41,34 @@ class InventoryView(InventoryViewInterface):
     def render_description(description, screen, position, *args, **kwargs):
         font = pygame.font.SysFont("monospace", InventoryView.FONT_SIZE)
 
-        background = pygame.Surface((Map.MAP_SIZE, Map.MAP_SIZE/2))
-        background.fill((5, 4, 71, 100))
-        screen.blit(background, (0, Map.MAP_SIZE/2))
 
+    @staticmethod
+    def render_character_data(character, screen, position, *args, **kwargs):
+        font = pygame.font.SysFont("monospace", InventoryView.FONT_SIZE)
+
+
+        # Render inventory list data
+        count = 0
+        for item in character.inventory.item_list:
+            quantity_label = font.render(str(character.inventory.item_list[item]), 1, (255, 255, 255))
+            screen.blit(quantity_label, (2*InventoryView.PADDING + 200,
+                        count*InventoryView.LINE_HEIGHT + InventoryView.OFFSET))
+
+            type_label = font.render((item).__class__.__name__, 1, (255, 255, 255))
+            screen.blit(type_label, (2*InventoryView.PADDING + 250,
+                        count*InventoryView.LINE_HEIGHT + InventoryView.OFFSET))
+
+            slot_label = font.render(item.slot, 1, (255, 255, 255))
+            screen.blit(slot_label, (2*InventoryView.PADDING + 400,
+                        count*InventoryView.LINE_HEIGHT + InventoryView.OFFSET))
+
+            if item.slot in character.loadout:
+                if character.loadout[item.slot] == item:
+                    equipped_label = font.render(str(1), 1, (255, 255, 255))
+                    screen.blit(equipped_label, (2*InventoryView.PADDING + 350,
+                                count*InventoryView.LINE_HEIGHT + InventoryView.OFFSET))
+            count += 1
+
+        # Render character stats
 
 

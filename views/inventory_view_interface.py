@@ -4,7 +4,7 @@ from Unrealistic_Engine.views.view import View
 class InventoryViewInterface(View):
 
     @staticmethod
-    def render_inventory(inventory, screen, position, *args, **kwargs):
+    def render_background(model, screen, position, *args, **kwargs):
         raise NotImplementedError("Please implement this method")
 
     @staticmethod
@@ -13,4 +13,8 @@ class InventoryViewInterface(View):
 
     @staticmethod
     def render_description(description, screen, position, *args, **kwargs):
+        raise NotImplementedError("Please implement this method")
+
+    @staticmethod
+    def render_character_data(character, screen, position, *args, **kwargs):
         raise NotImplementedError("Please implement this method")

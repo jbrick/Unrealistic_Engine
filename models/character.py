@@ -13,18 +13,19 @@ class Character(Saveable):
     LEFT = "left"
     RIGHT = "right"
 
-
     SIZE = Map.MAP_SIZE / Map.GRID_SIZE
 
-    def __init__(self, name, image, health, attack):
+    def __init__(self, name, image, health, attack, defense):
         self.name = name
         self.image = image
         self.health = health
         self.total_health = health
         self.attack = attack
+        self.defense = defense
         self.position = Position(1, 1)
         self.direction = Character.DOWN
         self.inventory = Inventory()
+        self.loadout = {}
 
     def create_memento(self):
         return CharacterMemento(self.position, self.health, self.total_health, self.attack)

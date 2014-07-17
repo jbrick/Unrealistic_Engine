@@ -2,16 +2,17 @@ import pygame
 import sys
 
 from Unrealistic_Engine.controllers.controller import Controller
-
 from Unrealistic_Engine.utils import utils
 from Unrealistic_Engine.views.inventory_view import InventoryView
 from Unrealistic_Engine.views.view import View
 from Unrealistic_Engine.utils.position import Position
-from Unrealistic_Engine.views.main_menu import MainMenu
 from Unrealistic_Engine.models.leaf_node import LeafNode
-from Unrealistic_Engine.models.menu_node import MenuNode
 from Unrealistic_Engine.models.menu import Menu
+from Unrealistic_Engine.models.map import Map
 from Unrealistic_Engine import event_types
+from Unrealistic_Engine.models.item import Item
+from Unrealistic_Engine.models.armor_item import ArmorItem
+from Unrealistic_Engine.models.weapon_item import WeaponItem
 
 
 class InventoryController(Controller):
@@ -20,14 +21,19 @@ class InventoryController(Controller):
         self.model = model
         self.view = view
 
-        # Add Inventory to visible models
+        # Add Background layer to visible models
         self.view.add_model(
-            self.model.character.inventory, InventoryView.render_inventory,
+            None, InventoryView.render_background,
             Position(0, 0), View.BACKGROUND)
+
+        # Add Character to visible models
+        self.view.add_model(
+            self.model.character, InventoryView.render_character_data,
+            Position(Map.MAP_SIZE/4, 0), View.FOREGROUND)
 
         # Build item list from model into a menu
         self.inventory_menu = Menu(self.view, InventoryView.render_inventory_menu,
-                                   self.on_node_activated)
+                                   self.on_node_activated, Position(0, 0))
 
         for item in self.model.character.inventory.item_list:
             self.inventory_menu.nodes.append(
@@ -57,7 +63,42 @@ class InventoryController(Controller):
             node.execute_action()
 
     def select_item(self, item):
-        print("Item %s was selected." % item[0].name)
+        if item.slot == Item.Bag:
+            # Show a an error that item can't be equipped
+            return
+        current_loadout = self.model.character.loadout
+        if item.slot in current_loadout:
+            if item is current_loadout[item.slot]:
+                self.unequip_item(item)
+            else:
+                self.equip_item(item)
+        else:
+            self.equip_item(item)
+
+    def equip_item(self, item):
+        old_item = None
+        if item.slot in self.model.character.loadout:
+            old_item = self.model.character.loadout[item.slot]
+        self.model.character.loadout[item.slot] = item
+        # Show dialog that item was equipped
+
+        self.update_stats(old_item, item)
+
+    def unequip_item(self, item):
+        del self.model.character.loadout[item.slot]
+        self.update_stats(item, None)
+
+    def update_stats(self, old_item, new_item):
+        if isinstance(new_item, ArmorItem) or isinstance(old_item, ArmorItem):
+            if old_item is not None:
+                self.model.character.defense -= old_item.defense_value
+            if new_item is not None:
+                self.model.character.defense += new_item.defense_value
+        elif isinstance(new_item, WeaponItem) or isinstance(old_item, WeaponItem):
+            if old_item is not None:
+                self.model.character.attack -= old_item.attack_value
+            if new_item is not None:
+                self.model.character.attack += new_item.attack_value
 
     def close_inventory(self):
         base = utils.fetch(utils.qualify_controller_name("game_controller"))

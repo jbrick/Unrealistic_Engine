@@ -4,14 +4,19 @@ __author__ = 'steve'
 class Item():
 
     # Item type enums
-    Weapon = 0
-    Armor = 1
-    Healing = 2
+    Weapon = "Weapon"
+    Armor = "Armor"
+    Healing = "Healing"
 
     # Slot type enums
-    Bag = 0
-    LeftHand = 1
-    Head = 2
+    Bag = "Bag"
+    LeftHand = "Left Hand"
+    RightHand = "Right Hand"
+    Head = "Head"
+    Chest = "Chest"
+    Legs = "Legs"
+    Boots = "Boots"
+    Gloves = "Gloves"
 
     def __init__(self, name, description, slot):
         self.name = name
