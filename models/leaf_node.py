@@ -16,4 +16,4 @@ class LeafNode(Node):
         if not self.action_args:
             return self.action()
         else:
-            return self.action(self.action_args)
+            return self.action(*self.action_args)
