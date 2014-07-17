@@ -68,7 +68,7 @@ class Database(Model):
         loaded_maps = cursor.fetchall()
 
         for each_map in loaded_maps:
-            game_map = Map(Map.GRID_SIZE, each_map["Name"])
+            game_map = Map(Map.GRID_SIZE, each_map["Name"], each_map["Music"])
             # Load the map tiles for this map.
             cursor = self._database_execute(
                 """SELECT mt.TileId, mt.Index_X, mt.Index_Y, t.Name, t.Walkable,

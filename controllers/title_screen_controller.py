@@ -1,5 +1,6 @@
 import sys
 import pygame
+import os
 
 from Unrealistic_Engine.utils import utils
 from Unrealistic_Engine.utils.position import Position
@@ -18,6 +19,9 @@ class TitleScreenController(Controller):
         self.view = view
         self.save_node_ids = []
         self.load_node_ids = []
+
+        pygame.mixer.music.load(os.path.join('Music','theme.mid'))
+        pygame.mixer.music.play()
 
         self.menu_model = Menu(self.view, TitleScreenView.render_menu,
                                self.on_node_activated, Position(0,0))
