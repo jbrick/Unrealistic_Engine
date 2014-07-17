@@ -31,8 +31,8 @@ class GameController(Controller):
         self._build_triggers()
 
         # Add Map model
-        view.add_model(model.current_map, GameView.render_map, Position(0, 0), GameView.BACKGROUND)
-        
+        view.add_model(model.current_map, GameView.render_map, Position(0, 0), View.BACKGROUND)
+
         # Add Character model
         view.add_model(
             model.character,
@@ -136,8 +136,13 @@ class GameController(Controller):
                                                 self.model.current_map.music))
             pygame.mixer.music.play()
 
+<<<<<<< HEAD
         self.view.add_model(
             self.model.current_map, GameView.render_map, Position(0, 0), GameView.BACKGROUND)
+=======
+        self.view.add_model(self.model.current_map, GameView.render_map,
+                            Position(0, 0), View.BACKGROUND)
+>>>>>>> Added ability to make 2 Map Layers
         self.triggers = {}
         self.previous_position = None
         self._build_triggers()
@@ -161,7 +166,7 @@ class GameController(Controller):
                  "View": view}))
 
     def _build_triggers(self):
-        for row in self.model.current_map.tiles:
+        for row in self.model.current_map.layers[1]:
             for tile in row:
                 if tile != 0 and tile.trigger is not None:
                     self.triggers[tile.position] = tile.trigger

@@ -108,44 +108,49 @@ def show_map_layout(cursor, map_names, *args, **kwargs):
             "SELECT * FROM Map WHERE Name='%s'" % map_names[0])
     loaded_map = cursor.fetchone()
 
-    cursor.execute("SELECT * FROM MapTile WHERE MapId=%d" % loaded_map["Id"])
+    cursor = cursor.execute(
+            "SELECT * FROM MapLayer WHERE MapId='%d'" % loaded_map["Id"])
+    loaded_layers = cursor.fetchall()
 
-    map_tiles = cursor.fetchall()
-    matrix = [[0 for x in xrange(Map.GRID_SIZE)] for x in xrange(Map.GRID_SIZE)] 
-    for tile in map_tiles:
-        matrix[tile["Index_Y"]][tile["Index_X"]] = tile
+    for layer in loaded_layers:
+        cursor.execute("SELECT * FROM MapTile WHERE MapLayerId=%d" % layer["Id"])
 
-    print ""
-    print "Showing layout for map: %s" % map_names[0]
-    print ""
-    print "Tile Identifier"
-    print ""
+        map_tiles = cursor.fetchall()
+        matrix = [[0 for x in xrange(Map.GRID_SIZE)] for x in xrange(Map.GRID_SIZE)]
+        for tile in map_tiles:
+            matrix[tile["Index_Y"]][tile["Index_X"]] = tile
 
-    count = 0
-    for column in range(Map.GRID_SIZE):
-        for row in range(Map.GRID_SIZE):
-            sys.stdout.write( "%5d" % (matrix[column][row]["TileId"]))
-            count += 1
+        print ""
+        print "Showing layout for map: %s" % map_names[0]
+        print "Layer: %s" % layer["Layer"]
+        print "Tile Identifier"
         print ""
 
-    print ""
-    print "Unique Tile Identifier"
-    print ""
+        count = 0
+        for column in range(Map.GRID_SIZE):
+            for row in range(Map.GRID_SIZE):
+                sys.stdout.write( "%5d" % (matrix[column][row]["TileId"]))
+                count += 1
+            print ""
 
-    count = 0
-    for column in range(Map.GRID_SIZE):
-        for row in range(Map.GRID_SIZE):
-            sys.stdout.write( "%5d" % (matrix[column][row]["Id"]))
-            count += 1
+        print ""
+        print "Unique Tile Identifier"
         print ""
 
-    print ""
-    print "Triggers"
-    print ""
+        count = 0
+        for column in range(Map.GRID_SIZE):
+            for row in range(Map.GRID_SIZE):
+                sys.stdout.write( "%5d" % (matrix[column][row]["Id"]))
+                count += 1
+            print ""
 
-    show_triggers(cursor)
+        print ""
+        print "Triggers"
+        print ""
 
-    print ""
+        show_triggers(cursor)
+
+        print ""
 
 
 def show_map_names(cursor, *args, **kwargs):
@@ -161,6 +166,12 @@ def insert_map(cursor, map_name, music):
         [map_name, music])
 
 
+def insert_map_layer(cursor, layer, map_id):
+    cursor.execute(
+        "INSERT INTO MapLayer (Layer, MapId) VALUES (?, ?)",
+            [layer, map_id])
+
+
 def get_map_id(cursor, map_name):
     result = cursor.execute(
                 "SELECT ID FROM Map WHERE NAME = '%s'"
@@ -168,11 +179,18 @@ def get_map_id(cursor, map_name):
     for row in result:
         return row[0]
 
+def get_map_layer_id(cursor, map_id, layer):
+    result = cursor.execute(
+                "SELECT ID FROM MapLayer WHERE MapId = '%d' AND Layer= '%s'"
+                % (map_id, layer))
+    for row in result:
+        return row[0]
 
-def insert_maptile(cursor, map_id, tile_id, x_pos, y_pos):
+
+def insert_maptile(cursor, map_layer_id, tile_id, x_pos, y_pos):
     cursor.execute(
-        "INSERT INTO MapTile (MapId, TileId, Index_X, Index_Y) VALUES (?, ?, ?, ?)",
-        (map_id, tile_id, x_pos, y_pos))
+        "INSERT INTO MapTile (MapLayerId, TileId, Index_X, Index_Y) VALUES (?, ?, ?, ?)",
+        (map_layer_id, tile_id, x_pos, y_pos))
 
 
 def create_maps(cursor, maps, *args, **kwargs):
@@ -189,12 +207,27 @@ def create_maps(cursor, maps, *args, **kwargs):
         insert_map(cursor, map_name, the_map["Music"])
         map_id = get_map_id(cursor, map_name)
 
+        layer = "Layer1"
+        insert_map_layer(cursor, layer, map_id)
+        map_layer_id = get_map_layer_id(cursor, map_id, layer)
         cur_row = 0
-        for row in the_map["Map"]:
+        for row in the_map[layer]:
             entries = row.split(',')
             cur_col = 0
             for entry in entries:
-                insert_maptile(cursor, map_id, entry, cur_col, cur_row)
+                insert_maptile(cursor, map_layer_id, entry, cur_col, cur_row)
+                cur_col += 1
+            cur_row += 1
+
+        layer = "Layer2"
+        insert_map_layer(cursor, layer, map_id)
+        map_layer_id = get_map_layer_id(cursor, map_id, layer)
+        cur_row = 0
+        for row in the_map[layer]:
+            entries = row.split(',')
+            cur_col = 0
+            for entry in entries:
+                insert_maptile(cursor, map_layer_id, entry, cur_col, cur_row)
                 cur_col += 1
             cur_row += 1
 
@@ -236,6 +269,7 @@ def add_enemies(cursor, json_enemies_set, *args, **kwargs):
 def reset_database(cursor, *args, **kwargs):
     # Clear DB of existing tables
     cursor.execute("DROP TABLE IF EXISTS Map")
+    cursor.execute("DROP TABLE IF EXISTS MapLayer")
     cursor.execute("DROP TABLE IF EXISTS Tile")
     cursor.execute("DROP TABLE IF EXISTS MapTile")
     cursor.execute("DROP TABLE IF EXISTS Character")
@@ -248,12 +282,16 @@ def reset_database(cursor, *args, **kwargs):
         "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Music TEXT)")
 
     cursor.execute(
+        "CREATE TABLE MapLayer"
+        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Layer TEXT, MapId INTEGER)")
+
+    cursor.execute(
         "CREATE TABLE Tile"
         "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Image TEXT, Walkable INTEGER)")
 
     cursor.execute(
         "CREATE TABLE MapTile"
-        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, MapId INTEGER, TileId INTEGER, Index_X INTEGER, "
+        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, MapLayerId INTEGER, TileId INTEGER, Index_X INTEGER, "
         "Index_Y INTEGER)")
    
     cursor.execute(

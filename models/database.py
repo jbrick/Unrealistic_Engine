@@ -69,49 +69,59 @@ class Database(Model):
 
         for each_map in loaded_maps:
             game_map = Map(Map.GRID_SIZE, each_map["Name"], each_map["Music"])
-            # Load the map tiles for this map.
+            
+            # Load the map layers of this map
             cursor = self._database_execute(
-                """SELECT mt.TileId, mt.Index_X, mt.Index_Y, t.Name, t.Walkable,
-                 t.Image, mt.Id FROM MapTile AS mt JOIN Tile as t
-                 ON mt.TileId = t.Id
-                WHERE MapId = %d""" % each_map['Id'], None)
+                 """SELECT ID, Layer FROM MapLayer WHERE MapId = %s""" % each_map['Id'], None)
+            load_layers = cursor.fetchall()
 
-            map_tiles = cursor.fetchall()
-
-            # Add all the tiles into the map.
-            for row_map_tiles in map_tiles:
-                tile_image = pygame.image.load(
-                    os.path.join('Images', row_map_tiles['Image']))
-                tile_image_scaled = pygame.transform.scale(
-                    tile_image, (Tile.SIZE, Tile.SIZE))
-                map_tile_id = row_map_tiles['Id']
-
-                # Add trigger for this tile.
+            for each_layer in load_layers:
+                # Load the map tiles for this map.
                 cursor = self._database_execute(
-                    """SELECT Chance, Action_Type, Triggered_On,
-                    Direction_Facing, One_Time, Action_Data FROM
-                    Trigger WHERE MapTileId = %s""" % map_tile_id, None)
+                    """SELECT mt.TileId, mt.Index_X, mt.Index_Y, t.Name, t.Walkable,
+                     t.Image, mt.Id FROM MapTile AS mt JOIN Tile as t
+                     ON mt.TileId = t.Id
+                    WHERE MapLayerId = %d""" % each_layer['Id'], None)
 
-                trigger_row = cursor.fetchone()
-                if trigger_row is not None:
-                    trigger = Trigger(
-                        trigger_row['Chance'],
-                        trigger_row['Action_Type'],
-                        trigger_row['Triggered_On'],
-                        trigger_row['Direction_Facing'],
-                        trigger_row['One_Time'],
-                        trigger_row['Action_Data'])
-                else:
-                    trigger = None
+                map_tiles = cursor.fetchall()
 
-                position = Position(
-                    row_map_tiles['Index_X'], row_map_tiles['Index_Y'])
+                # Add all the tiles into the map.
+                for row_map_tiles in map_tiles:
+                    tile_image = pygame.image.load(
+                        os.path.join('Images', row_map_tiles['Image']))
+                    tile_image_scaled = pygame.transform.scale(
+                        tile_image, (Tile.SIZE, Tile.SIZE))
+                    map_tile_id = row_map_tiles['Id']
 
-                tile = Tile(
-                    row_map_tiles['Name'], tile_image_scaled, position,
-                    trigger, row_map_tiles['Walkable'])
-                
-                game_map.add_or_replace_tile(tile)
+                    # Add trigger for this tile.
+                    cursor = self._database_execute(
+                        """SELECT Chance, Action_Type, Triggered_On,
+                        Direction_Facing, One_Time, Action_Data FROM
+                        Trigger WHERE MapTileId = %s""" % map_tile_id, None)
+
+                    trigger_row = cursor.fetchone()
+                    if trigger_row is not None:
+                        trigger = Trigger(
+                            trigger_row['Chance'],
+                            trigger_row['Action_Type'],
+                            trigger_row['Triggered_On'],
+                            trigger_row['Direction_Facing'],
+                            trigger_row['One_Time'],
+                            trigger_row['Action_Data'])
+                    else:
+                        trigger = None
+
+                    position = Position(
+                        row_map_tiles['Index_X'], row_map_tiles['Index_Y'])
+
+                    tile = Tile(
+                        row_map_tiles['Name'], tile_image_scaled, position,
+                        trigger, row_map_tiles['Walkable'])
+
+                    if (each_layer["Layer"] == "Layer1"):
+                        game_map.add_or_replace_tile(0, tile)
+                    else:
+                        game_map.add_or_replace_tile(1, tile)
 
             maps[each_map['Name']] = game_map
 

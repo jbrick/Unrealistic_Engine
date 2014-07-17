@@ -64,10 +64,19 @@ class GameView(MapView):
                 render_position[0] + GameView.DIALOG_PADDING,
                 render_position[1] + GameView.DIALOG_PADDING))
 
-    @staticmethod
-    def render_map(game_map, screen, *args, **kwargs):
-        for x in range(0, game_map.grid_size):
-            for y in range(0, game_map.grid_size):
+    def render_map(map, screen, *args, **kwargs):
+        #render layer 1
+        for x in range(0, map.grid_size):
+            for y in range(0, map.grid_size):
                 position = Position(x, y)
-                if game_map.tiles[x][y] != 0:
-                    screen.blit(game_map.tiles[x][y].image, position.convert_to_pixels(0))
+                if map.layers[0][x][y] != 0:
+                    screen.blit(map.layers[0][x][y].image,
+                                position.convert_to_pixels(0))
+
+        #render layer 2
+        for x in range(0, map.grid_size):
+            for y in range(0, map.grid_size):
+                position = Position(x, y)
+                if map.layers[1][x][y] != 0:
+                    screen.blit(map.layers[1][x][y].image,
+                                position.convert_to_pixels(0))
