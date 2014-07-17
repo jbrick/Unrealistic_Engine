@@ -68,7 +68,7 @@ class Database(Model):
         loaded_maps = cursor.fetchall()
 
         for each_map in loaded_maps:
-            game_map = Map(Map.GRID_SIZE, each_map["Name"])
+            game_map = Map(Map.GRID_SIZE, each_map["Name"], each_map["Music"])
             # Load the map tiles for this map.
             cursor = self._database_execute(
                 """SELECT mt.TileId, mt.Index_X, mt.Index_Y, t.Name, t.Walkable,
@@ -117,8 +117,7 @@ class Database(Model):
 
         return maps
 
-    def save_game(self, args):
-        game_memento = args[0]
+    def save_game(self, game_memento):
         cursor = self._database_execute(
             "INSERT INTO GameState(Current_Map, Character_Position_X, Character_Position_Y, "
             "Character_Health, Character_Total_Health, Character_Attack) "
@@ -130,9 +129,7 @@ class Database(Model):
              game_memento.character_memento.total_health,
              game_memento.character_memento.attack))
 
-    def save_game_overwrite(self, args):
-        saved_game_id = args[0]
-        game_memento = args[1]
+    def save_game_overwrite(self, saved_game_id, game_memento):
         cursor = self._database_execute(
             "UPDATE GameState SET Current_Map='%s', Character_Position_X='%s', "
             "Character_Position_Y='%s', Character_Health='%s', Character_Total_Health='%s',"
@@ -154,8 +151,7 @@ class Database(Model):
 
         return memento_names
 
-    def load_saved_game(self, args):
-        memento_id = args[0]
+    def load_saved_game(self, memento_id, *args, **kwargs):
         cursor = self._database_execute(
             "SELECT Current_Map, Character_Position_X, Character_Position_Y, Character_Health, "
             "Character_Total_Health, Character_Attack FROM GameState WHERE Id = %s" % memento_id,

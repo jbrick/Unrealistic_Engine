@@ -1,4 +1,5 @@
 import pygame
+import os
 
 from Unrealistic_Engine.models.database import Database
 from Unrealistic_Engine.controllers.title_screen_controller import \

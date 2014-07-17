@@ -1,5 +1,6 @@
 import sys
 import pygame
+import os
 
 from Unrealistic_Engine.utils import utils
 from Unrealistic_Engine.utils.position import Position
@@ -18,6 +19,9 @@ class TitleScreenController(Controller):
         self.view = view
         self.save_node_ids = []
         self.load_node_ids = []
+
+        pygame.mixer.music.load(os.path.join('Music','theme.mid'))
+        pygame.mixer.music.play()
 
         self.menu_model = Menu(self.view, TitleScreenView.render_menu,
                                self.on_node_activated, Position(0,0))
@@ -44,7 +48,7 @@ class TitleScreenController(Controller):
             game_menu = Menu(self.view, TitleScreenView.render_menu,
                              self.on_node_activated, Position(0, 0))
 
-            self.load_node_ids = utils.build_list_of_saved_games(
+            self.load_node_ids = utils.add_saved_game_nodes(
                 game_menu, Database().load_saved_game, None)
 
             node.submenu = game_menu
@@ -56,7 +60,7 @@ class TitleScreenController(Controller):
         # If user has selected a load node
         if node.id in self.load_node_ids:
             self.game_model.set_memento(result)
-            self._return_to_game()
+            utils.return_to_game(self.game_model)
 
     @staticmethod
     def get_imports():

@@ -1,6 +1,7 @@
 import pygame
 import copy
 import sys
+import os
 
 from Unrealistic_Engine import event_types
 from Unrealistic_Engine.utils import utils
@@ -21,6 +22,10 @@ class GameController(Controller):
         self.triggers = {}
         self.previous_position = None
         self.changed_map = False
+
+        pygame.mixer.music.load(os.path.join('Music',
+                                             self.model.current_map.music))
+        pygame.mixer.music.play()
 
         self._build_triggers()
 
@@ -108,9 +113,21 @@ class GameController(Controller):
             self.changed_map = False
 
     def _change_map(self, map_name):
+
+
         self.changed_map = True
         self.view.remove_model(self.model.current_map)
+
+        prev_music = self.model.current_map.music
         self.model.current_map = self.model.maps[map_name]
+
+        # Change the music if necessary
+        curr_music = self.model.current_map.music
+        if prev_music != curr_music:
+            pygame.mixer.music.load(os.path.join('Music',
+                                                self.model.current_map.music))
+            pygame.mixer.music.play()
+
         self.view.add_model(
             self.model.current_map, GameView.render_map, Position(0, 0), 1)
         self.triggers = {}
