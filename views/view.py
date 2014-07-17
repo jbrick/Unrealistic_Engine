@@ -13,6 +13,9 @@ class View():
         # render said model, as well as the position of where to render it.
         self.visible_models = {}
 
+    def after_visible_models_rendered(self, screen):
+        return
+
     def render(self, screen):
         for model in self.visible_models:
             # Find the tuple (renderfunction, position) for the current model.
@@ -28,6 +31,7 @@ class View():
                 self.visible_models[model][0](model, screen,
                                               self.visible_models[model][1])
 
+        self.after_visible_models_rendered(screen)
         pygame.display.flip()
 
     def add_model(self, model, render_function, position, priority):

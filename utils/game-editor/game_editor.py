@@ -23,14 +23,9 @@ def main():
         help="Displays the names of all loaded maps")
 
     parser.add_argument(
-        "--create_map", dest="to_run", action="store_const", 
+        "--create_maps", dest="to_run", action="store_const",
         const=create_maps, default=None,
-        help="Creates a map using a passed in .csv file")
-
-    parser.add_argument(
-        "--update_map", dest="to_run", action="store_const", 
-        const=update_map, default=None,
-        help="Updates a map using a passed in .csv file")
+        help="Creates a map using a passed in .json file")
 
     parser.add_argument(
         "--add_tileset", dest="to_run", action="store_const", 
@@ -87,7 +82,6 @@ def main():
     with db:
         cursor = db.cursor()
         args.to_run(cursor, args.input_files)
-
 
 def show_triggers(cursor, *args, **kwargs):
     cursor.execute("SELECT * FROM Trigger")
@@ -167,10 +161,10 @@ def show_map_names(cursor, *args, **kwargs):
         print("Name: '%s', ID: '%s'" % (row[1], row[0]))
 
 
-def insert_map(cursor, map_name):
+def insert_map(cursor, map_name, music):
     cursor.execute(
-        "INSERT INTO Map (Name) VALUES (?)",
-        [map_name])
+        "INSERT INTO Map (Name, Music) VALUES (?, ?)",
+        [map_name, music])
 
 
 def get_map_id(cursor, map_name):
@@ -189,56 +183,28 @@ def insert_maptile(cursor, map_id, tile_id, x_pos, y_pos):
 
 def create_maps(cursor, maps, *args, **kwargs):
 
-    for a_map in maps:    
-        reader = csv.reader(open(a_map, "rb"), delimiter=',')
+    for a_map in maps:
+        map_file = open(a_map)
+        the_map = json.load(map_file)
+        map_file.close()
+
         map_name = a_map
-        if map_name.endswith(".csv"):
-            map_name = map_name[:(len(map_name) - 4)]
-        insert_map(cursor, map_name)
+        if map_name.endswith(".json"):
+            map_name = map_name[:(len(map_name) - len(".json"))]
+
+        insert_map(cursor, map_name, the_map["Music"])
         map_id = get_map_id(cursor, map_name)
 
         cur_row = 0
-        for row in reader:
+        for row in the_map["Map"]:
+            entries = row.split(',')
             cur_col = 0
-            for entry in row:
+            for entry in entries:
                 insert_maptile(cursor, map_id, entry, cur_col, cur_row)
                 cur_col += 1
             cur_row += 1
+
         print("Map with name '%s' was successfully created." % map_name)  
-
-
-def update_map(cursor, map_arg, *args, **kwargs):
-    reader = csv.reader(open(map_arg, "rb"), delimiter=',')
-
-    map_name = map_arg
-    if map_name.endswith(".csv"):
-        map_name = map_name[:-4]
-
-    map_id = get_map_id(cursor, map_name)
-    if map_id is None:
-        print("There is no map with name '%s'. " +
-              "Please use create option instead." % map_name)
-        return
-
-    # Removes all current MapTiles with the found map id
-    delete_map_tiles(cursor, map_id)
-
-    #Re-adds updated MapTiles
-    cur_row = 0
-    for row in reader:
-        cur_col = 0
-        for entry in row:
-            insert_maptile(cursor, map_id, entry, cur_col, cur_row)
-            cur_col += 1
-        cur_row += 1
-    print("Map with name '%s' was successfully updated." % map_name)
-
-
-def delete_map_tiles(cursor, map_id,):
-    cursor.execute(
-        "DELETE FROM MapTile WHERE MapId = %s" % map_id)
-    print("Map with id %s deleted successfully." % map_id)
-
 
 def show_tiles(cursor, *args, **kwargs):
     cursor.execute("SELECT * FROM Tile")
@@ -299,7 +265,7 @@ def reset_database(cursor, *args, **kwargs):
     # Create tables (again if dropped before)
     cursor.execute(
         "CREATE TABLE Map"
-        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT)")
+        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Music TEXT)")
 
     cursor.execute(
         "CREATE TABLE Tile"
