@@ -3,3 +3,5 @@
 *.DS_Store
 # ignore sqlite db
 game.db
+# ignore pycharm files
+.idea
