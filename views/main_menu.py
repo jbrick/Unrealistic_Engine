@@ -11,5 +11,3 @@ class MainMenu(MenuView):
     MENU_FONT_SIZE = 12
     MENU_WIDTH = 200
     MENU_HEIGHT = 200
-
-

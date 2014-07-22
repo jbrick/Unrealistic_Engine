@@ -5,8 +5,15 @@ import pygame
 # implement the required methods.
 class View():
 
+    # Layer definitions
     BACKGROUND = 1
     FOREGROUND = 2
+    OVERLAY = 3
+    
+    # Model access key
+    RENDER_FUNCTION = 0
+    POSITION = 1
+    LAYER = 2
 
     def __init__(self):
         # We maintain a dictionary mapping a model to the function to call to
@@ -20,16 +27,20 @@ class View():
         for model in self.visible_models:
             # Find the tuple (renderfunction, position) for the current model.
             # Call the associated render function
-            if self.visible_models[model][2] == View.BACKGROUND:
-                self.visible_models[model][0](model, screen,
-                                              self.visible_models[model][1])
+            if self.visible_models[model][View.LAYER] == View.BACKGROUND:
+                self.visible_models[model][View.RENDER_FUNCTION](
+                    model, screen, self.visible_models[model][View.POSITION])
 
+        # Repeat above for other layers
         for model in self.visible_models:
-            # Find the tuple (renderfunction, position) for the current model.
-            # Call the associated render function
-            if self.visible_models[model][2] == View.FOREGROUND:
-                self.visible_models[model][0](model, screen,
-                                              self.visible_models[model][1])
+            if self.visible_models[model][View.LAYER] == View.FOREGROUND:
+                self.visible_models[model][View.RENDER_FUNCTION](
+                    model, screen, self.visible_models[model][View.POSITION])
+        
+        for model in self.visible_models:
+            if self.visible_models[model][View.LAYER] == View.OVERLAY:
+                self.visible_models[model][View.RENDER_FUNCTION](
+                    model, screen, self.visible_models[model][View.POSITION])
 
         self.after_visible_models_rendered(screen)
         pygame.display.flip()
@@ -41,8 +52,8 @@ class View():
         del self.visible_models[model]
 
     def set_visible_model_position(self, model, position):
-        self.visible_models[model] = (self.visible_models[model][0],
-                                      position, self.visible_models[model][2])
+        self.visible_models[model] = (self.visible_models[model][View.RENDER_FUNCTION],
+                                      position, self.visible_models[model][View.LAYER])
 
     def get_visible_model_position(self, model):
-        return self.visible_models[model][1]
+        return self.visible_models[model][View.POSITION]
