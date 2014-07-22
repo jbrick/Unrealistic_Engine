@@ -1,13 +1,13 @@
 {
     "triggers": [
         {
-        "MapTileId" : 222,
-        "Chance" : 100,
-        "Action_Type" : "change_map",
-        "Direction_Facing" : "any",
-        "One_Time" : 0,
-        "Triggered_On" : "enter",
-        "Action_Data" : {
+            "MapTileId" : 222,
+            "Chance" : 100,
+            "Action_Type" : "change_map",
+            "Direction_Facing" : "any",
+            "One_Time" : 0,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
                 "map_name" : "tower_floor2",
                 "character_x": 13,
                 "character_y": 13
