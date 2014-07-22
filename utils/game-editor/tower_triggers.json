@@ -116,6 +116,19 @@
             }
         },
         {
+            "MapTileId" : 220,
+            "Chance" : 100,
+            "Action_Type" : 3,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
+                "dialog_x" : 8,
+                "dialog_y" : 8,
+                "dialog_text" : "YOU SHALL NOT PASS",
+                "timed" : 0,
+                "timeout" : 0
+            }
+        },
+        {
             "MapTileId" : 221,
             "Chance" : 100,
             "Action_Type" : "show_dialog",

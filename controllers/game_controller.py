@@ -23,10 +23,13 @@ class GameController(Controller):
         self.previous_position = None
         self.changed_map = False
         self.unmoved = True
+<<<<<<< HEAD
 
         pygame.mixer.music.load(os.path.join('Music',
                                              self.model.current_map.music))
         pygame.mixer.music.play()
+=======
+>>>>>>> c48099abdfb4876db0934be75d89e603405a9969
 
         self._build_triggers()
 
@@ -39,8 +42,11 @@ class GameController(Controller):
             GameView.render_character,
             model.character.position,
             GameView.FOREGROUND)
+<<<<<<< HEAD
 
         self.unmoved = True
+=======
+>>>>>>> c48099abdfb4876db0934be75d89e603405a9969
 
     @staticmethod
     def get_imports():
