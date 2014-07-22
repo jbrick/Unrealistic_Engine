@@ -56,7 +56,7 @@ class GameController(Controller):
         destination_tile = None
 
         if pressed_key == pygame.K_LEFT or pressed_key == pygame.K_a:
-            self.model.character.direction = Character.LEFT\
+            self.model.character.direction = Character.LEFT
             self.unmoved = False
             destination_tile = self.model.current_map.get_map_tile(
                 position.x_coord - 1, position.y_coord)

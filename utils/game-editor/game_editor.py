@@ -96,8 +96,8 @@ def add_triggers(cursor, json_triggers_set, *args, **kwargs):
                 Triggered_On, Direction_Facing, One_Time,
                  Action_Data) VALUES (?, ?, ?, ?, ?, ?, ?)""",
                 (trigger["MapTileId"], trigger["Chance"],
-                 trigger["Action_Type"], trigger["Triggered_On"], trigger[
-                    "Direction_Facing"], trigger["One_Time"],
+                 trigger["Action_Type"], trigger["Triggered_On"],
+                 trigger["Direction_Facing"], trigger["One_Time"],
                  json.dumps(trigger["Action_Data"])))
     print("Triggers added successfully.")
 

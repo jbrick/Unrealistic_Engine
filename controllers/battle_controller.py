@@ -95,7 +95,7 @@ class BattleController(Controller):
             if pressed_key == pygame.K_UP or pressed_key == pygame.K_w:
                 self.action_menu.dec_active_node()
             if pressed_key == pygame.K_DOWN or pressed_key == pygame.K_s:
-                self.action_menu.inc_active_node
+                self.action_menu.inc_active_node()
             if pressed_key == K_RETURN:
                 self.action_menu = self.action_menu.activate_node()
 
