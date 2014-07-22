@@ -64,6 +64,7 @@ class GameView(MapView):
                 render_position[0] + GameView.DIALOG_PADDING,
                 render_position[1] + GameView.DIALOG_PADDING))
 
+    @staticmethod
     def render_map(map, screen, *args, **kwargs):
         #render layer 1
         for x in range(0, map.grid_size):

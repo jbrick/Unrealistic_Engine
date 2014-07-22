@@ -120,6 +120,8 @@
             "Chance" : 100,
             "Action_Type" : 3,
             "Triggered_On" : "enter",
+	    "Direction_Facing" : "any",
+            "One_Time" : 0,
             "Action_Data" : {
                 "dialog_x" : 8,
                 "dialog_y" : 8,

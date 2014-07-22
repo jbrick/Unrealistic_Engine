@@ -12,7 +12,7 @@ from Unrealistic_Engine.models.trigger import Trigger
 from Unrealistic_Engine.views.game_view import GameView
 from Unrealistic_Engine.controllers.controller import Controller
 from Unrealistic_Engine.models.character import Character
-
+from Unrealistic_Engine.views.view import View
 
 class GameController(Controller):
 
@@ -136,13 +136,8 @@ class GameController(Controller):
                                                 self.model.current_map.music))
             pygame.mixer.music.play()
 
-<<<<<<< HEAD
-        self.view.add_model(
-            self.model.current_map, GameView.render_map, Position(0, 0), GameView.BACKGROUND)
-=======
         self.view.add_model(self.model.current_map, GameView.render_map,
                             Position(0, 0), View.BACKGROUND)
->>>>>>> Added ability to make 2 Map Layers
         self.triggers = {}
         self.previous_position = None
         self._build_triggers()
