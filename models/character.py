@@ -24,14 +24,18 @@ class Character(Saveable):
         self.defense = defense
         self.position = Position(1, 1)
         self.direction = Character.DOWN
-        self.inventory = Inventory()
+        self.inventory = Inventory({})
         self.loadout = {}
 
     def create_memento(self):
-        return CharacterMemento(self.position, self.health, self.total_health, self.attack)
+        return CharacterMemento(self.position, self.health, self.total_health, self.attack,
+                                self.defense, self.inventory.item_list, self.loadout)
 
     def set_memento(self, character_memento):
         self.position = character_memento.position
         self.health = character_memento.health
         self.total_health = character_memento.total_health
         self.attack = character_memento.attack
+        self.defense = character_memento.defense
+        self.inventory.item_list = character_memento.item_list
+        self.loadout = character_memento.loadout

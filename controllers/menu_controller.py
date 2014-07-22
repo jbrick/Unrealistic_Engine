@@ -27,9 +27,6 @@ class MenuController(Controller):
             Position(Map.MAP_SIZE/2 - MainMenu.MENU_WIDTH /2, Map.MAP_SIZE/2 -
                      MainMenu.MENU_HEIGHT /2))
 
-        self.menu_model.nodes.append(
-            LeafNode("Quit", utils.quit))
-
         save_game_node = MenuNode("Save Game")
         self.menu_model.nodes.append(save_game_node)
         self.save_game_node_id = save_game_node.id
@@ -37,6 +34,11 @@ class MenuController(Controller):
         load_game_node = MenuNode("Load Saved Game")
         self.menu_model.nodes.append(load_game_node)
         self.load_game_node_id = load_game_node.id
+
+        self.menu_model.nodes.append(
+            LeafNode("Quit", utils.quit))
+
+
 
     def on_node_activated(self, node):
 

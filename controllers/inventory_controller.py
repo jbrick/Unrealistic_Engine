@@ -13,6 +13,7 @@ from Unrealistic_Engine import event_types
 from Unrealistic_Engine.models.item import Item
 from Unrealistic_Engine.models.armor_item import ArmorItem
 from Unrealistic_Engine.models.weapon_item import WeaponItem
+from Unrealistic_Engine.models.item_description import ItemDescription
 
 
 class InventoryController(Controller):
@@ -31,6 +32,11 @@ class InventoryController(Controller):
             self.model.character, InventoryView.render_character_data,
             Position(Map.MAP_SIZE/4, 0), View.FOREGROUND)
 
+        # Add item description
+        self.item_description = ItemDescription("")
+        self.view.add_model(
+            self.item_description, InventoryView.render_description,
+            Position(0, 0), View.FOREGROUND)
         # Build item list from model into a menu
         self.inventory_menu = Menu(self.view, InventoryView.render_inventory_menu,
                                    self.on_node_activated, Position(0, 0))
@@ -63,8 +69,9 @@ class InventoryController(Controller):
             node.execute_action()
 
     def select_item(self, item):
+        self.item_description.description = item.description
         if item.slot == Item.Bag:
-            # Show a an error that item can't be equipped
+            # Show an error that item can't be equipped
             return
         current_loadout = self.model.character.loadout
         if item.slot in current_loadout:

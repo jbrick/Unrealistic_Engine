@@ -18,7 +18,8 @@ class Item():
     Boots = "Boots"
     Gloves = "Gloves"
 
-    def __init__(self, name, description, slot):
+    def __init__(self, item_id, name, description, slot):
+        self.item_id = item_id
         self.name = name
         self.description = description
         self.slot = slot

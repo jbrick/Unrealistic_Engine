@@ -147,8 +147,13 @@ class BattleController(Controller):
         self.execute_enemy_turn()
 
     def execute_enemy_turn(self):
-        self.model.character.health -= self.enemy.attack
-        self.update_battle_log("%s hit you for %d damage." % (self.enemy.name, self.enemy.attack))
+
+        if self.model.character.defense >= self.enemy.attack:
+            self.update_battle_log("You dodged %s's attack." % self.enemy.name)
+        else:
+            self.model.character.health -= (self.enemy.attack - self.model.character.defense)
+            self.update_battle_log("%s hit you for %d damage." % (self.enemy.name, self.enemy.attack))
+
         if self.model.character.health <= 0:
             self.quit_game()
 

@@ -234,8 +234,8 @@ def add_enemies(cursor, json_enemies_set, *args, **kwargs):
 
         for enemy in enemies["enemies"]:
             cursor.execute(
-                """INSERT INTO Character (Name, Image, Health, Attack) VALUES (?, ?, ?, ?)""",
-                (enemy["Name"], enemy["Image"], enemy["Health"], enemy["Attack"]))
+                """INSERT INTO Character (Name, Image, Health, Attack, Defense) VALUES (?, ?, ?, ?, ?)""",
+                (enemy["Name"], enemy["Image"], enemy["Health"], enemy["Attack"], enemy['Defense']))
     print("Enemies added successfully.")
 
 
@@ -261,6 +261,7 @@ def reset_database(cursor, *args, **kwargs):
     cursor.execute("DROP TABLE IF EXISTS Trigger")
     cursor.execute("DROP TABLE IF EXISTS GameState")
     cursor.execute("DROP TABLE IF EXISTS Item")
+    cursor.execute("DROP TABLE IF EXISTS InventoryState")
 
     # Create tables (again if dropped before)
     cursor.execute(
@@ -279,7 +280,7 @@ def reset_database(cursor, *args, **kwargs):
     cursor.execute(
         "CREATE TABLE Character"
         "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Image TEXT, Health INTEGER, "
-        "Attack INTEGER)")
+        "Attack INTEGER, Defense INTEGER)")
 
     cursor.execute(
         "CREATE TABLE Trigger"
@@ -291,7 +292,7 @@ def reset_database(cursor, *args, **kwargs):
         "CREATE TABLE GameState"
         "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Current_Map TEXT, Character_Position_X INTEGER, "
         "Character_Position_Y INTEGER, Character_Health INTEGER, Character_Total_Health INTEGER,"
-        "Character_Attack INTEGER)")
+        "Character_Attack INTEGER, Character_Defense INTEGER)")
 
     cursor.execute(
         "CREATE TABLE Item"
@@ -299,11 +300,16 @@ def reset_database(cursor, *args, **kwargs):
         "Description TEXT)"
     )
 
+    cursor.execute(
+        "CREATE TABLE InventoryState"
+        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Game_State_ID INTEGER, Item_ID INTEGER, Equipped INTEGER, Quantity INTEGER)"
+    )
+
     # Insert default data
     # Insert default character entry
     cursor.execute(
-        "INSERT INTO Character (Name, Image, Health, Attack) VALUES (?, ?, ?, ?)",
-        ("Player", "warrior", 200, 50))
+        "INSERT INTO Character (Name, Image, Health, Attack, Defense) VALUES (?, ?, ?, ?, ?)",
+        ("Player", "warrior", 200, 50, 10))
 
     print("Database successfully reset to base data.")
 
