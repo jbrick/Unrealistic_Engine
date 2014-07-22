@@ -85,26 +85,6 @@ class GameController(Controller):
                 position.set_y_coord(position.y_coord + 1)
         if pressed_key == pygame.K_b:
             self._start_battle('Greyback', position)
-        # For testing purposes pressing enter swaps controller / view.
-        if pressed_key == pygame.K_RETURN:
-            base = utils.fetch(utils.qualify_controller_name("battle_controller"))
-            
-            imports = base.BattleController.get_imports()
-            
-            view_module = utils.fetch(imports [base.BattleController.VIEWS] ["battle_view"])
-            
-            view = view_module.BattleView()
-            
-            # Just give the battle view the same visible models as the
-            # game view for now.
-            view.visible_models = self.view.visible_models
-            controller = base.BattleController(self.model, view)
-
-            pygame.event.post(
-                pygame.event.Event(
-                    event_types.UPDATE_GAME_STATE,
-                    {"Controller": controller,
-                     "View": view}))
         if pressed_key == pygame.K_ESCAPE:
             base = utils.fetch(utils.qualify_controller_name("menu_controller"))
             
@@ -173,6 +153,7 @@ class GameController(Controller):
         view = view_module.BattleView()
 
         controller = base.BattleController(self.model, view, enemy_name)
+        
         pygame.event.post(
             pygame.event.Event(
                 event_types.UPDATE_GAME_STATE,
