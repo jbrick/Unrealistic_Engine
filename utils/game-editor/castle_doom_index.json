@@ -1,0 +1,17 @@
+{
+	"tilesets": [
+		"tile_set.json"
+	],
+	"maps": [
+		"tower_floor1.json",
+		"tower_floor2.json",
+		"tower_floor3.json",
+		"tower_floor4.json"
+	],
+	"triggers": [
+		"tower_triggers.json"
+	],
+	"enemies": [
+		"enemies.json"
+	]
+}
