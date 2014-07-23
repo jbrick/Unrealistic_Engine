@@ -10,7 +10,7 @@ from Unrealistic_Engine.models.map import Map
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Utility to create games in unrealistic engine"
+        description="Utility to create games in Unrealistic Engine"
     )
 
     parser.add_argument(
@@ -127,6 +127,7 @@ def add_triggers(cursor, json_triggers_set, *args, **kwargs):
                  json.dumps(trigger["Action_Data"])))
     print("Triggers added successfully.")
 
+
 def create_game(cursor, game_index_file, *args, **kwargs):
     index_file = open(game_index_file[0])
     game_index = json.load(index_file)
@@ -138,6 +139,8 @@ def create_game(cursor, game_index_file, *args, **kwargs):
     add_maps (cursor, game_index["maps"])
     add_triggers (cursor, game_index["triggers"])
     add_enemies (cursor, game_index["enemies"])
+    add_items(cursor, game_index["items"])
+
 
 def show_map_layout(cursor, map_names, *args, **kwargs):
     show_tiles(cursor)

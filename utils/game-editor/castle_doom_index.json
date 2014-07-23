@@ -13,5 +13,8 @@
 	],
 	"enemies": [
 		"enemies.json"
+	],
+	"items": [
+	    "items.json"
 	]
 }
