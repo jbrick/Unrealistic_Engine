@@ -14,7 +14,7 @@ class Menu():
         self.view = view
         self.nodes = []
         self.on_node_activated = on_node_activated
-        self._active_node_index = 0;
+        self._active_node_index = 0
         self.active_icon = pygame.image.load(os.path.join("Images", "menu_active.png"))
         self.render_function = render_function
         self.position = position

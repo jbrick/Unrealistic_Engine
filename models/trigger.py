@@ -9,6 +9,7 @@ class Trigger:
     CHANGE_MAP = "change_map"
     START_BATTLE = "start_battle"
     GET_ITEM = "get_item"
+    SHOW_DIALOG = "show_dialog"
 
     # Triggered On Types
     ENTER = "enter"
@@ -21,7 +22,6 @@ class Trigger:
     DIRECTION_LEFT = Character.LEFT
     DIRECTION_RIGHT = Character.RIGHT
     DIRECTION_ANY = "any"
-
 
     def __init__(self, chance, action_type, triggered_on, direction_facing,
                  one_time, action_data):

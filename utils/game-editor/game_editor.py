@@ -10,42 +10,51 @@ from Unrealistic_Engine.models.map import Map
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Utility to create games in unrealistic engine")
+        description="Utility to create games in unrealistic engine"
+    )
 
     parser.add_argument(
         "--reset", dest="to_run", action="store_const", 
         const=reset_database, default=None,
-        help="Resets the game database to default state")
+        help="Resets the game database to default state"
+    )
 
     parser.add_argument(
         "--show_map_names", dest="to_run", action="store_const", 
         const=show_map_names, default=None,
-        help="Displays the names of all loaded maps")
+        help="Displays the names of all loaded maps"
+    )
 
     parser.add_argument(
-        "--create_maps", dest="to_run", action="store_const",
-        const=create_maps, default=None,
-        help="Creates a map using a passed in .json file")
+        "--add_maps", dest="to_run", action="store_const",
+        const=add_maps, default=None,
+        help="Creates a map using a passed in .json file"
+    )
 
     parser.add_argument(
         "--add_tileset", dest="to_run", action="store_const", 
         const=add_tilesets, default=None,
-        help="Adds a .json defined tileset to the game")
+        help="Adds a .json defined tileset to the game"
+    )
 
     parser.add_argument(
         "--show_tiles", dest="to_run", action="store_const", 
         const=show_tiles, default=None,
-        help="Shows all available tiles in the game")
+        help="Shows all available tiles in the game"
+    )
 
     parser.add_argument(
         "--show_map_layout", dest="to_run", action="store_const", 
         const=show_map_layout, default=None,
-        help="Given a map shows the the tile id and unique id for every tile in the map. This can be used for knowing where to add triggers to the map")
+        help="Given a map shows the the tile id and unique id for every tile in the map. \
+              This can be used for knowing where to add triggers to the map"
+    )
 
     parser.add_argument(
         "--add_triggers", dest="to_run", action="store_const",
         const=add_triggers, default=None,
-        help="Attach triggers from a json file to unique map tiles use the show_map_layout command to use when writing triggers."
+        help="Attach triggers from a json file to unique map tiles use the show_map_layout command \
+              to use when writing triggers."
     )
 
     parser.add_argument(
@@ -66,14 +75,23 @@ def main():
         help="Adds a .json file defined item list to the game"
     )
 
-    parser.add_argument("input_files", type=str, nargs="*",
-                   help="input files")
+    parser.add_argument(
+        "--create_game", dest="to_run", action="store_const",
+        const=create_game, default=None,
+        help="Builds a complete game using the files specified in the given file. Runs, in order, \
+              --reset, --add_tileset, --create_map, --add_triggers, and --add_enemies"
+    )
+
+    parser.add_argument(
+        "input_files",
+        type=str, nargs="*",
+        help="input files"
+    )
 
     args = parser.parse_args()
 
     if not args.to_run:
         parser.error("No arguments provided")
-
 
     dir = os.path.dirname(__file__)
     filename = os.path.join(dir, "../../models/game.db")
@@ -83,11 +101,13 @@ def main():
         cursor = db.cursor()
         args.to_run(cursor, args.input_files)
 
+
 def show_triggers(cursor, *args, **kwargs):
     cursor.execute("SELECT * FROM Trigger")
     rows = cursor.fetchall()
     for row in rows:
-        print "MapTileId: %3d | Chance: %3d | Action_Type: %3d | Action_Data: %s" % (row['MapTileId'], row['Chance'], row['Action_Type'], str(json.loads(row['Action_Data'])))
+        print "MapTileId: %3d | Chance: %3d | Action_Type: %3d | Action_Data: %s" % (row['MapTileId'],
+                row['Chance'], row['Action_Type'], str(json.loads(row['Action_Data'])))
 
 
 def add_triggers(cursor, json_triggers_set, *args, **kwargs):
@@ -102,11 +122,22 @@ def add_triggers(cursor, json_triggers_set, *args, **kwargs):
                 Triggered_On, Direction_Facing, One_Time,
                  Action_Data) VALUES (?, ?, ?, ?, ?, ?, ?)""",
                 (trigger["MapTileId"], trigger["Chance"],
-                 trigger["Action_Type"], trigger["Triggered_On"], trigger[
-                    "Direction_Facing"], trigger["One_Time"],
+                 trigger["Action_Type"], trigger["Triggered_On"],
+                 trigger["Direction_Facing"], trigger["One_Time"],
                  json.dumps(trigger["Action_Data"])))
     print("Triggers added successfully.")
 
+def create_game(cursor, game_index_file, *args, **kwargs):
+    index_file = open(game_index_file[0])
+    game_index = json.load(index_file)
+    index_file.close()
+    
+    reset_database(cursor)
+    
+    add_tilesets (cursor, game_index["tilesets"])
+    add_maps (cursor, game_index["maps"])
+    add_triggers (cursor, game_index["triggers"])
+    add_enemies (cursor, game_index["enemies"])
 
 def show_map_layout(cursor, map_names, *args, **kwargs):
     show_tiles(cursor)
@@ -114,44 +145,49 @@ def show_map_layout(cursor, map_names, *args, **kwargs):
             "SELECT * FROM Map WHERE Name='%s'" % map_names[0])
     loaded_map = cursor.fetchone()
 
-    cursor.execute("SELECT * FROM MapTile WHERE MapId=%d" % loaded_map["Id"])
+    cursor = cursor.execute(
+            "SELECT * FROM MapLayer WHERE MapId='%d'" % loaded_map["Id"])
+    loaded_layers = cursor.fetchall()
 
-    map_tiles = cursor.fetchall()
-    matrix = [[0 for x in xrange(Map.GRID_SIZE)] for x in xrange(Map.GRID_SIZE)] 
-    for tile in map_tiles:
-        matrix[tile["Index_Y"]][tile["Index_X"]] = tile
+    for layer in loaded_layers:
+        cursor.execute("SELECT * FROM MapTile WHERE MapLayerId=%d" % layer["Id"])
 
-    print ""
-    print "Showing layout for map: %s" % map_names[0]
-    print ""
-    print "Tile Identifier"
-    print ""
+        map_tiles = cursor.fetchall()
+        matrix = [[0 for x in xrange(Map.GRID_SIZE)] for x in xrange(Map.GRID_SIZE)]
+        for tile in map_tiles:
+            matrix[tile["Index_Y"]][tile["Index_X"]] = tile
 
-    count = 0
-    for column in range(Map.GRID_SIZE):
-        for row in range(Map.GRID_SIZE):
-            sys.stdout.write( "%5d" % (matrix[column][row]["TileId"]))
-            count += 1
+        print ""
+        print "Showing layout for map: %s" % map_names[0]
+        print "Layer: %s" % layer["Layer"]
+        print "Tile Identifier"
         print ""
 
-    print ""
-    print "Unique Tile Identifier"
-    print ""
+        count = 0
+        for column in range(Map.GRID_SIZE):
+            for row in range(Map.GRID_SIZE):
+                sys.stdout.write( "%5d" % (matrix[column][row]["TileId"]))
+                count += 1
+            print ""
 
-    count = 0
-    for column in range(Map.GRID_SIZE):
-        for row in range(Map.GRID_SIZE):
-            sys.stdout.write( "%5d" % (matrix[column][row]["Id"]))
-            count += 1
+        print ""
+        print "Unique Tile Identifier"
         print ""
 
-    print ""
-    print "Triggers"
-    print ""
+        count = 0
+        for column in range(Map.GRID_SIZE):
+            for row in range(Map.GRID_SIZE):
+                sys.stdout.write( "%5d" % (matrix[column][row]["Id"]))
+                count += 1
+            print ""
 
-    show_triggers(cursor)
+        print ""
+        print "Triggers"
+        print ""
 
-    print ""
+        show_triggers(cursor)
+
+        print ""
 
 
 def show_map_names(cursor, *args, **kwargs):
@@ -167,6 +203,12 @@ def insert_map(cursor, map_name, music):
         [map_name, music])
 
 
+def insert_map_layer(cursor, layer, map_id):
+    cursor.execute(
+        "INSERT INTO MapLayer (Layer, MapId) VALUES (?, ?)",
+            [layer, map_id])
+
+
 def get_map_id(cursor, map_name):
     result = cursor.execute(
                 "SELECT ID FROM Map WHERE NAME = '%s'"
@@ -174,15 +216,21 @@ def get_map_id(cursor, map_name):
     for row in result:
         return row[0]
 
+def get_map_layer_id(cursor, map_id, layer):
+    result = cursor.execute(
+                "SELECT ID FROM MapLayer WHERE MapId = '%d' AND Layer= '%s'"
+                % (map_id, layer))
+    for row in result:
+        return row[0]
 
-def insert_maptile(cursor, map_id, tile_id, x_pos, y_pos):
+
+def insert_maptile(cursor, map_layer_id, tile_id, x_pos, y_pos):
     cursor.execute(
-        "INSERT INTO MapTile (MapId, TileId, Index_X, Index_Y) VALUES (?, ?, ?, ?)",
-        (map_id, tile_id, x_pos, y_pos))
+        "INSERT INTO MapTile (MapLayerId, TileId, Index_X, Index_Y) VALUES (?, ?, ?, ?)",
+        (map_layer_id, tile_id, x_pos, y_pos))
 
 
-def create_maps(cursor, maps, *args, **kwargs):
-
+def add_maps(cursor, maps, *args, **kwargs):
     for a_map in maps:
         map_file = open(a_map)
         the_map = json.load(map_file)
@@ -195,16 +243,32 @@ def create_maps(cursor, maps, *args, **kwargs):
         insert_map(cursor, map_name, the_map["Music"])
         map_id = get_map_id(cursor, map_name)
 
+        layer = "Layer1"
+        insert_map_layer(cursor, layer, map_id)
+        map_layer_id = get_map_layer_id(cursor, map_id, layer)
         cur_row = 0
-        for row in the_map["Map"]:
+        for row in the_map[layer]:
             entries = row.split(',')
             cur_col = 0
             for entry in entries:
-                insert_maptile(cursor, map_id, entry, cur_col, cur_row)
+                insert_maptile(cursor, map_layer_id, entry, cur_col, cur_row)
+                cur_col += 1
+            cur_row += 1
+
+        layer = "Layer2"
+        insert_map_layer(cursor, layer, map_id)
+        map_layer_id = get_map_layer_id(cursor, map_id, layer)
+        cur_row = 0
+        for row in the_map[layer]:
+            entries = row.split(',')
+            cur_col = 0
+            for entry in entries:
+                insert_maptile(cursor, map_layer_id, entry, cur_col, cur_row)
                 cur_col += 1
             cur_row += 1
 
         print("Map with name '%s' was successfully created." % map_name)  
+
 
 def show_tiles(cursor, *args, **kwargs):
     cursor.execute("SELECT * FROM Tile")
@@ -255,6 +319,7 @@ def add_items(cursor, json_items_set, *args, **kwargs):
 def reset_database(cursor, *args, **kwargs):
     # Clear DB of existing tables
     cursor.execute("DROP TABLE IF EXISTS Map")
+    cursor.execute("DROP TABLE IF EXISTS MapLayer")
     cursor.execute("DROP TABLE IF EXISTS Tile")
     cursor.execute("DROP TABLE IF EXISTS MapTile")
     cursor.execute("DROP TABLE IF EXISTS Character")
@@ -269,12 +334,16 @@ def reset_database(cursor, *args, **kwargs):
         "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Music TEXT)")
 
     cursor.execute(
+        "CREATE TABLE MapLayer"
+        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Layer TEXT, MapId INTEGER)")
+
+    cursor.execute(
         "CREATE TABLE Tile"
         "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Image TEXT, Walkable INTEGER)")
 
     cursor.execute(
         "CREATE TABLE MapTile"
-        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, MapId INTEGER, TileId INTEGER, Index_X INTEGER, "
+        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, MapLayerId INTEGER, TileId INTEGER, Index_X INTEGER, "
         "Index_Y INTEGER)")
    
     cursor.execute(

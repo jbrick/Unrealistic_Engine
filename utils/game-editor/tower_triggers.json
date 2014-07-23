@@ -1,13 +1,13 @@
 {
     "triggers": [
         {
-        "MapTileId" : 222,
-        "Chance" : 100,
-        "Action_Type" : "change_map",
-        "Direction_Facing" : "any",
-        "One_Time" : 0,
-        "Triggered_On" : "enter",
-        "Action_Data" : {
+            "MapTileId" : 222,
+            "Chance" : 100,
+            "Action_Type" : "change_map",
+            "Direction_Facing" : "any",
+            "One_Time" : 0,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
                 "map_name" : "tower_floor2",
                 "character_x": 13,
                 "character_y": 13
@@ -79,7 +79,22 @@
             }
         },
         {
-            "MapTileId" : 282,
+            "MapTileId" : 220,
+            "Chance" : 100,
+            "Action_Type" : "show_dialog",
+            "Direction_Facing" : "any",
+            "One_Time" : 0,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
+                "dialog_x" : 8,
+                "dialog_y" : 8,
+                "dialog_text" : "YOU SHALL NOT PASS",
+                "timed" : 0,
+                "timeout" : 0
+            }
+        },
+        {
+            "MapTileId" : 221,
             "Chance" : 100,
             "Action_Type" : "start_battle",
             "Direction_Facing" : "any",
@@ -87,7 +102,7 @@
             "Triggered_On" : "enter",
             "Action_Data" : {
                         "enemy":"Greyback"
-                }
+            }
         },
         {
             "MapTileId" : 338,
@@ -209,7 +224,36 @@
             "Action_Data" : {
                         "item":"Hulk Fists"
                 }
+        },
+        {
+            "MapTileId" : 220,
+            "Chance" : 100,
+            "Action_Type" : 3,
+            "Triggered_On" : "enter",
+	    "Direction_Facing" : "any",
+            "One_Time" : 0,
+            "Action_Data" : {
+                "dialog_x" : 8,
+                "dialog_y" : 8,
+                "dialog_text" : "YOU SHALL NOT PASS",
+                "timed" : 0,
+                "timeout" : 0
+            }
+        },
+        {
+            "MapTileId" : 221,
+            "Chance" : 100,
+            "Action_Type" : "show_dialog",
+            "Direction_Facing" : "any",
+            "One_Time" : 0,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
+                "dialog_x" : 8,
+                "dialog_y" : 8,
+                "dialog_text" : "Congratulations! You've made it to the end!",
+                "timed" : 1,
+                "timeout" : 100
+            }
         }
     ]
-
 }

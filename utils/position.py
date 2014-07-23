@@ -6,8 +6,8 @@ class Position():
         self.x_coord = x_coord
         self.y_coord = y_coord
 
-    def __eq__(self, othr):
-        return ((self.x_coord, self.y_coord) == (othr.x_coord, othr.y_coord))
+    def __eq__(self, other):
+        return ((self.x_coord, self.y_coord) == (other.x_coord, other.y_coord))
 
     def __hash__(self):
         return hash((self.x_coord, self.y_coord))
