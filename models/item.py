@@ -1,6 +1,3 @@
-__author__ = 'steve'
-
-
 class Item():
 
     # Item type enums
@@ -32,4 +29,3 @@ class Item():
 
     def unequip_item(self, character):
         raise NotImplementedError("Please implement this method")
-

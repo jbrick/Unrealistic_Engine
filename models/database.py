@@ -11,10 +11,10 @@ from Unrealistic_Engine.models.tile import Tile
 from Unrealistic_Engine.models.trigger import Trigger
 from Unrealistic_Engine.models.mementos.character import CharacterMemento
 from Unrealistic_Engine.models.mementos.game import GameMemento
+from Unrealistic_Engine.models.item import Item
 from Unrealistic_Engine.models.armor_item import ArmorItem
 from Unrealistic_Engine.models.healing_item import HealingItem
 from Unrealistic_Engine.models.weapon_item import WeaponItem
-from Unrealistic_Engine.models.item import Item
 
 
 class Database(Model):
@@ -68,18 +68,11 @@ class Database(Model):
         cursor = self._database_execute("SELECT * FROM Item", None)
         items = cursor.fetchall()
         item_dict = {}
+        types = self.create_types_dict()
         for item in items:
-            if item['Type'] == Item.Weapon:
-                item_dict[item['Name']] = WeaponItem(item['Id'], item['Name'], item['Description'],
-                                                     item['Slot'], item['Modifier'])
-            elif item['Type'] == Item.Armor:
-                item_dict[item['Name']] = ArmorItem(item['Id'], item['Name'], item['Description'],
-                                                     item['Slot'], item['Modifier'])
-
-            elif item['Type'] == Item.Healing:
-                item_dict[item['Name']] = HealingItem(item['Id'], item['Name'], item['Description'],
-                                                     item['Slot'], item['Modifier'])
-
+            item_init = types[item['Type']]
+            item_dict[item['Name']] = item_init(item['Id'], item['Name'], item['Description'],
+                                                item['Slot'], item['Modifier'])
         return item_dict
 
     def _load_maps(self):
@@ -235,18 +228,12 @@ class Database(Model):
         items = cursor.fetchall()
         item_dict = {}
         loadout = {}
+        types = self.create_types_dict()
         for item in items:
-            new_item = None
-            if item['Type'] == Item.Weapon:
-                new_item = WeaponItem(item['Id'], item['Name'], item['Description'],
-                                      item['Slot'], item['Modifier'])
-            elif item['Type'] == Item.Armor:
-                new_item = ArmorItem(item['Id'], item['Name'], item['Description'],
-                                     item['Slot'], item['Modifier'])
+            item_init = types[item['Type']]
+            new_item = item_init(item['Id'], item['Name'], item['Description'],
+                                 item['Slot'], item['Modifier'])
 
-            elif item['Type'] == Item.Healing:
-                new_item = HealingItem(item['Id'], item['Name'], item['Description'],
-                                       item['Slot'], item['Modifier'])
             if item['Equipped'] == 1:
                 loadout[item['Slot']] = new_item
             item_dict[new_item] = item['Quantity']
@@ -262,5 +249,5 @@ class Database(Model):
 
         return game_memento
 
-
-
+    def create_types_dict(self):
+        return {Item.Weapon: WeaponItem, Item.Armor: ArmorItem, Item.Healing: HealingItem}
