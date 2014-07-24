@@ -1,7 +1,7 @@
 {
     "triggers": [
         {
-            "MapTileId" : 222,
+            "MapTileId" : 478,
             "Chance" : 100,
             "Action_Type" : "change_map",
             "Direction_Facing" : "any",
@@ -14,7 +14,7 @@
             }
         },
         {
-            "MapTileId" : 478,
+            "MapTileId" : 990,
             "Chance" : 100,
             "Action_Type" : "change_map",
             "Direction_Facing" : "any",
@@ -27,20 +27,7 @@
             }
         },
         {
-            "MapTileId" : 325,
-            "Chance" : 100,
-            "Action_Type" : "change_map",
-            "Direction_Facing" : "any",
-            "One_Time" : 0,
-            "Triggered_On" : "enter",
-            "Action_Data" : {
-                "map_name" : "tower_floor3",
-                "character_x": 4,
-                "character_y": 4
-            }
-        },
-        {
-            "MapTileId" : 581,
+            "MapTileId" : 99999,
             "Chance" : 100,
             "Action_Type" : "change_map",
             "Direction_Facing" : "any",
@@ -48,38 +35,12 @@
             "Triggered_On" : "enter",
             "Action_Data" : {
                 "map_name" : "tower_floor2",
-                "character_x": 4,
-                "character_y": 4
+                "character_x": 13,
+                "character_y": 13
             }
         },
         {
-            "MapTileId" : 583,
-            "Chance" : 100,
-            "Action_Type" : "change_map",
-            "Direction_Facing" : "any",
-            "One_Time" : 0,
-            "Triggered_On" : "enter",
-            "Action_Data" : {
-                "map_name" : "tower_floor4",
-                "character_x": 6,
-                "character_y": 4
-            }
-        },
-        {
-            "MapTileId" : 839,
-            "Chance" : 100,
-            "Action_Type" : "change_map",
-            "Direction_Facing" : "any",
-            "One_Time" : 0,
-            "Triggered_On" : "enter",
-            "Action_Data" : {
-                "map_name" : "tower_floor3",
-                "character_x": 6,
-                "character_y": 4
-            }
-        },
-        {
-            "MapTileId" : 220,
+            "MapTileId" : 99999,
             "Chance" : 100,
             "Action_Type" : "show_dialog",
             "Direction_Facing" : "any",
@@ -94,7 +55,7 @@
             }
         },
         {
-            "MapTileId" : 221,
+            "MapTileId" : 99999,
             "Chance" : 100,
             "Action_Type" : "start_battle",
             "Direction_Facing" : "any",
@@ -102,168 +63,6 @@
             "Triggered_On" : "enter",
             "Action_Data" : {
                         "enemy":"Greyback"
-            }
-        },
-        {
-            "MapTileId" : 338,
-            "Chance" : 100,
-            "Action_Type" : "start_battle",
-            "Direction_Facing" : "any",
-            "One_Time" : 1,
-            "Triggered_On" : "enter",
-            "Action_Data" : {
-                        "enemy":"Fenris"
-                }
-        },
-        {
-            "MapTileId" : 22,
-            "Chance" : 100,
-            "Action_Type" : "get_item",
-            "Direction_Facing" : "any",
-            "One_Time" : 1,
-            "Triggered_On" : "enter",
-            "Action_Data" : {
-                        "item":"Lesser Healing Potion"
-                }
-        },
-        {
-            "MapTileId" : 261,
-            "Chance" : 100,
-            "Action_Type" : "get_item",
-            "Direction_Facing" : "any",
-            "One_Time" : 1,
-            "Triggered_On" : "enter",
-            "Action_Data" : {
-                        "item":"Sword of Noob"
-                }
-        },
-        {
-            "MapTileId" : 259,
-            "Chance" : 100,
-            "Action_Type" : "get_item",
-            "Direction_Facing" : "any",
-            "One_Time" : 1,
-            "Triggered_On" : "enter",
-            "Action_Data" : {
-                        "item":"Santa's Hat"
-                }
-        },
-        {
-            "MapTileId" : 260,
-            "Chance" : 100,
-            "Action_Type" : "get_item",
-            "Direction_Facing" : "any",
-            "One_Time" : 1,
-            "Triggered_On" : "enter",
-            "Action_Data" : {
-                        "item":"Santa's Hat"
-                }
-        },
-        {
-            "MapTileId" : 25,
-            "Chance" : 100,
-            "Action_Type" : "get_item",
-            "Direction_Facing" : "any",
-            "One_Time" : 1,
-            "Triggered_On" : "enter",
-            "Action_Data" : {
-                        "item":"10 Gallon Hat"
-                }
-        },
-        {
-            "MapTileId" : 26,
-            "Chance" : 100,
-            "Action_Type" : "get_item",
-            "Direction_Facing" : "any",
-            "One_Time" : 1,
-            "Triggered_On" : "enter",
-            "Action_Data" : {
-                        "item":"Sword of a Thousand Truths"
-                }
-        },
-        {
-            "MapTileId" : 27,
-            "Chance" : 100,
-            "Action_Type" : "get_item",
-            "Direction_Facing" : "any",
-            "One_Time" : 1,
-            "Triggered_On" : "enter",
-            "Action_Data" : {
-                        "item":"Frostmourne"
-                }
-        },
-        {
-            "MapTileId" : 28,
-            "Chance" : 100,
-            "Action_Type" : "get_item",
-            "Direction_Facing" : "any",
-            "One_Time" : 1,
-            "Triggered_On" : "enter",
-            "Action_Data" : {
-                        "item":"Red Plate Chestpiece"
-                }
-        },
-        {
-            "MapTileId" : 29,
-            "Chance" : 100,
-            "Action_Type" : "get_item",
-            "Direction_Facing" : "any",
-            "One_Time" : 1,
-            "Triggered_On" : "enter",
-            "Action_Data" : {
-                        "item":"Cafeteria Tray"
-                }
-        },
-        {
-            "MapTileId" : 30,
-            "Chance" : 100,
-            "Action_Type" : "get_item",
-            "Direction_Facing" : "any",
-            "One_Time" : 1,
-            "Triggered_On" : "enter",
-            "Action_Data" : {
-                        "item":"High Heels"
-                }
-        },
-        {
-            "MapTileId" : 31,
-            "Chance" : 100,
-            "Action_Type" : "get_item",
-            "Direction_Facing" : "any",
-            "One_Time" : 1,
-            "Triggered_On" : "enter",
-            "Action_Data" : {
-                        "item":"Hulk Fists"
-                }
-        },
-        {
-            "MapTileId" : 220,
-            "Chance" : 100,
-            "Action_Type" : 3,
-            "Triggered_On" : "enter",
-	    "Direction_Facing" : "any",
-            "One_Time" : 0,
-            "Action_Data" : {
-                "dialog_x" : 8,
-                "dialog_y" : 8,
-                "dialog_text" : "YOU SHALL NOT PASS",
-                "timed" : 0,
-                "timeout" : 0
-            }
-        },
-        {
-            "MapTileId" : 221,
-            "Chance" : 100,
-            "Action_Type" : "show_dialog",
-            "Direction_Facing" : "any",
-            "One_Time" : 0,
-            "Triggered_On" : "enter",
-            "Action_Data" : {
-                "dialog_x" : 8,
-                "dialog_y" : 8,
-                "dialog_text" : "Congratulations! You've made it to the end!",
-                "timed" : 1,
-                "timeout" : 100
             }
         }
     ]
