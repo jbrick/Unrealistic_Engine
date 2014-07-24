@@ -13,7 +13,6 @@ from Unrealistic_Engine import event_types
 from Unrealistic_Engine.models.item import Item
 from Unrealistic_Engine.models.armor_item import ArmorItem
 from Unrealistic_Engine.models.weapon_item import WeaponItem
-from Unrealistic_Engine.models.item_description import ItemDescription
 
 
 class InventoryController(Controller):
@@ -32,10 +31,10 @@ class InventoryController(Controller):
             self.model.character, InventoryView.render_character_data,
             Position(Map.MAP_SIZE/4, 0), View.FOREGROUND)
 
-        # Add item description
-        self.item_description = ItemDescription("")
+        # Add item description - using blank item for initialization
+        self.description_item = Item(0, 0, "", 0)
         self.view.add_model(
-            self.item_description, InventoryView.render_description,
+            self.description_item, InventoryView.render_description,
             Position(0, 0), View.FOREGROUND)
         # Build item list from model into a menu
         self.inventory_menu = Menu(self.view, InventoryView.render_inventory_menu,
@@ -69,43 +68,18 @@ class InventoryController(Controller):
             node.execute_action()
 
     def select_item(self, item):
-        self.item_description.description = item.description
+        self.description_item.description = item.description
         if item.slot == Item.Bag:
             # Show an error that item can't be equipped
             return
         current_loadout = self.model.character.loadout
         if item.slot in current_loadout:
             if item is current_loadout[item.slot]:
-                self.unequip_item(item)
+                item.unequip(self.model.character)
             else:
-                self.equip_item(item)
+                item.equip(self.model.character)
         else:
-            self.equip_item(item)
-
-    def equip_item(self, item):
-        old_item = None
-        if item.slot in self.model.character.loadout:
-            old_item = self.model.character.loadout[item.slot]
-        self.model.character.loadout[item.slot] = item
-        # Show dialog that item was equipped
-
-        self.update_stats(old_item, item)
-
-    def unequip_item(self, item):
-        del self.model.character.loadout[item.slot]
-        self.update_stats(item, None)
-
-    def update_stats(self, old_item, new_item):
-        if isinstance(new_item, ArmorItem) or isinstance(old_item, ArmorItem):
-            if old_item is not None:
-                self.model.character.defense -= old_item.defense_value
-            if new_item is not None:
-                self.model.character.defense += new_item.defense_value
-        elif isinstance(new_item, WeaponItem) or isinstance(old_item, WeaponItem):
-            if old_item is not None:
-                self.model.character.attack -= old_item.attack_value
-            if new_item is not None:
-                self.model.character.attack += new_item.attack_value
+            item.equip(self.model.character)
 
     def close_inventory(self):
         base = utils.fetch(utils.qualify_controller_name("game_controller"))

@@ -1,8 +1,10 @@
 import pygame
+from pygame import Rect
 import os
 
 from Unrealistic_Engine.views.inventory_view_interface import InventoryViewInterface
 from Unrealistic_Engine.models.map import Map
+from Unrealistic_Engine.utils import utils
 
 
 class InventoryView(InventoryViewInterface):
@@ -62,13 +64,13 @@ class InventoryView(InventoryViewInterface):
                                                       75 + InventoryView.PADDING))
 
     @staticmethod
-    def render_description(description, screen, position, *args, **kwargs):
+    def render_description(item, screen, position, *args, **kwargs):
         font = pygame.font.SysFont("monospace", InventoryView.FONT_SIZE)
 
-        description_label = font.render(description.description, 1, (255, 255, 255))
-        screen.blit(description_label, (2*InventoryView.PADDING,
-                                        InventoryView.LARGE_OFFSET + 30))
-
+        test_text = "This piece of armor doesn't have much protection, but it does give you the urge to give gifts."
+        rect = Rect((2*InventoryView.PADDING, InventoryView.LARGE_OFFSET + 30),
+                    (InventoryView.LARGE_OFFSET, Map.MAP_SIZE/4))
+        utils.draw_text(screen, item.description, (255, 255, 255), rect, font)
 
     @staticmethod
     def render_character_data(character, screen, position, *args, **kwargs):
@@ -106,7 +108,6 @@ class InventoryView(InventoryViewInterface):
         defense_label = font.render("DEF : %d" % character.defense, 1, (255, 255, 255))
         screen.blit(defense_label, (InventoryView.LARGE_OFFSET,
                     InventoryView.LARGE_OFFSET + 24 + 2*InventoryView.LINE_HEIGHT))
-
 
 
 

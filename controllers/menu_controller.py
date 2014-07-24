@@ -35,10 +35,7 @@ class MenuController(Controller):
         self.menu_model.nodes.append(load_game_node)
         self.load_game_node_id = load_game_node.id
 
-        self.menu_model.nodes.append(
-            LeafNode("Quit", utils.quit))
-
-
+        self.menu_model.nodes.append(LeafNode("Quit", utils.quit))
 
     def on_node_activated(self, node):
 

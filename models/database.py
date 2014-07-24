@@ -165,7 +165,6 @@ class Database(Model):
              game_memento.character_memento.defense))
 
         game_state_id = cursor.lastrowid
-        print(game_state_id)
         item_list = game_memento.character_memento.item_list
         loadout = game_memento.character_memento.loadout
         for item in item_list:

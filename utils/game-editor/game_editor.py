@@ -106,8 +106,8 @@ def show_triggers(cursor, *args, **kwargs):
     cursor.execute("SELECT * FROM Trigger")
     rows = cursor.fetchall()
     for row in rows:
-        print "MapTileId: %3d | Chance: %3d | Action_Type: %3d | Action_Data: %s" % (row['MapTileId'],
-                row['Chance'], row['Action_Type'], str(json.loads(row['Action_Data'])))
+        print "MapTileId: %3d | Chance: %3d | Action_Type: %s | Action_Data: %s" % (row['MapTileId'],
+                row['Chance'], str(row['Action_Type']), str(json.loads(row['Action_Data'])))
 
 
 def add_triggers(cursor, json_triggers_set, *args, **kwargs):

@@ -24,6 +24,12 @@ class Item():
         self.description = description
         self.slot = slot
 
-    @staticmethod
-    def use_item(self):
+    def update_stats(self, old_item, new_item, character):
         raise NotImplementedError("Please implement this method")
+
+    def equip_item(self, character):
+        raise NotImplementedError("Please implement this method")
+
+    def unequip_item(self, character):
+        raise NotImplementedError("Please implement this method")
+

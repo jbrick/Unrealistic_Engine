@@ -14,4 +14,5 @@ class AttackAction(Action):
                                                     current_target.defense)
             battle_log.add_battle_log_entry("You hit %s for %d damage." %
                                             (target_window.current_target.name,
-                                             self.attacker_power))
+                                             self.attacker_power - target_window.
+                                             current_target.defense))

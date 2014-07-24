@@ -127,7 +127,7 @@
                 }
         },
         {
-            "MapTileId" : 23,
+            "MapTileId" : 261,
             "Chance" : 100,
             "Action_Type" : "get_item",
             "Direction_Facing" : "any",
@@ -138,7 +138,18 @@
                 }
         },
         {
-            "MapTileId" : 24,
+            "MapTileId" : 259,
+            "Chance" : 100,
+            "Action_Type" : "get_item",
+            "Direction_Facing" : "any",
+            "One_Time" : 1,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
+                        "item":"Santa's Hat"
+                }
+        },
+        {
+            "MapTileId" : 260,
             "Chance" : 100,
             "Action_Type" : "get_item",
             "Direction_Facing" : "any",
