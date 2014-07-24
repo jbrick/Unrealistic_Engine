@@ -3,10 +3,11 @@ from Unrealistic_Engine.models.mementos.game import GameMemento
 
 
 class Game(Saveable):
-    def __init__(self, character, maps, enemies, current_map):
+    def __init__(self, character, maps, enemies, items, current_map):
         self.character = character
         self.maps = maps
         self.enemies = enemies
+        self.items = items
         self.current_map = current_map
 
     def create_memento(self):

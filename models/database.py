@@ -11,6 +11,10 @@ from Unrealistic_Engine.models.tile import Tile
 from Unrealistic_Engine.models.trigger import Trigger
 from Unrealistic_Engine.models.mementos.character import CharacterMemento
 from Unrealistic_Engine.models.mementos.game import GameMemento
+from Unrealistic_Engine.models.item import Item
+from Unrealistic_Engine.models.armor_item import ArmorItem
+from Unrealistic_Engine.models.healing_item import HealingItem
+from Unrealistic_Engine.models.weapon_item import WeaponItem
 
 
 class Database(Model):
@@ -22,7 +26,8 @@ class Database(Model):
         character = self._load_characters()
         maps = self._load_maps()
         enemies = self._load_enemies()
-        game = Game(character, maps, enemies, maps["tower_floor1"])
+        items = self._load_items()
+        game = Game(character, maps, enemies, items, maps["tower_floor1"])
         return game
 
     def _database_execute(self, sql, args):
@@ -43,7 +48,7 @@ class Database(Model):
         cursor = self._database_execute("SELECT * FROM Character WHERE Name = 'Player'", None)
         row = cursor.fetchone()
         return Character(row['Name'], row['Image'], row['Health'],
-                         row['Attack'])
+                         row['Attack'], row['Defense'])
 
     def _load_enemies(self):
         cursor = self._database_execute("SELECT * FROM Character WHERE Name != 'Player'", None)
@@ -54,9 +59,21 @@ class Database(Model):
                 os.path.join('Images', enemy['Image']))
             enemy_image_scaled = pygame.transform.scale(
                 enemy_image, (Character.SIZE, Character.SIZE))
-            enemy_dict[enemy['Name']] = Character(enemy['Name'], enemy_image_scaled, enemy['Health'], enemy['Attack'])
+            enemy_dict[enemy['Name']] = Character(enemy['Name'], enemy_image_scaled,
+                                                  enemy['Health'], enemy['Attack'], enemy['Defense'])
 
         return enemy_dict
+
+    def _load_items(self):
+        cursor = self._database_execute("SELECT * FROM Item", None)
+        items = cursor.fetchall()
+        item_dict = {}
+        types = self.create_types_dict()
+        for item in items:
+            item_init = types[item['Type']]
+            item_dict[item['Name']] = item_init(item['Id'], item['Name'], item['Description'],
+                                                item['Slot'], item['Modifier'])
+        return item_dict
 
     def _load_maps(self):
 
@@ -130,26 +147,59 @@ class Database(Model):
     def save_game(self, game_memento):
         cursor = self._database_execute(
             "INSERT INTO GameState(Current_Map, Character_Position_X, Character_Position_Y, "
-            "Character_Health, Character_Total_Health, Character_Attack) "
-            "VALUES (?, ?, ?, ?, ?, ?)",
+            "Character_Health, Character_Total_Health, Character_Attack, Character_Defense) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?)",
             (game_memento.map_name,
              game_memento.character_memento.position.x_coord,
              game_memento.character_memento.position.y_coord,
              game_memento.character_memento.health,
              game_memento.character_memento.total_health,
-             game_memento.character_memento.attack))
+             game_memento.character_memento.attack,
+             game_memento.character_memento.defense))
+
+        game_state_id = cursor.lastrowid
+        item_list = game_memento.character_memento.item_list
+        loadout = game_memento.character_memento.loadout
+        for item in item_list:
+            is_equipped = 0
+            if item.slot in loadout:
+                if loadout[item.slot].name == item.name:
+                    is_equipped = 1
+            cursor = self._database_execute(
+                "INSERT INTO InventoryState(Game_State_ID, Item_ID, Equipped, Quantity)"
+                "VALUES (?, ?, ?, ?)",
+                (game_state_id, item.item_id, is_equipped, item_list[item])
+            )
 
     def save_game_overwrite(self, saved_game_id, game_memento):
         cursor = self._database_execute(
             "UPDATE GameState SET Current_Map='%s', Character_Position_X='%s', "
             "Character_Position_Y='%s', Character_Health='%s', Character_Total_Health='%s',"
-            "Character_Attack='%s' WHERE Id='%s'" % (game_memento.map_name,
+            "Character_Attack='%s', Character_Defense='%s' WHERE Id='%s'" % (game_memento.map_name,
             game_memento.character_memento.position.x_coord,
             game_memento.character_memento.position.y_coord,
             game_memento.character_memento.health,
             game_memento.character_memento.total_health,
             game_memento.character_memento.attack,
+            game_memento.character_memento.defense,
             saved_game_id), None)
+
+        cursor = self._database_execute(
+            "DELETE FROM InventoryState WHERE Game_State_ID = '%s'" % saved_game_id, None
+        )
+
+        item_list = game_memento.character_memento.item_list
+        loadout = game_memento.character_memento.loadout
+        for item in item_list:
+            is_equipped = 0
+            if item.slot in loadout:
+                if loadout[item.slot].name == item.name:
+                    is_equipped = 1
+            cursor = self._database_execute(
+                "INSERT INTO InventoryState(Game_State_ID, Item_ID, Equipped, Quantity)"
+                "VALUES (?, ?, ?, ?)",
+                (saved_game_id, item.item_id, is_equipped, item_list[item])
+            )
 
     def get_saved_games(self):
         cursor = self._database_execute("SELECT Id FROM GameState", None)
@@ -164,20 +214,40 @@ class Database(Model):
     def load_saved_game(self, memento_id, *args, **kwargs):
         cursor = self._database_execute(
             "SELECT Current_Map, Character_Position_X, Character_Position_Y, Character_Health, "
-            "Character_Total_Health, Character_Attack FROM GameState WHERE Id = %s" % memento_id,
+            "Character_Total_Health, Character_Attack, Character_Defense FROM GameState WHERE Id = %s" % memento_id,
             None)
         memento_row = cursor.fetchone()
         current_map = memento_row['Current_Map']
         character_position = Position(
             memento_row['Character_Position_X'], memento_row['Character_Position_Y'])
 
+        cursor = self._database_execute(
+            "SELECT * FROM InventoryState JOIN Item on InventoryState.Item_ID = Item.Id "
+            "WHERE InventoryState.Game_State_Id = '%s'" % memento_id, None
+        )
+        items = cursor.fetchall()
+        item_dict = {}
+        loadout = {}
+        types = self.create_types_dict()
+        for item in items:
+            item_init = types[item['Type']]
+            new_item = item_init(item['Id'], item['Name'], item['Description'],
+                                 item['Slot'], item['Modifier'])
+
+            if item['Equipped'] == 1:
+                loadout[item['Slot']] = new_item
+            item_dict[new_item] = item['Quantity']
+
         character_memento = CharacterMemento(character_position,
                                              memento_row['Character_Health'],
                                              memento_row['Character_Total_Health'],
-                                             memento_row['Character_Attack'])
+                                             memento_row['Character_Attack'],
+                                             memento_row['Character_Defense'],
+                                             item_dict,
+                                             loadout)
         game_memento = GameMemento(current_map, character_memento)
 
         return game_memento
 
-
-
+    def create_types_dict(self):
+        return {Item.Weapon: WeaponItem, Item.Armor: ArmorItem, Item.Healing: HealingItem}

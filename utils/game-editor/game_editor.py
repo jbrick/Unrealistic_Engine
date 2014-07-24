@@ -10,7 +10,7 @@ from Unrealistic_Engine.models.map import Map
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Utility to create games in unrealistic engine"
+        description="Utility to create games in Unrealistic Engine"
     )
 
     parser.add_argument(
@@ -68,13 +68,13 @@ def main():
         const=add_enemies, default=None,
         help="Adds a .json file defined enemy list to the game"
     )
-    
-    # parser.add_argument(
-    #     "--show_enemies", dest="to_run", action="store_const",
-    #     const=show_enemies, default=None,
-    #     help="Shows all of the enemies defined for this game"
-    # )
-    
+
+    parser.add_argument(
+        "--add_items", dest="to_run", action="store_const",
+        const=add_items, default=None,
+        help="Adds a .json file defined item list to the game"
+    )
+
     parser.add_argument(
         "--create_game", dest="to_run", action="store_const",
         const=create_game, default=None,
@@ -101,12 +101,13 @@ def main():
         cursor = db.cursor()
         args.to_run(cursor, args.input_files)
 
+
 def show_triggers(cursor, *args, **kwargs):
     cursor.execute("SELECT * FROM Trigger")
     rows = cursor.fetchall()
     for row in rows:
-        print "MapTileId: %3d | Chance: %3d | Action_Type: %3d | Action_Data: %s" % (row['MapTileId'],
-                row['Chance'], row['Action_Type'], str(json.loads(row['Action_Data'])))
+        print "MapTileId: %3d | Chance: %3d | Action_Type: %s | Action_Data: %s" % (row['MapTileId'],
+                row['Chance'], str(row['Action_Type']), str(json.loads(row['Action_Data'])))
 
 
 def add_triggers(cursor, json_triggers_set, *args, **kwargs):
@@ -126,6 +127,7 @@ def add_triggers(cursor, json_triggers_set, *args, **kwargs):
                  json.dumps(trigger["Action_Data"])))
     print("Triggers added successfully.")
 
+
 def create_game(cursor, game_index_file, *args, **kwargs):
     index_file = open(game_index_file[0])
     game_index = json.load(index_file)
@@ -137,6 +139,8 @@ def create_game(cursor, game_index_file, *args, **kwargs):
     add_maps (cursor, game_index["maps"])
     add_triggers (cursor, game_index["triggers"])
     add_enemies (cursor, game_index["enemies"])
+    add_items(cursor, game_index["items"])
+
 
 def show_map_layout(cursor, map_names, *args, **kwargs):
     show_tiles(cursor)
@@ -297,9 +301,22 @@ def add_enemies(cursor, json_enemies_set, *args, **kwargs):
 
         for enemy in enemies["enemies"]:
             cursor.execute(
-                """INSERT INTO Character (Name, Image, Health, Attack) VALUES (?, ?, ?, ?)""",
-                (enemy["Name"], enemy["Image"],enemy["Health"], enemy["Attack"]))
+                """INSERT INTO Character (Name, Image, Health, Attack, Defense) VALUES (?, ?, ?, ?, ?)""",
+                (enemy["Name"], enemy["Image"], enemy["Health"], enemy["Attack"], enemy['Defense']))
     print("Enemies added successfully.")
+
+
+def add_items(cursor, json_items_set, *args, **kwargs):
+    for json_items in json_items_set:
+        items_file = open(json_items)
+        items = json.load(items_file)
+        items_file.close()
+
+        for item in items["items"]:
+            cursor.execute(
+                """INSERT INTO Item (Name, Type, Modifier, Slot, Description) VALUES (?, ?, ?, ?, ?)""",
+                (item["Name"], item["Type"], item["Modifier"], item['Slot'], item["Description"]))
+    print("Items added successfully")
 
 
 def reset_database(cursor, *args, **kwargs):
@@ -311,6 +328,8 @@ def reset_database(cursor, *args, **kwargs):
     cursor.execute("DROP TABLE IF EXISTS Character")
     cursor.execute("DROP TABLE IF EXISTS Trigger")
     cursor.execute("DROP TABLE IF EXISTS GameState")
+    cursor.execute("DROP TABLE IF EXISTS Item")
+    cursor.execute("DROP TABLE IF EXISTS InventoryState")
 
     # Create tables (again if dropped before)
     cursor.execute(
@@ -333,7 +352,7 @@ def reset_database(cursor, *args, **kwargs):
     cursor.execute(
         "CREATE TABLE Character"
         "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Image TEXT, Health INTEGER, "
-        "Attack INTEGER)")
+        "Attack INTEGER, Defense INTEGER)")
 
     cursor.execute(
         "CREATE TABLE Trigger"
@@ -345,13 +364,24 @@ def reset_database(cursor, *args, **kwargs):
         "CREATE TABLE GameState"
         "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Current_Map TEXT, Character_Position_X INTEGER, "
         "Character_Position_Y INTEGER, Character_Health INTEGER, Character_Total_Health INTEGER,"
-        "Character_Attack INTEGER)")
+        "Character_Attack INTEGER, Character_Defense INTEGER)")
+
+    cursor.execute(
+        "CREATE TABLE Item"
+        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Type INTEGER, Slot INTEGER, Modifier INTEGER, "
+        "Description TEXT)"
+    )
+
+    cursor.execute(
+        "CREATE TABLE InventoryState"
+        "(Id INTEGER PRIMARY KEY AUTOINCREMENT, Game_State_ID INTEGER, Item_ID INTEGER, Equipped INTEGER, Quantity INTEGER)"
+    )
 
     # Insert default data
     # Insert default character entry
     cursor.execute(
-        "INSERT INTO Character (Name, Image, Health, Attack) VALUES (?, ?, ?, ?)",
-        ("Player", "warrior", 200, 50))
+        "INSERT INTO Character (Name, Image, Health, Attack, Defense) VALUES (?, ?, ?, ?, ?)",
+        ("Player", "warrior", 200, 50, 10))
 
     print("Database successfully reset to base data.")
 

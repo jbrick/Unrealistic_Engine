@@ -68,18 +68,20 @@ class BattleView(BattleViewInterface, MenuView):
                         position.convert_to_pixels(BattleView.TARGET_ICON_OFFSET))
 
         # Render enemy stats window
-        enemy_background = pygame.Surface((170, Map.MAP_SIZE / 7))
+        enemy_background = pygame.Surface((170, 110))
         enemy_background.fill((5, 4, 71, 100))
         enemy_stats_position = Position(11, 2)
         screen.blit(enemy_background, enemy_stats_position.convert_to_pixels(0))
 
         enemy_name_label = font.render("%s" % target_window.characters['Enemy'].name,
                                        1, (255, 255, 0))
-        enemy_health_label = font.render("Health: %d/%d" %
+        enemy_health_label = font.render("HP: %d/%d" %
                                          (target_window.characters['Enemy'].health,
                                          target_window.characters['Enemy'].total_health),
                                          1, (255, 255, 255))
-        enemy_attack_label = font.render("Attack: %d" % target_window.characters['Enemy'].attack,
+        enemy_attack_label = font.render("ATK: %d" % target_window.characters['Enemy'].attack,
+                                         1, (255, 255, 255))
+        enemy_defense_label = font.render("DEF: %d" % target_window.characters['Enemy'].defense,
                                          1, (255, 255, 255))
 
         screen.blit(enemy_name_label,
@@ -93,21 +95,27 @@ class BattleView(BattleViewInterface, MenuView):
                     enemy_stats_position.convert_with_offset(BattleView.PADDING,
                                                              2 * BattleView.LINE_HEIGHT +
                                                              BattleView.PADDING))
+        screen.blit(enemy_defense_label,
+                    enemy_stats_position.convert_with_offset(BattleView.PADDING,
+                                                             3 * BattleView.LINE_HEIGHT +
+                                                             BattleView.PADDING))
 
         # Render player stats window
-        player_background = pygame.Surface((170, Map.MAP_SIZE / 7))
+        player_background = pygame.Surface((170, 110))
         player_background.fill((5, 4, 71, 100))
         player_stats_position = Position(2, 8)
         screen.blit(player_background, player_stats_position.convert_to_pixels(0))
 
         player_name_label = font.render("%s" % target_window.characters['Player'].name,
                                         1, (255, 255, 0))
-        player_health_label = font.render("Health: %d/%d" %
+        player_health_label = font.render("HP: %d/%d" %
                                           (target_window.characters['Player'].health,
                                           target_window.characters['Player'].total_health)
                                           , 1, (255, 255, 255))
-        player_attack_label = font.render("Attack: %d" % target_window.characters['Player'].attack,
+        player_attack_label = font.render("ATK: %d" % target_window.characters['Player'].attack,
                                           1, (255, 255, 255))
+        player_defense_label = font.render("DEF: %d" % target_window.characters['Player'].defense,
+                                           1, (255, 255, 255))
 
         screen.blit(player_name_label,
                     player_stats_position.convert_with_offset(BattleView.PADDING,
@@ -119,6 +127,10 @@ class BattleView(BattleViewInterface, MenuView):
         screen.blit(player_attack_label,
                     player_stats_position.convert_with_offset(BattleView.PADDING,
                                                               2 * BattleView.LINE_HEIGHT +
+                                                              BattleView.PADDING))
+        screen.blit(player_defense_label,
+                    player_stats_position.convert_with_offset(BattleView.PADDING,
+                                                              3 * BattleView.LINE_HEIGHT +
                                                               BattleView.PADDING))
 
     @staticmethod

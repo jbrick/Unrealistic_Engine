@@ -8,6 +8,7 @@ class Trigger:
     # Trigger Types
     CHANGE_MAP = "change_map"
     START_BATTLE = "start_battle"
+    GET_ITEM = "get_item"
     SHOW_DIALOG = "show_dialog"
 
     # Triggered On Types
