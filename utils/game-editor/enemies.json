@@ -1,33 +1,32 @@
 {
 	"enemies": [
-	        {
-				"Name" : "Greyback",
-				"Image" : "boss1.png",
-				"Health" : 100,
-				"Attack" : 10,
-				"Defense" : 10
-			},
-			{
-				"Name" : "Fenris",
-				"Image" : "boss1.png",
-				"Health" : 200,
-				"Attack" : 30,
-				"Defense" : 20
-			},
-			{
-				"Name" : "Dorkle",
-				"Image" : "boss1.png",
-				"Health" : 50,
-				"Attack" : 2,
-				"Defense" : 5
-			},
-			{
-				"Name" : "Clar",
-				"Image" : "boss1.png",
-				"Health" : 300,
-				"Attack" : 60,
-				"Defense" : 50
-			}
-		]
-
+        {
+			"Name" : "Grunt",
+			"Image" : "ranger_m.png",
+			"Health" : 100,
+			"Attack" : 10,
+			"Defense" : 10
+		},
+		{
+			"Name" : "Cultist",
+			"Image" : "healer_m.png",
+			"Health" : 200,
+			"Attack" : 30,
+			"Defense" : 20
+		},
+		{
+			"Name" : "Fenris",
+			"Image" : "boss1.png",
+			"Health" : 150,
+			"Attack" : 100,
+			"Defense" : 0
+		},
+		{
+			"Name" : "Magna Scorn",
+			"Image" : "healer_m.png",
+			"Health" : 800,
+			"Attack" : 75,
+			"Defense" : 50
+		}
+	]
 }

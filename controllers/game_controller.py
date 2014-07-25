@@ -59,32 +59,32 @@ class GameController(Controller):
             self.model.character.direction = Character.LEFT
             self.unmoved = False
             destination_tile = self.model.current_map.get_map_tile(
-                position.x_coord - 1, position.y_coord)
+                position.x_coord - 1, position.y_coord, 0)
             if (position.x_coord - 1) >= 0 and destination_tile.walkable == 1:
                 position.set_x_coord(position.x_coord - 1)
         if pressed_key == pygame.K_RIGHT or pressed_key == pygame.K_d:
             self.model.character.direction = Character.RIGHT
             self.unmoved = False
             destination_tile = self.model.current_map.get_map_tile(
-                position.x_coord + 1, position.y_coord)
+                position.x_coord + 1, position.y_coord, 0)
             if(position.x_coord + 1) < Map.GRID_SIZE and destination_tile.walkable == 1:
                 position.set_x_coord(position.x_coord + 1)
         if pressed_key == pygame.K_UP or pressed_key == pygame.K_w:
             self.model.character.direction = Character.UP
             self.unmoved = False
             destination_tile = self.model.current_map.get_map_tile(
-                position.x_coord, position.y_coord - 1)
+                position.x_coord, position.y_coord - 1, 0)
             if(position.y_coord - 1) >= 0 and destination_tile.walkable == 1:
                 position.set_y_coord(position.y_coord - 1)
         if pressed_key == pygame.K_DOWN or pressed_key == pygame.K_s:
             self.model.character.direction = Character.DOWN
             self.unmoved = False
             destination_tile = self.model.current_map.get_map_tile(
-                position.x_coord, position.y_coord + 1)
+                position.x_coord, position.y_coord + 1, 0)
             if(position.y_coord + 1) < Map.GRID_SIZE and destination_tile.walkable == 1:
                 position.set_y_coord(position.y_coord + 1)
         if pressed_key == pygame.K_b:
-            self._start_battle('Greyback', position)
+            self._start_battle('Cultist', position)
         if pressed_key == pygame.K_ESCAPE:
             base = utils.fetch(utils.qualify_controller_name("menu_controller"))
             

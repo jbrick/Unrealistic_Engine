@@ -6,7 +6,8 @@
 		"tower_floor1.json",
 		"tower_floor2.json",
 		"tower_floor3.json",
-		"tower_floor4.json"
+		"tower_floor4.json",
+		"tower_floor5.json"
 	],
 	"triggers": [
 		"tower_triggers.json"

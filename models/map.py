@@ -13,8 +13,8 @@ class Map:
     def add_or_replace_tile(self, layer, tile):
         self.layers[layer][tile.position.x_coord][tile.position.y_coord] = tile
 
-    def get_map_tile(self, pos_x, pos_y):
+    def get_map_tile(self, pos_x, pos_y, layer):
         if pos_x < 0 or pos_y < 0 or pos_x >Map.GRID_SIZE - 1 or pos_y > Map.GRID_SIZE - 1:
             return None
 
-        return self.layers[1][pos_x][pos_y]
+        return self.layers[layer][pos_x][pos_y]
