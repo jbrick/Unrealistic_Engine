@@ -27,7 +27,20 @@
             }
         },
         {
-            "MapTileId" : 99999,
+            "MapTileId" : 837,
+            "Chance" : 100,
+            "Action_Type" : "change_map",
+            "Direction_Facing" : "any",
+            "One_Time" : 0,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
+                "map_name" : "tower_floor3",
+                "character_x": 4,
+                "character_y": 4
+            }
+        },
+        {
+            "MapTileId" : 1349,
             "Chance" : 100,
             "Action_Type" : "change_map",
             "Direction_Facing" : "any",
@@ -35,34 +48,259 @@
             "Triggered_On" : "enter",
             "Action_Data" : {
                 "map_name" : "tower_floor2",
-                "character_x": 13,
-                "character_y": 13
+                "character_x": 4,
+                "character_y": 4
             }
         },
         {
-            "MapTileId" : 99999,
+            "MapTileId" : 1294,
             "Chance" : 100,
-            "Action_Type" : "show_dialog",
+            "Action_Type" : "change_map",
             "Direction_Facing" : "any",
             "One_Time" : 0,
             "Triggered_On" : "enter",
             "Action_Data" : {
+                "map_name" : "tower_floor4",
+                "character_x": 3,
+                "character_y": 15
+            }
+        },
+        {
+            "MapTileId" : 2036,
+            "Chance" : 100,
+            "Action_Type" : "change_map",
+            "Direction_Facing" : "any",
+            "One_Time" : 0,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
+                "map_name" : "tower_floor3",
+                "character_x": 13,
+                "character_y": 0
+            }
+        },
+        {
+            "MapTileId" : 1865,
+            "Chance" : 100,
+            "Action_Type" : "change_map",
+            "Direction_Facing" : "up",
+            "One_Time" : 0,
+            "Triggered_On" : "action_key",
+            "Action_Data" : {
+                "map_name" : "tower_floor5",
+                "character_x": 8,
+                "character_y": 14
+            }
+        },
+        {
+            "MapTileId" : 286,
+            "Chance" : 100,
+            "Action_Type" : "show_dialog",
+            "Direction_Facing" : "right",
+            "One_Time" : 0,
+            "Triggered_On" : "action_key",
+            "Action_Data" : {
                 "dialog_x" : 8,
-                "dialog_y" : 8,
-                "dialog_text" : "YOU SHALL NOT PASS",
+                "dialog_y" : 3,
+                "dialog_text" : "Please help! An evil cleric at the top of this tower is plotting to destroy us all!",
                 "timed" : 0,
                 "timeout" : 0
             }
         },
         {
-            "MapTileId" : 99999,
+            "MapTileId" : 303,
+            "Chance" : 100,
+            "Action_Type" : "show_dialog",
+            "Direction_Facing" : "up",
+            "One_Time" : 0,
+            "Triggered_On" : "action_key",
+            "Action_Data" : {
+                "dialog_x" : 8,
+                "dialog_y" : 3,
+                "dialog_text" : "Please help! An evil cleric at the top of this tower is plotting to destroy us all!",
+                "timed" : 0,
+                "timeout" : 0
+            }
+        },
+        {
+            "MapTileId" : 904,
+            "Chance" : 100,
+            "Action_Type" : "show_dialog",
+            "Direction_Facing" : "any",
+            "One_Time" : 1,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
+                "dialog_x" : 8,
+                "dialog_y" : 8,
+                "dialog_text" : "You found an item in the water...",
+                "timed" : 1,
+                "timeout" : 50
+            }
+        },
+        {
+            "MapTileId" : 920,
+            "Chance" : 100,
+            "Action_Type" : "get_item",
+            "Direction_Facing" : "any",
+            "One_Time" : 1,
+            "Triggered_On" : "exit",
+            "Action_Data" : {
+                "item" : "Sword of Noob"
+            }
+        },
+        {
+            "MapTileId" : 888,
             "Chance" : 100,
             "Action_Type" : "start_battle",
             "Direction_Facing" : "any",
             "One_Time" : 1,
             "Triggered_On" : "enter",
             "Action_Data" : {
-                        "enemy":"Greyback"
+                "enemy" : "Grunt"
+            }
+        },
+        {
+            "MapTileId" : 1454,
+            "Chance" : 100,
+            "Action_Type" : "start_battle",
+            "Direction_Facing" : "any",
+            "One_Time" : 1,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
+                "enemy" : "Cultist"
+            }
+        },
+        {
+            "MapTileId" : 1438,
+            "Chance" : 100,
+            "Action_Type" : "show_dialog",
+            "Direction_Facing" : "any",
+            "One_Time" : 1,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
+                "dialog_x" : 8,
+                "dialog_y" : 8,
+                "dialog_text" : "The cultist dropped some armour...",
+                "timed" : 1,
+                "timeout" : 50
+            }
+        },
+        {
+            "MapTileId" : 1470,
+            "Chance" : 100,
+            "Action_Type" : "get_item",
+            "Direction_Facing" : "any",
+            "One_Time" : 1,
+            "Triggered_On" : "exit",
+            "Action_Data" : {
+                "item" : "Bulwark of the Damned"
+            }
+        },
+        {
+            "MapTileId" : 1839,
+            "Chance" : 100,
+            "Action_Type" : "show_dialog",
+            "Direction_Facing" : "up",
+            "One_Time" : 1,
+            "Triggered_On" : "action_key",
+            "Action_Data" : {
+                "dialog_x" : 8,
+                "dialog_y" : 8,
+                "dialog_text" : "You find a sword hidden under the apples in the barrel.",
+                "timed" : 1,
+                "timeout" : 50
+            }
+        },
+        {
+            "MapTileId" : 1855,
+            "Chance" : 100,
+            "Action_Type" : "get_item",
+            "Direction_Facing" : "any",
+            "One_Time" : 1,
+            "Triggered_On" : "exit",
+            "Action_Data" : {
+                "item" : "Sword of a Thousand Truths"
+            }
+        },
+        {
+            "MapTileId" : 2036,
+            "Chance" : 100,
+            "Action_Type" : "show_dialog",
+            "Direction_Facing" : "any",
+            "One_Time" : 0,
+            "Triggered_On" : "exit",
+            "Action_Data" : {
+                "dialog_x" : 8,
+                "dialog_y" : 8,
+                "dialog_text" : "An uneasy feeling fills you as you enter the garden.",
+                "timed" : 1,
+                "timeout" : 100
+            }
+        },
+        {
+            "MapTileId" : 1881,
+            "Chance" : 100,
+            "Action_Type" : "start_battle",
+            "Direction_Facing" : "any",
+            "One_Time" : 1,
+            "Triggered_On" : "exit",
+            "Action_Data" : {
+                "enemy" : "Fenris"
+            }
+        },
+        {
+            "MapTileId" : 2393,
+            "Chance" : 100,
+            "Action_Type" : "start_battle",
+            "Direction_Facing" : "up",
+            "One_Time" : 1,
+            "Triggered_On" : "action_key",
+            "Action_Data" : {
+                "enemy" : "Magna Scorn"
+            }
+        },
+        {
+            "MapTileId" : 2489,
+            "Chance" : 100,
+            "Action_Type" : "show_dialog",
+            "Direction_Facing" : "any",
+            "One_Time" : 1,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
+                "dialog_x" : 8,
+                "dialog_y" : 3,
+                "dialog_text" : "You have finally arrived hero. This was forseen.",
+                "timed" : 0,
+                "timeout" : 0
+            }
+        },
+        {
+            "MapTileId" : 2425,
+            "Chance" : 100,
+            "Action_Type" : "show_dialog",
+            "Direction_Facing" : "any",
+            "One_Time" : 1,
+            "Triggered_On" : "enter",
+            "Action_Data" : {
+                "dialog_x" : 8,
+                "dialog_y" : 3,
+                "dialog_text" : "You are too late. I am invincible. My malice is infinite.",
+                "timed" : 0,
+                "timeout" : 0
+            }
+        },
+        {
+            "MapTileId" : 2409,
+            "Chance" : 100,
+            "Action_Type" : "show_dialog",
+            "Direction_Facing" : "any",
+            "One_Time" : 1,
+            "Triggered_On" : "exit",
+            "Action_Data" : {
+                "dialog_x" : 8,
+                "dialog_y" : 3,
+                "dialog_text" : "So be it. Meet your doom, hero.",
+                "timed" : 0,
+                "timeout" : 0
             }
         }
     ]

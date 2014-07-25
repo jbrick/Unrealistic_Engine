@@ -39,7 +39,8 @@ class BattleController(Controller):
         # Add Map Model
         self.view.add_model(
             self.model.current_map.get_map_tile(self.model.character.position.x_coord,
-                                                self.model.character.position.y_coord),
+                                                self.model.character.position.y_coord,
+                                                0),
             BattleView.render_map, Position(0, Map.MAP_SIZE -
                                             BattleView.MENU_HEIGHT),
             View.BACKGROUND)
