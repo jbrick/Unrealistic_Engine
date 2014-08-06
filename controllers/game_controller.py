@@ -13,10 +13,12 @@ from Unrealistic_Engine.views.game_view import GameView
 from Unrealistic_Engine.controllers.controller import Controller
 from Unrealistic_Engine.models.character import Character
 from Unrealistic_Engine.views.view import View
+from Unrealistic_Engine.controllers.controller_factory import ControllerFactory
+
 
 class GameController(Controller):
 
-    def __init__(self, model, view):
+    def __init__(self, model, view, *args, **kwargs):
         self.model = model
         self.view = view
         self.triggers = {}
@@ -41,14 +43,6 @@ class GameController(Controller):
             GameView.FOREGROUND)
 
         self.unmoved = True
-
-    @staticmethod
-    def get_imports():
-        models = ["map", "trigger"]
-        views = ["game_view"]
-        controllers = ["game_controller"]
-        
-        return Controller.qualify_imports((models, views, controllers))
 
     def handle_key_press(self, pressed_key):
         position = self.view.get_visible_model_position(
@@ -83,25 +77,16 @@ class GameController(Controller):
                 position.x_coord, position.y_coord + 1, 0)
             if(position.y_coord + 1) < Map.GRID_SIZE and destination_tile.walkable == 1:
                 position.set_y_coord(position.y_coord + 1)
-        if pressed_key == pygame.K_b:
-            self._start_battle('Cultist', position)
         if pressed_key == pygame.K_ESCAPE:
-            base = utils.fetch(utils.qualify_controller_name("menu_controller"))
-            
-            imports = base.MenuController.get_imports()
-
-            view_module = utils.fetch(imports[base.MenuController.VIEWS]["main_menu"])
-
-            view = view_module.MainMenu()
-            controller = base.MenuController(self.model, view, self, self.view)
-
-            pygame.event.post(
-                pygame.event.Event(
-                    event_types.UPDATE_GAME_STATE,
-                    {"Controller": controller,
-                     "View": view}))
+            ControllerFactory.build_and_swap_controller(self.model,
+                                                        "menu_controller",
+                                                        "main_menu", self,
+                                                        self.view)
         if pressed_key == pygame.K_i:
-            self.open_inventory()
+            ControllerFactory.build_and_swap_controller(self.model,
+                                                        "inventory_controller",
+                                                        "inventory_view", self,
+                                                        self.view)
 
         self.view.set_visible_model_position(self.model.character, position)
         self.model.character.position = position
@@ -144,41 +129,6 @@ class GameController(Controller):
         self.previous_position = None
         self._build_triggers()
 
-    def _start_battle(self, enemy_name, position):
-        base = utils.fetch(utils.qualify_controller_name(
-            "battle_controller"))
-
-        imports = base.BattleController.get_imports()
-
-        view_module = utils.fetch(imports[base.BattleController.VIEWS]["battle_view"])
-
-        view = view_module.BattleView()
-
-        controller = base.BattleController(self.model, view, enemy_name)
-        
-        pygame.event.post(
-            pygame.event.Event(
-                event_types.UPDATE_GAME_STATE,
-                {"Controller": controller,
-                 "View": view}))
-
-    def open_inventory(self):
-        base = utils.fetch(utils.qualify_controller_name(
-                           "inventory_controller"))
-
-        imports = base.InventoryController.get_imports()
-
-        view_module = utils.fetch(imports[base.InventoryController.VIEWS]["inventory_view"])
-
-        view = view_module.InventoryView()
-        controller = base.InventoryController(self.model, view)
-
-        pygame.event.post(
-            pygame.event.Event(
-                event_types.UPDATE_GAME_STATE,
-                {"Controller": controller,
-                 "View": view}))
-
     def _build_triggers(self):
         for row in self.model.current_map.layers[1]:
             for tile in row:
@@ -191,7 +141,7 @@ class GameController(Controller):
         valid_current_trigger = trigger.triggered_on == Trigger.ENTER and not is_previous
 
         valid_action_trigger = trigger.triggered_on == Trigger.KEY_ACTION and \
-                               pressed_key == pygame.K_e
+                               pressed_key == pygame.K_SPACE
 
         if not (valid_previous_trigger or valid_current_trigger or valid_action_trigger):
             return
@@ -213,7 +163,12 @@ class GameController(Controller):
             self.view.set_visible_model_position(self.model.character, position)
 
         if trigger.action_type == Trigger.START_BATTLE:
-            self._start_battle(trigger.action_data['enemy'], position)
+            ControllerFactory.build_and_swap_controller(self.model,
+                                                        "battle_controller",
+                                                        "battle_view", self,
+                                                        self.view,
+                                                        trigger.action_data[
+                                                            "enemy"])
 
         if trigger.action_type == Trigger.GET_ITEM:
             self.model.character.inventory.\
@@ -233,23 +188,13 @@ class GameController(Controller):
                     new_dialog, GameView.render_dialog, new_dialog.location, GameView.OVERLAY)
                 
                 if not new_dialog.timed:
-                    # TODO: Render icon to indicate manual procession
-                    base = utils.fetch(utils.qualify_controller_name("dialog_controller"))
-                    
-                    controller = base.DialogController(new_dialog, self.view)
-
-                    pygame.event.post(
-                        pygame.event.Event(
-                            event_types.UPDATE_GAME_STATE,
-                            {"Controller": controller,
-                             "View": self.view}))
+                    ControllerFactory.build_and_swap_controller(new_dialog,
+                                                        "dialog_controller",
+                                                        "game_view", self,
+                                                        self.view)
 
         print("Action occurred with data: " + str(trigger.action_data))
 
     def handle_game_event(self, event):
         if event.type == event_types.KILL_DIALOG:
             self.view.remove_model(event.Dialog)
-
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()

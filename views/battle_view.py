@@ -3,7 +3,8 @@ import os
 
 from Unrealistic_Engine.models.map import Map
 from Unrealistic_Engine.views.battle_view_interface import BattleViewInterface
-from Unrealistic_Engine.utils import utils
+from Unrealistic_Engine.controllers.battle_controller import  \
+    TARGET_SELECT
 from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine.models.character import Character
 from Unrealistic_Engine.views.menu_view import MenuView
@@ -55,10 +56,7 @@ class BattleView(BattleViewInterface, MenuView):
     def render_target_window(target_window, screen, position, *args, **kwargs):
         font = pygame.font.SysFont("monospace", BattleView.FONT_SIZE)
 
-        base = utils.fetch(utils.qualify_controller_name(
-                           "battle_controller"))
-
-        if target_window.battle_state is base.BattleController.TARGET_SELECT:
+        if target_window.battle_state is TARGET_SELECT:
             # Render the target icon over the new target
             target_image = pygame.image.load(
                 os.path.join('Images', "target_icon.png"))

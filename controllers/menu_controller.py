@@ -14,7 +14,8 @@ from Unrealistic_Engine.models.database import Database
 
 class MenuController(Controller):
 
-    def __init__(self, model, view, previous_controller, previous_view):
+    def __init__(self, model, view, previous_controller, previous_view,
+                 *args, **kwargs):
         self.game_model = model
         self.view = view
         self.previous_controller = previous_controller
@@ -84,14 +85,6 @@ class MenuController(Controller):
             self.game_model.set_memento(result)
             utils.return_to_game(self.game_model)
 
-    @staticmethod
-    def get_imports():
-        models = ["menu", "node_menu", "node_leaf"]
-        views = ["main_menu"]
-        controllers = ["menu_controller"]
-        
-        return Controller.qualify_imports((models, views, controllers))
-
     def handle_key_press(self, pressed_key):
 
         if pressed_key == pygame.K_LEFT:
@@ -111,6 +104,4 @@ class MenuController(Controller):
             utils.return_to_game(self.game_model)
 
     def handle_game_event(self, event):
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+        pass

@@ -1,5 +1,5 @@
 import pygame
-import os
+import sys
 
 from Unrealistic_Engine.models.database import Database
 from Unrealistic_Engine.controllers.title_screen_controller import \
@@ -33,6 +33,10 @@ while True:
             view.render(screen)
         if event.type is pygame.KEYDOWN:
             controller.handle_key_press(event.key)
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
         # Allow for swapping of MVC Components.
         if event.type == event_types.UPDATE_GAME_STATE:
             controller = event.Controller

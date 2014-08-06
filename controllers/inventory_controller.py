@@ -9,15 +9,13 @@ from Unrealistic_Engine.utils.position import Position
 from Unrealistic_Engine.models.leaf_node import LeafNode
 from Unrealistic_Engine.models.menu import Menu
 from Unrealistic_Engine.models.map import Map
-from Unrealistic_Engine import event_types
+from Unrealistic_Engine.controllers.controller_factory import ControllerFactory
 from Unrealistic_Engine.models.item import Item
-from Unrealistic_Engine.models.armor_item import ArmorItem
-from Unrealistic_Engine.models.weapon_item import WeaponItem
 
 
 class InventoryController(Controller):
 
-    def __init__(self, model, view):
+    def __init__(self, model, view, *args, **kwargs):
         self.model = model
         self.view = view
 
@@ -82,32 +80,7 @@ class InventoryController(Controller):
             item.equip(self.model.character)
 
     def close_inventory(self):
-        base = utils.fetch(utils.qualify_controller_name("game_controller"))
-
-        imports = base.GameController.get_imports()
-
-        view_module = utils.fetch(imports[base.GameController.VIEWS]["game_view"])
-
-        view = view_module.GameView()
-
-        controller = base.GameController(self.model, view)
-
-        pygame.event.post(pygame.event.Event(
-            event_types.UPDATE_GAME_STATE,
-            {"Controller": controller, "View": view}))
-
-    def handle_game_event(self, event):
-        if event.type == pygame.QUIT:
-            self.quit_game()
-
-    @staticmethod
-    def get_imports():
-        models = ["map", "trigger"]
-        views = ["inventory_view"]
-        controllers = ["inventory_controller"]
-
-        return Controller.qualify_imports((models, views, controllers))
-
-    def quit_game(self):
-        pygame.quit()
-        sys.exit()
+        ControllerFactory.build_and_swap_controller(self.model,
+                                                        "game_controller",
+                                                        "game_view", self,
+                                                        self.view)

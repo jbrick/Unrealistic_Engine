@@ -14,7 +14,7 @@ from Unrealistic_Engine.models.database import Database
 
 class TitleScreenController(Controller):
 
-    def __init__(self, model, view):
+    def __init__(self, model, view, *args, **kwargs):
         self.game_model = model
         self.view = view
         self.save_node_ids = []
@@ -36,7 +36,7 @@ class TitleScreenController(Controller):
         self.load_game_node_id = load_game_node.id
 
         self.menu_model.nodes.append(
-            LeafNode("Quit", utils.quit))
+            LeafNode("Quit", utils.quit_game))
 
     def on_node_activated(self, node):
 
@@ -87,8 +87,3 @@ class TitleScreenController(Controller):
 
         if pressed_key == pygame.K_ESCAPE:
             utils.return_to_game(self.game_model)
-
-    def handle_game_event(self, event):
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
