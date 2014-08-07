@@ -24,7 +24,7 @@ class TitleScreenController(Controller):
         pygame.mixer.music.play()
 
         self.menu_model = Menu(self.view, TitleScreenView.render_menu,
-                               self.on_node_activated, Position(0,0))
+                               Position(0,0), self.on_node_activated)
 
         new_game_node = LeafNode(
             "New Game", utils.return_to_game, self.game_model)
@@ -38,7 +38,7 @@ class TitleScreenController(Controller):
         self.menu_model.nodes.append(
             LeafNode("Quit", utils.quit_game))
 
-    def on_node_activated(self, node):
+    def on_node_activated(self, node, *args, **kwargs):
 
         if node.is_leaf_node():
             result = node.execute_action()

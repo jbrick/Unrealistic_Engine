@@ -10,7 +10,7 @@ class Menu():
     """
     Constructor.
     """
-    def __init__(self, view, render_function, on_node_activated, position):
+    def __init__(self, view, render_function, position, on_node_activated=None):
         self.view = view
         self.nodes = []
         self.on_node_activated = on_node_activated
@@ -19,7 +19,7 @@ class Menu():
         self.render_function = render_function
         self.position = position
         self.view.add_model(self, self.render_function, position,
-                        View.FOREGROUND)
+                            View.FOREGROUND)
 
     def get_active_node(self):
         return self.nodes[self._active_node_index]
@@ -45,9 +45,15 @@ class Menu():
         return self
 
     def activate_node(self):
-        self.on_node_activated(self.get_active_node())
-        if not self.get_active_node().is_leaf_node():
+        if self.get_active_node().is_leaf_node():
+            result = self.get_active_node().execute_action()
+            if self.on_node_activated:
+                self.on_node_activated(self.get_active_node(), result)
+        else:
+            if self.on_node_activated:
+                self.on_node_activated(self.get_active_node())
             return self.go_to_submenu()
+
         return self
 
     def go_to_submenu(self):

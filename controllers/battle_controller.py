@@ -15,7 +15,7 @@ from Unrealistic_Engine.views.battle_view import BattleView
 from Unrealistic_Engine.views.view import View
 from Unrealistic_Engine.models.leaf_node import LeafNode
 from Unrealistic_Engine.controllers.controller import Controller
-from Unrealistic_Engine.controllers.controller_factory import ControllerFactory
+from Unrealistic_Engine.utils import utils
 
 
 class BattleController(Controller):
@@ -63,7 +63,7 @@ class BattleController(Controller):
 
         # Add action select menu to visible models
         self.action_menu = Menu(
-            self.view, BattleView.render_menu,self.on_node_activated,
+            self.view, BattleView.render_menu,
             Position(0, Map.MAP_SIZE - BattleView.MENU_HEIGHT))
 
         self.action_menu.nodes.append(LeafNode("Attack", self.set_attack_action))
@@ -73,10 +73,6 @@ class BattleController(Controller):
         self.battle_log = BattleLog("%s Attacked!" % enemy_name)
         self.view.add_model(self.battle_log, BattleView.render_battle_log,
                             Position(0, 0), View.FOREGROUND)
-
-    def on_node_activated(self, node):
-        if node.is_leaf_node():
-            node.execute_action()
 
     def handle_key_press(self, pressed_key):
         if self.state is BattleController.TARGET_SELECT:
@@ -131,7 +127,7 @@ class BattleController(Controller):
         # End battle when someone dies
         if self.target_window.current_target.health <= 0:
             if self.target_window.current_target.name == 'Player':
-                self.quit_game()
+                utils.quit_game()
             else:
                 # return to ensure enemy doesn't attack after being killed
                 self.end_battle()
@@ -155,13 +151,13 @@ class BattleController(Controller):
                                     self.enemy.attack - self.model.character.defense))
 
         if self.model.character.health <= 0:
-            self.quit_game()
+            utils.quit_game()
 
         self.state = BattleController.ACTION_SELECT
         self.update_target_window(self.target_window.current_target, self.state)
 
     def end_battle(self):
-        ControllerFactory.build_and_swap_controller(self.model,
+        Controller.build_and_swap_controller(self.model,
                                                         "game_controller",
                                                         "game_view", self,
                                                         self.view)

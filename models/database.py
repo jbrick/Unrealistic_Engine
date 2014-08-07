@@ -18,17 +18,25 @@ from Unrealistic_Engine.models.weapon_item import WeaponItem
 
 
 class Database(Model):
+
+    # Use Borg design pattern to share game state across any Database instance.
+    __shared_state = {"game": None}
+
     def __init__(self):
+        self.__dict__ = self.__shared_state
         self.db = None
 
     def load_application(self):
-
-        character = self._load_characters()
-        maps = self._load_maps()
-        enemies = self._load_enemies()
-        items = self._load_items()
-        game = Game(character, maps, enemies, items, maps["tower_floor1"])
-        return game
+        if self.game:
+            return self.game
+        else:
+            character = self._load_characters()
+            maps = self._load_maps()
+            enemies = self._load_enemies()
+            items = self._load_items()
+            game = Game(character, maps, enemies, items, maps["tower_floor1"])
+            self.game = game
+            return game
 
     def _database_execute(self, sql, args):
         dir = os.path.dirname(__file__)

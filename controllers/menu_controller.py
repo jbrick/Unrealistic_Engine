@@ -24,9 +24,10 @@ class MenuController(Controller):
         self.load_node_ids = []
 
         self.menu_model = Menu(
-            self.view, MainMenu.render_menu,self.on_node_activated,
+            self.view, MainMenu.render_menu,
             Position(Map.MAP_SIZE/2 - MainMenu.MENU_WIDTH /2, Map.MAP_SIZE/2 -
-                     MainMenu.MENU_HEIGHT /2))
+                     MainMenu.MENU_HEIGHT /2),
+                    self.on_node_activated)
 
         save_game_node = MenuNode("Save Game")
         self.menu_model.nodes.append(save_game_node)
@@ -36,21 +37,19 @@ class MenuController(Controller):
         self.menu_model.nodes.append(load_game_node)
         self.load_game_node_id = load_game_node.id
 
-        self.menu_model.nodes.append(LeafNode("Quit", utils.quit))
+        self.menu_model.nodes.append(LeafNode("Quit", utils.quit_game))
 
-    def on_node_activated(self, node):
-
-        if node.is_leaf_node():
-            result = node.execute_action()
+    def on_node_activated(self, node, result=None, *args, **kwargs):
 
         # Add save game nodes to menu it consists of allowing the user to overwrite any
         # existing save or add a new one.
         if node.id == self.save_game_node_id:
 
             game_menu = Menu(self.view, MainMenu.render_menu,
-                             self.on_node_activated,Position(
+                             Position(
                              Map.MAP_SIZE / 2 - MainMenu.MENU_WIDTH / 2,
-                             Map.MAP_SIZE / 2 - MainMenu.MENU_HEIGHT / 2))
+                             Map.MAP_SIZE / 2 - MainMenu.MENU_HEIGHT / 2),
+                             self.on_node_activated)
 
             self.save_node_ids = utils.add_saved_game_nodes(
                                  game_menu, Database().save_game_overwrite,
@@ -67,9 +66,10 @@ class MenuController(Controller):
         # Add load game nodes to menu it allows a user to load any existing save.
         if node.id == self.load_game_node_id:
             game_menu = Menu(self.view, MainMenu.render_menu,
-                             self.on_node_activated,Position(
+                             Position(
                              Map.MAP_SIZE / 2 - MainMenu.MENU_WIDTH / 2,
-                             Map.MAP_SIZE / 2 - MainMenu.MENU_HEIGHT / 2))
+                             Map.MAP_SIZE / 2 - MainMenu.MENU_HEIGHT / 2),
+                             self.on_node_activated)
 
             self.load_node_ids = utils.add_saved_game_nodes(
                                 game_menu, Database().load_saved_game, None)
@@ -78,11 +78,13 @@ class MenuController(Controller):
 
         # If user has selected a save node
         if node.id in self.save_node_ids:
+            Menu.breadcrumbs = []
             utils.return_to_game(self.game_model)
 
         # If user has selected a load node
         if node.id in self.load_node_ids:
             self.game_model.set_memento(result)
+            Menu.breadcrumbs = []
             utils.return_to_game(self.game_model)
 
     def handle_key_press(self, pressed_key):
@@ -101,7 +103,5 @@ class MenuController(Controller):
             self.menu_model.inc_active_node()
 
         if pressed_key == pygame.K_ESCAPE:
+            Menu.breadcrumbs = []
             utils.return_to_game(self.game_model)
-
-    def handle_game_event(self, event):
-        pass

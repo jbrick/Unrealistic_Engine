@@ -35,8 +35,8 @@ class InventoryController(Controller):
             self.description_item, InventoryView.render_description,
             Position(0, 0), View.FOREGROUND)
         # Build item list from model into a menu
-        self.inventory_menu = Menu(self.view, InventoryView.render_inventory_menu,
-                                   self.on_node_activated, Position(0, 0))
+        self.inventory_menu = Menu(
+            self.view, InventoryView.render_inventory_menu, Position(0, 0))
 
         for item in self.model.character.inventory.item_list:
             self.inventory_menu.nodes.append(
@@ -61,10 +61,6 @@ class InventoryController(Controller):
             # way to detect previous controller
             self.close_inventory()
 
-    def on_node_activated(self, node):
-        if node.is_leaf_node():
-            node.execute_action()
-
     def select_item(self, item):
         self.description_item.description = item.description
         if item.slot == Item.Bag:
@@ -80,7 +76,5 @@ class InventoryController(Controller):
             item.equip(self.model.character)
 
     def close_inventory(self):
-        ControllerFactory.build_and_swap_controller(self.model,
-                                                        "game_controller",
-                                                        "game_view", self,
-                                                        self.view)
+        Controller.build_and_swap_controller(self.model,"game_controller",
+                                             "game_view", self, self.view)

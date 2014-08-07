@@ -4,7 +4,7 @@ from pygame import Rect
 
 from Unrealistic_Engine.models.leaf_node import LeafNode
 from Unrealistic_Engine.models.database import Database
-from Unrealistic_Engine.controllers.controller_factory import ControllerFactory
+from Unrealistic_Engine.controllers.controller import Controller
 
 def dictify(list_to_change):
     dictionary = {}
@@ -29,8 +29,8 @@ def quit_game():
     sys.exit()
 
 def return_to_game(model):
-     ControllerFactory.build_and_swap_controller(model,"game_controller",
-                                                 "game_view", None, None)
+     Controller.build_and_swap_controller(model, "game_controller",
+                                          "game_view", None, None)
 
 # draw some text into an area of a surface
 # automatically wraps words
